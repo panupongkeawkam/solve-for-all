@@ -28,6 +28,7 @@ export const postSlice = createSlice({
         state.fetchingPosts = false;
         // action.payload are returned value from async fetchPosts()
         state.postsList = action.payload;
+        console.log(action.payload.length);
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         console.log("fetch posts error!");

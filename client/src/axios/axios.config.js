@@ -1,9 +1,13 @@
 import axios from "axios";
 
-import host from "../host.config";
+axios.defaults.baseURL = process.env.REACT_APP_SERVER_HOST;
+
+const defaultAxios = axios.create({
+  baseURL: process.env.REACT_APP_SERVER_HOST,
+});
 
 const authAxios = axios.create({
-  baseURL: host.BASE_URL,
+  baseURL: process.env.REACT_APP_SERVER_HOST,
 });
 
 authAxios.interceptors.request.use(
@@ -20,3 +24,5 @@ authAxios.interceptors.request.use(
 );
 
 export { authAxios };
+
+export default defaultAxios;

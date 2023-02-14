@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import axios from "./axios/axios.config";
+
 import theme from "./style/mui.config";
 import store from "./store/index";
 import { fetchPosts } from "./store/postSlice";
@@ -13,6 +15,7 @@ import HomeScreen from "./containers/HomeScreen";
 export default () => {
   useEffect(() => {
     document.body.style.backgroundColor = theme.palette["base-1"].main;
+    axios.get("/user").then((res) => console.log(res.data));
     store.dispatch(fetchPosts());
   }, []);
 
