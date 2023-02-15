@@ -15,10 +15,14 @@ import { CreateUserDto } from "./Dto/createUser.dto";
 import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
+import { AuthService } from "../auth/auth.service";
 
 @Controller("users")
 export class UserController {
-	constructor(private userService: UserService) {}
+	constructor(
+		private userService: UserService,
+		private authService: AuthService,
+	) {}
 
 	@Get()
 	async findPeople(@Res() res: Response) {
@@ -35,15 +39,17 @@ export class UserController {
 			...body,
 			password: hashedPassword,
 		});
-		res.status(HttpStatus.CREATED).json(user);
+		const token = await this.authService.tokenGenerate(user);
+		res.status(HttpStatus.CREATED).json({ user, token });
 	}
 
 	@UseGuards(LocalAuthGuard)
 	@Post("login")
-	loginUser(@Req() req: Request, @Res() res: Response) {
-		console.log(req);
+	async loginUser(@Req() req: Request, @Res() res: Response) {
+		const token = await this.authService.tokenGenerate(req.user);
 		res.status(HttpStatus.OK).json({
-			User: req.user,
+			user: req.user,
+			token,
 		});
 	}
 

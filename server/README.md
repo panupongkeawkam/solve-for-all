@@ -30,15 +30,15 @@
 
 ```json
   {
-      "_id": ObjectId("63ec5a42ae5dba49b35b6e0d"),
+      "_id": "ObjectId('63ec5a42ae5dba49b35b6e0d')",
       "username": "helloworld123",
-      "password": "$2b$10$uCrlLAWRw7Y.I1547.5frOiKwdV95YUdKAk1gVysUDogD.hCohp1a"
+      "password": "$2b$10$uCrlLAWRw7Y.I1547.5frOiKwdV95YUdKAk1gVysUDogD.hCohp1a",
       "email": "helloworld@gmail.com",
       "birthday": "2023-02-15T05:09:24.216Z",
       "image": "",
       "bio": "Hello everyone my name is Hello nice to meet you",
       "reputation": 0,
-      "tags": Tag[],
+      "tags": "Tag"[],
       "answered": 0,
       "solved": 0,
       "createdAt": "2023-02-15T05:19:27.355Z",
@@ -69,8 +69,9 @@
       likedBy: String[],
       dislikedBy: String[],
       solvedBy: String,
-      createdBy: Date,
-      updatedBy: Date
+      createdAt: Date,
+      updatedAt: Date,
+      tags: Tag[]
 }
 ```
 

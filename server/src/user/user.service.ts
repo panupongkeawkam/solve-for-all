@@ -5,7 +5,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User } from "./Schema/user.schema";
-import { Model, Document } from "mongoose";
+import { Model } from "mongoose";
 import { CreateUserDto } from "./Dto/createUser.dto";
 
 @Injectable()
