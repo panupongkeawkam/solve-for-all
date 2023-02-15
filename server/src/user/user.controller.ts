@@ -16,12 +16,13 @@ import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
 
-@Controller("user")
+@Controller("users")
 export class UserController {
 	constructor(private userService: UserService) {}
 
 	@Get()
-	getUser(@Res() res: Response) {
+	async findPeople(@Res() res: Response) {
+		const users = await this.userService.findAllUsername();
 		res.status(HttpStatus.OK).send("HELLO");
 	}
 
@@ -39,13 +40,17 @@ export class UserController {
 
 	@UseGuards(LocalAuthGuard)
 	@Post("login")
-	loginUser(
-		@Req() req: Request,
-		@Res() res: Response,
-	) {
+	loginUser(@Req() req: Request, @Res() res: Response) {
 		console.log(req);
 		res.status(HttpStatus.OK).json({
 			User: req.user,
+		});
+	}
+
+	@Get("protected")
+	getUser(@Res() res: Response) {
+		res.status(HttpStatus.OK).json({
+			msg: "Hi",
 		});
 	}
 }

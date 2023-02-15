@@ -5,7 +5,7 @@ import {
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { User } from "./Schema/user.schema";
-import { Model } from "mongoose";
+import { Model, Document } from "mongoose";
 import { CreateUserDto } from "./Dto/createUser.dto";
 
 @Injectable()
@@ -15,20 +15,11 @@ export class UserService {
 	// receive POST method
 	async createUser(createUserDto: CreateUserDto): Promise<any> {
 		try {
-			const user = await this.userModel.create(createUserDto);
-			return {
-				username: user.username,
-				email: user.email,
-				name: user.name,
-				image: user.image,
-				tags: user.tags,
-				birthDate: user.birthDate,
-				biology: user.biology,
-				_id: user._id,
-			};
+			const user: any = await this.userModel.create(createUserDto);
+			const { password, createdAt, updatedAt, ...rest } = user?._doc;
+			return rest;
 		} catch (error) {
 			const { username } = error.keyValue;
-			console.log(error);
 			if (error.code === 11000 && username)
 				throw new BadRequestException("Username is used");
 			else if (error.code === 11000)
@@ -47,5 +38,16 @@ export class UserService {
 			console.log(error);
 			throw new UnauthorizedException("Your username is incorrect");
 		}
+	}
+
+	async findAllUsername(): Promise<any> {
+		const users = await this.userModel
+			.find()
+			.select({
+				username: 1,
+				_id: 1,
+			})
+			.limit(10);
+		return users;
 	}
 }
