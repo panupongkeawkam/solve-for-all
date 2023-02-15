@@ -14,6 +14,12 @@ export default createTheme({
     secondary: {
       main: palette.secondary,
     },
+    correct: {
+      main: palette.correct,
+    },
+    wrong: {
+      main: palette.wrong,
+    },
     "content-1": {
       main: palette["content-1"],
     },
@@ -73,6 +79,47 @@ export default createTheme({
           ":hover": {
             cursor: "pointer",
           },
+        },
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        size: "small",
+        color: "content-1",
+        sx: {
+          my: 1,
+        },
+      },
+    },
+    MuiSpeedDial: {
+      styleOverrides: {
+        fab: {
+          background: "transparent",
+          border: `1px solid ${palette.secondary}`,
+          color: palette.secondary,
+          ":hover": {
+            background: "transparent",
+          },
+          width: "36px",
+          height: "36px",
+          minHeight: "0px",
+        },
+      },
+    },
+    MuiSpeedDialAction: {
+      styleOverrides: {
+        fab: {
+          background: "transparent",
+          border: `1px solid ${palette["content-2"]}`,
+          color: palette["content-2"],
+          ":hover": {
+            background: "transparent",
+            border: `1px solid ${palette["content-1"]}`,
+            color: palette["content-1"],
+          },
+          width: "32px",
+          height: "32px",
+          minHeight: "0px",
         },
       },
     },
