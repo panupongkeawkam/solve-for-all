@@ -15,7 +15,6 @@ import HomeScreen from "./containers/HomeScreen";
 export default () => {
   useEffect(() => {
     document.body.style.backgroundColor = theme.palette["base-1"].main;
-    axios.get("/user").then((res) => console.log(res.data));
     store.dispatch(fetchPosts());
   }, []);
 

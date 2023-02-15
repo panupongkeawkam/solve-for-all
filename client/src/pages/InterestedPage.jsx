@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { IconButton, Link } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
@@ -9,6 +9,9 @@ import TextArea from "../components/inputs/TextArea";
 import SearchField from "../components/inputs/SearchField";
 import SmallSearchField from "../components/inputs/SmallSearchField";
 import Button from "../components/buttons/Button";
+import TagInput from "../components/inputs/TagInput";
+import DeletableTag from "../components/DeletableTag";
+import Tag from "../components/Tag";
 
 export default (props) => {
   const [birthday, setBirthday] = useState(null);
@@ -17,6 +20,17 @@ export default (props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [bio, setBio] = useState("");
   const [error, setError] = useState(false);
+
+  const tagsDummy = [
+    { title: "java" },
+    { title: "javascript" },
+    { title: "tech" },
+    { title: "cat" },
+    { title: "coffee" },
+    { title: "9arm" },
+  ];
+
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const usernameChangeHandler = (e) => {
     setError(false);
@@ -36,17 +50,17 @@ export default (props) => {
   };
 
   return (
-    <div className="p-5 flex flex-row flex-wrap">
+    <div className="p-5 flex flex-row flex-wrap mb-10">
       <div className="basis-full">
         <h1 className="text-6xl text-white font-bold">
           This is interested page!
         </h1>
       </div>
-      <div className="basis-1/4">
+      <div className="basis-1/4 md:basis-3/4">
         <DatePicker
           date={birthday}
           label="Birthday"
-          onDateChange={setBirthday}
+          onDateChange={(date) => setBirthday(date.$d)}
         />
         <TextField
           value={username}
@@ -98,7 +112,13 @@ export default (props) => {
           onChange={searchQueryChangeHandler}
           icon={<Icon.People fontSize="12px" />}
         />
-        <Button fullWidth text="Submit" />
+        <Button
+          fullWidth
+          text="Submit"
+          onClick={() => {
+            console.log(selectedTags);
+          }}
+        />
         <Button variant="outlined" text="Submit" />
         <Button size="small" text="Submit" />
         <Button
@@ -119,6 +139,15 @@ export default (props) => {
           Link
           <Icon.ArrowForward fontSize="16px" sx={{ ml: "2px" }} />
         </Link>
+        <Tag title={"python"} onClick={() => {}} />
+        <TagInput
+          options={tagsDummy}
+          onTagChange={(tags) => {
+            console.log([...tags]);
+            setSelectedTags([...tags]);
+          }}
+        />
+        {/* <DeletableTag title={"javascript"} onDelete={() => {}} /> */}
       </div>
     </div>
   );
