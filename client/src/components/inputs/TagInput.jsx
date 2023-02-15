@@ -37,7 +37,7 @@ export default ({ options = [], onTagChange }) => {
             paddingTop: "2px",
             paddingBottom: value.length === 0 ? "4px" : "8px",
           }}
-          className={`my-2 px-3 rounded-[8px] border border-[#666] hover:border-white cursor-text transition duration-300`}
+          className={`my-2 px-3 rounded-[8px] border border-[#666] hover:border-white cursor-text`}
         >
           {/* selected tags list */}
           {value.map((option, index) => (
@@ -52,9 +52,8 @@ export default ({ options = [], onTagChange }) => {
             }}
             className="mx-0 mb-0 p-0 font-[500] focus:outline-none border-0 placeholder:text-[#888]"
             {...getInputProps()}
-            placeholder={
-              value.length === 0 ? "Find tags (e.g. graphic, math)" : null
-            }
+            onBlur={() => onTagChange([...value])}
+            placeholder={value.length === 0 ? "Find tags" : null}
           />
         </div>
       </div>
@@ -96,13 +95,18 @@ export default ({ options = [], onTagChange }) => {
                 fontSize: "12px",
               }}
               onClick={() => {
-                value.push({
-                  title: inputProps.value
-                    .replaceAll(" ", "-")
-                    .toLowerCase()
-                    .trim(),
-                });
-                onTagChange([...value]);
+                if (
+                  value.find((val) => val.title === inputProps.value.trim()) ===
+                  undefined
+                ) {
+                  value.push({
+                    title: inputProps.value
+                      .trim()
+                      .replaceAll(" ", "-")
+                      .toLowerCase(),
+                  });
+                  onTagChange([...value]);
+                }
               }}
             >
               Create new

@@ -34,7 +34,7 @@ export default (props) => {
   const [error, setError] = useState(false);
   const [sortBy, setSortBy] = useState("popular");
   const [anchorEl, setAnchorEl] = useState(null);
-  const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
+  const [showAddQuestionModal, setShowAddQuestionModal] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
 
   const tagsDummy = [
@@ -111,6 +111,7 @@ export default (props) => {
   };
 
   const addQuestionSubmitHandler = (question) => {
+    console.log(question);
     // POST to server
   };
 
@@ -267,11 +268,11 @@ export default (props) => {
           actions={actions}
           onActionChange={actionChangeHandler}
         />
-
         <Button text="Add question" onClick={toggleAddQuestionModalHandler} />
         <QuestionFormModal
           active={showAddQuestionModal}
           submitText="Publish"
+          doingMessage="Asking question..."
           onSubmit={addQuestionSubmitHandler}
           onClose={toggleAddQuestionModalHandler}
         />

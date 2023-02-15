@@ -3,13 +3,12 @@ import palette from "./palette";
 
 export default createTheme({
   typography: {
-    fontFamily: "Tajawal, sans-serif",
+    fontFamily: "Karla, sans-serif",
   },
   palette: {
     mode: "dark",
     primary: {
       main: palette.primary,
-      contrastText: palette["content-1"],
     },
     secondary: {
       main: palette.secondary,
@@ -35,6 +34,9 @@ export default createTheme({
     "base-2": {
       main: palette["base-2"],
     },
+    "base-3": {
+      main: palette["base-3"],
+    },
   },
   components: {
     MuiButton: {
@@ -49,7 +51,7 @@ export default createTheme({
             fontWeight: "bold",
             fontSize: "16px",
             textTransform: "none",
-            color: palette["content-1"],
+            color: !ownerState.color.includes("content") ? palette["content-1"] : undefined,
           };
 
           if (ownerState.variant === "outlined") {

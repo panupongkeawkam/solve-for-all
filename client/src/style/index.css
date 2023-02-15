@@ -3,11 +3,12 @@
 @tailwind utilities;
 
 @import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&display=swap');
 
 body {
   margin: 0;
   transition: 0.3s;
-  font-family: "Tajawal", sans-serif;
+  font-family: "Karla", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -23,10 +24,12 @@ h2 {
 
 p {
   font-size: 16px;
+  line-height: 16px;
 }
 
 span {
   font-size: 12px;
+  line-height: 16px;
 }
 
 code {

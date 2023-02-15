@@ -19,7 +19,7 @@ export default ({
         className="flex flex-row backdrop-blur-2xl"
         style={{ backgroundColor: `${palette["base-1"]}11` }}
       >
-        <div className="2xl:basis-1/3 xl:basis-1/2 lg:basis-1/2 md:basis-1/2 sm:3/4 mx-auto h-screen py-10 flex items-center">
+        <div className="2xl:basis-1/3 xl:basis-1/2 lg:basis-1/2 md:basis-1/2 sm:basis-3/4 mx-auto h-screen py-10 flex items-center">
           {/* modal body */}
           <div
             className="w-full rounded-[12px] shadow-2xl p-28"
