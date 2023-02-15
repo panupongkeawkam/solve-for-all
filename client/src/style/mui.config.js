@@ -49,11 +49,13 @@ export default createTheme({
             fontWeight: "bold",
             fontSize: "16px",
             textTransform: "none",
+            color: palette["content-1"],
           };
 
           if (ownerState.variant === "outlined") {
             defaultStyleConfig.borderWidth = "2px";
             defaultStyleConfig[":hover"].borderWidth = "2px";
+            defaultStyleConfig.color = ownerState.color;
           }
 
           if (ownerState.size === "small") {

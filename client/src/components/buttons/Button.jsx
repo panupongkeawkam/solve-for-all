@@ -9,7 +9,7 @@ export default (props) => {
       sx={{
         my: 1,
         py: props.size === "small" ? "6px" : undefined,
-        px: 2,
+        px: props.size === "small" ? 2 : 3,
       }}
     >
       {props.text}

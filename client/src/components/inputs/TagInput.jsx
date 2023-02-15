@@ -72,7 +72,7 @@ export default ({ options = [], onTagChange }) => {
           overflow: "auto",
           position: "absolute",
           width: "100%",
-          zIndex: 100,
+          zIndex: 2000,
         }}
       >
         {groupedOptions.length === 0 && inputProps.value.trim() ? (

@@ -22,6 +22,8 @@ import Button from "../components/buttons/Button";
 import TagInput from "../components/inputs/TagInput";
 import Tag from "../components/Tag";
 import MultipleAction from "../components/buttons/MultipleAction";
+import QuestionFormModal from "../components/modals/QuestionFormModal";
+import Dialog from "../components/modals/DialogModal";
 
 export default (props) => {
   const [birthday, setBirthday] = useState(null);
@@ -32,6 +34,8 @@ export default (props) => {
   const [error, setError] = useState(false);
   const [sortBy, setSortBy] = useState("popular");
   const [anchorEl, setAnchorEl] = useState(null);
+  const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
 
   const tagsDummy = [
     { title: "java" },
@@ -100,6 +104,18 @@ export default (props) => {
     } else if (actionName === "image") {
       console.log("Add image");
     }
+  };
+
+  const toggleAddQuestionModalHandler = () => {
+    setShowAddQuestionModal(!showAddQuestionModal);
+  };
+
+  const addQuestionSubmitHandler = (question) => {
+    // POST to server
+  };
+
+  const toggleDialogHandler = () => {
+    setShowDialog(!showDialog);
   };
 
   return (
@@ -250,6 +266,32 @@ export default (props) => {
         <MultipleAction
           actions={actions}
           onActionChange={actionChangeHandler}
+        />
+
+        <Button text="Add question" onClick={toggleAddQuestionModalHandler} />
+        <QuestionFormModal
+          active={showAddQuestionModal}
+          submitText="Publish"
+          onSubmit={addQuestionSubmitHandler}
+          onClose={toggleAddQuestionModalHandler}
+        />
+        <Button
+          text="Show confirm modal"
+          size="small"
+          variant="outlined"
+          color="correct"
+          onClick={toggleDialogHandler}
+        />
+        <Dialog
+          active={showDialog}
+          title="This is a alert modal"
+          description={
+            "simply dummy text of the printing and typesetting industry."
+          }
+          danger
+          onClose={toggleDialogHandler}
+          // confirmText="Logout"
+          // onConfirm={toggleDialogHandler}
         />
       </div>
     </div>
