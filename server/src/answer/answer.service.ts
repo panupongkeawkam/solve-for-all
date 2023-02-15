@@ -20,7 +20,7 @@ export class AnswerService {
 			const { createdAt, updatedAt, ...rest } = answer?._doc;
 			return rest;
 		} catch (error) {
-			throw "catch error 2"
+			throw "catch error"
 		}
 	}
 
