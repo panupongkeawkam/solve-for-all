@@ -5,7 +5,7 @@ import DeletableTag from "../DeletableTag";
 
 import palette from "../../style/palette";
 
-export default ({ options = [], onTagChange }) => {
+export default ({ options = [], onTagChange, limitLength = -1 }) => {
   const {
     getRootProps,
     getInputProps,
@@ -22,6 +22,8 @@ export default ({ options = [], onTagChange }) => {
   });
 
   var inputProps = getInputProps();
+
+  console.log(getInputProps())
 
   return (
     <div
@@ -50,6 +52,7 @@ export default ({ options = [], onTagChange }) => {
               fontSize: "12px",
               color: palette["content-1"],
             }}
+            disabled={limitLength === value.length}
             className="mx-0 mb-0 p-0 font-[500] focus:outline-none border-0 placeholder:text-[#888]"
             {...getInputProps()}
             onBlur={() => onTagChange([...value])}

@@ -309,13 +309,12 @@ export default ({
               case "image":
                 return (
                   <div className="basis-full flex flex-row mb-3">
-                    <div className="basis-5/6">
-                      <img
-                        className="w-full rounded-[8px] my-2"
-                        src={imageToObjectURL(body.image)}
-                        alt="Not found"
-                      />
-                    </div>
+                    <img
+                      width="100"
+                      className="rounded-[8px] my-2 flex-1 flex"
+                      src={imageToObjectURL(body.image)}
+                      alt="Not found"
+                    />
                     <div className="basis-1/6 pl-2">
                       <IconButton onClick={() => deleteHandler(index)}>
                         <Icon.Close color="content-1" />
@@ -340,7 +339,11 @@ export default ({
             topic easily find it.
           </span>
           <div className="2xl:w-1/3 xl:w-1/3 lg:w-1/2 md:w-1/2 sm:w-3/4">
-            <TagInput options={tagsDummy} onTagChange={tagChangeHandler} />
+            <TagInput
+              options={tagsDummy}
+              onTagChange={tagChangeHandler}
+              limitLength={5}
+            />
           </div>
         </DialogContentText>
       </DialogContent>

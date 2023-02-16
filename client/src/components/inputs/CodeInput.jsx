@@ -6,21 +6,15 @@ import {
   MenuItem,
 } from "@mui/material";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { monokai } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { monokai, githubGist } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import palette from "../../style/palette";
+import { languages } from "../../utils/dummy";
 
 import InvisibleTextArea from "./InvisibleTextArea";
 
 export default ({ code, onCodeChange, language, onLanguageChange }) => {
   const [codeState, setCodeState] = useState("edit");
-
-  const languageOptions = [
-    { name: "java", title: "Java" },
-    { name: "javascript", title: "JavaScript" },
-    { name: "python", title: "Python" },
-    { name: "mysql", title: "MySQL" },
-  ];
 
   return (
     <div
@@ -53,9 +47,9 @@ export default ({ code, onCodeChange, language, onLanguageChange }) => {
           onChange={(e) => onLanguageChange(e.target.value)}
           sx={{ m: 0 }}
         >
-          {languageOptions.map((languageOption, index) => (
-            <MenuItem value={languageOption.name} key={index}>
-              {languageOption.title}
+          {languages.map((language, index) => (
+            <MenuItem value={language.name} key={index}>
+              {language.title}
             </MenuItem>
           ))}
         </Select>
@@ -80,6 +74,7 @@ export default ({ code, onCodeChange, language, onLanguageChange }) => {
               padding: 0,
               marginBottom: "3px",
               lineHeight: "16px",
+              OverflowY: "visible",
             }}
             onClick={() => setCodeState("edit")}
           >
