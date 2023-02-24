@@ -23,8 +23,6 @@ export default ({ options = [], onTagChange, limitLength = -1 }) => {
 
   var inputProps = getInputProps();
 
-  console.log(getInputProps())
-
   return (
     <div
       style={{ position: "relative", width: "100%" }}

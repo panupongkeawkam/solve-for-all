@@ -20,18 +20,17 @@ export const postSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(fetchPosts.pending, (state, action) => {
-        console.log("fetching posts...");
+        // console.log("fetching posts...");
         state.fetchingPosts = true;
       })
       .addCase(fetchPosts.fulfilled, (state, action) => {
-        console.log("posts has fetched");
+        // console.log("posts has fetched");
         state.fetchingPosts = false;
         // action.payload are returned value from async fetchPosts()
         state.postsList = action.payload;
-        console.log(action.payload.length);
       })
       .addCase(fetchPosts.rejected, (state, action) => {
-        console.log("fetch posts error!");
+        // console.log("fetch posts error!");
         state.fetchingPosts = false;
       });
   },

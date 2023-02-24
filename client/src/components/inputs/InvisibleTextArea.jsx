@@ -21,7 +21,7 @@ export default ({
       placeholder={placeholder}
       value={message}
       inputProps={{
-        maxlength: maxLength,
+        maxLength: maxLength,
       }}
       onChange={(e) => onTextChange(e.target.value)}
     />
