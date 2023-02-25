@@ -30,7 +30,7 @@
 
 ```json
   {
-      "_id": "ObjectId('63ec5a42ae5dba49b35b6e0d')",
+      "_id": "ObjectId(63ec5a42ae5dba49b35b6e0d)",
       "username": "helloworld123",
       "password": "$2b$10$uCrlLAWRw7Y.I1547.5frOiKwdV95YUdKAk1gVysUDogD.hCohp1a",
       "email": "helloworld@gmail.com",
@@ -79,30 +79,30 @@
 
 ```json
 {
-      "_id": ObjectId("63ec5a42ae5dba49b343gd4d"),
-      "createdBy": ObjectId("63ec5a42ae5dba49b35b6e0d"),
+      "_id": "ObjectId(63ec5a42ae5dba49b343gd4d)",
+      "createdBy": "ObjectId(63ec5a42ae5dba49b35b6e0d)",
       "title": "How to link CSS file with HTML file",
       "description": "Please tell me what am I do wrong or missing in my code"
       "body": [
-              '{"type":"header","msg":"This is my HTML code"}',
-              '{"type":"paragraph","msg":"I do link it with the CSS file already why it not working"}',
-              '{"type":"image","path":"../../uploads/html-picture-2023-02-15T09:23:37.594Z.jpg"}',
-              '{"type":"code","code":"\\n        <!DOCTYPE html>\\n        <html lang=\\"en\\">\\n            <head>\\n                <meta charset=\\"UTF-8\\" />\\n                <meta http-equiv=\\"X-UA-Compatible\\" content=\\"IE=edge\\" />\\n                <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\" />\\n                <link rel=\\"stylesheet\\" href=\\"../style.css\\" />\\n                <title>Document</title>\\n            </head>\\n            <body>\\n                <script src=\\"index.js\\"></script>\\n            </body>\\n        </html>","language":"html"}',
+              "{\"type\":\"header\",\"msg\":\"This is my HTML code\"}",
+              "{\"type\":\"paragraph\",\"msg\":\"I do link it with the CSS file already why it not working\"}",
+              "{\"type\":\"image\",\"path\":\"../../uploads/html-picture-2023-02-15T09:23:37.594Z.jpg\"}",
+              "{\"type\":\"code\",\"code\":\"\\n        <!DOCTYPE html>\\n        <html lang=\\"en\\">\\n            <head>\\n                <meta charset=\\"UTF-8\\" />\\n                <meta http-equiv=\\"X-UA-Compatible\\" content=\\"IE=edge\\" />\\n                <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\" />\\n                <link rel=\\"stylesheet\\" href=\\"../style.css\\" />\\n                <title>Document</title>\\n            </head>\\n            <body>\\n                <script src=\\"index.js\\"></script>\\n            </body>\\n        </html>\",\"language\":\"html\"}",
               ],
       "viewed": 0,
       "participant": 0,
       "rating": 0,
       "likedBy": [
-              ObjectId("63ec5a42ae5dba49bcap4fv"),
-              ObjectId("63ec5a42ae5dba49bd234bd"),
-              ObjectId("63ec5a42ae5dba49b343gd4d")
+              "ObjectId(63ec5a42ae5dba49bcap4fv)",
+              "ObjectId(63ec5a42ae5dba49bd234bd)",
+              "ObjectId(63ec5a42ae5dba49b343gd4d)"
               ],
       "dislikedBy": [
-              ObjectId("63ec5a42ae5dba49bcap4sz"),
-              ObjectId("63ec5a42ae5dba49bd23412"),
-              ObjectId("63ec5a42ae5dba49b343gd1a")
+              "ObjectId(63ec5a42ae5dba49bcap4sz)",
+              "ObjectId(63ec5a42ae5dba49bd23412)",
+              "ObjectId(63ec5a42ae5dba49b343gd1a)"
               ],
-      "solvedBy": ObjectId("63ec5a42ae5dba49b343gd4d"),
+      "solvedBy": "ObjectId(63ec5a42ae5dba49b343gd4d)",
       "createdAt": "2023-02-15T09:40:08.111Z",
       "updatedAt": "2023-02-15T09:40:08.111Z",
       "tags": Tag[]
@@ -140,9 +140,9 @@
 
 ```json
 {
-      "_id": ObjectId("63ec5a42ae5dba49b343dcx4"),
-      "answeredBy": ObjectId("63ec5a42ae5dba49b35b6e0d"),
-      "answeredIn": ObjectId("63ec5a42ae5dba49b343gd4d"),
+      "_id": "ObjectId(63ec5a42ae5dba49b343dcx4)",
+      "answeredBy": "ObjectId(63ec5a42ae5dba49b35b6e0d)",
+      "answeredIn": "ObjectId(63ec5a42ae5dba49b343gd4d)",
       "title": "Maybe this should help you",
       "description": "You should try this I hope it would help you :)"
       "body": [
@@ -152,14 +152,14 @@
         '{"type":"image","path":"../../uploads/smile-picture-2023-02-15T09:50:27.594Z.jpg"}',
               ],
       "likedBy": [
-              ObjectId("63ec5a42ae5dba49bcap4fv"),
-              ObjectId("63ec5a42ae5dba49bd234bd"),
-              ObjectId("63ec5a42ae5dba49b343gd4d")
+              "ObjectId(63ec5a42ae5dba49bcap4fv)",
+              "ObjectId("63ec5a42ae5dba49bd234bd)",
+              "ObjectId("63ec5a42ae5dba49b343gd4d)"
               ],
       "dislikedBy": [
-              ObjectId("63ec5a42ae5dba49bcap4sz"),
-              ObjectId("63ec5a42ae5dba49bd23412"),
-              ObjectId("63ec5a42ae5dba49b343gd1a")
+              "ObjectId(63ec5a42ae5dba49bcap4sz)",
+              "ObjectId(63ec5a42ae5dba49bd23412)",
+              "ObjectId(63ec5a42ae5dba49b343gd1a)"
               ],
       "rating": 0,
       "replies": Reply[],
@@ -189,8 +189,8 @@
 
 ```json
 {
-      "_id": ObjectId("63ec5a42ae5dba49b3412svy"),
-      "repliedBy": ObjectId("63ec5a42ae5dba49b33dz2fg"),
+      "_id": "ObjectId(63ec5a42ae5dba49b3412svy)",
+      "repliedBy": "ObjectId(63ec5a42ae5dba49b33dz2fg)",
       "message": "Wow this is very nice!",
       "createdAt": "2023-02-15T10:55:45.116Z",
       "updatedAt": "2023-02-15T10:55:45.116Z"
@@ -222,26 +222,26 @@
       "_id": ObjectId("63ec5a42ae5dba4au5x12svy"),
       "name": "html",
       "questions": [
-              ObjectId("63ec5a42ae5dba49bcbr0dz"),
-              ObjectId("63ec5a42ae5dba49bd23fxq"),
-              ObjectId("63ec5a42ae5dba49b343ak6a")
+              "ObjectId(63ec5a42ae5dba49bcbr0dz)",
+              "ObjectId(63ec5a42ae5dba49bd23fxq)",
+              "ObjectId(63ec5a42ae5dba49b343ak6a)"
               ],
       "interestedBy": [
-              ObjectId("63ec5a42ae5dba49bcbra5z"),
-              ObjectId("63ec5a42ae5dba49bd23m9q"),
-              ObjectId("63ec5a42ae5dba49b3431w6a")
+              "ObjectId(63ec5a42ae5dba49bcbra5z)",
+              "ObjectId(63ec5a42ae5dba49bd23m9q)",
+              "ObjectId(63ec5a42ae5dba49b3431w6a)"
               ],
       "createdAt": "2023-02-15T10:55:45.116Z",
       "updatedAt": "2023-02-15T10:55:45.116Z"
 }
 ```
 
-### 6. <b>Notification schema</b>
+### 6. <b>Notification Collection</b>
 
 -   <b>isRead</b> field is a status that shows whether the user has read or not.
--   <b>message</b> field is the answer on your question.
 -   <b>to</b> field is the question owner ObjectId.
--   <b>from</b> field is the answer owner ObjectId.
+-   <b>fromUserId</b> field is the answer owner ObjectId (return username and image).
+-   <b>message</b> field is the title of answer (return title of the answer).
 
 #### Schema
 
@@ -249,10 +249,10 @@
 {
       _id: String,
       isRead: Boolean,
-      message: Answer,
+      message: string,
       question: Question,
       to: String,
-      from: String,
+      fromUserId: String,
       createdAt: Date,
       updatedAt: Date
 }
@@ -262,12 +262,12 @@
 
 ```json
 {
-      "_id": ObjectId("63ec5a42ae5dba49b34bs46a"),
+      "_id": "ObjectId(63ec5a42ae5dba49b34bs46a)",
       "isRead": false,
       "message": Answer,
       "question": Question,
-      "to": ObjectId("63ec5a42ae5dba49b35b6e0d"),
-      "from": ObjectId("63ec5a42ae5dba49b35b62cs"),
+      "to": "ObjectId(63ec5a42ae5dba49b35b6e0d)",
+      "from": "ObjectId(63ec5a42ae5dba49b35b62cs)",
       "createdAt": "2023-02-15T11:21:33.483Z",
       "updatedAt": "2023-02-15T11:21:33.483Z"
 }
@@ -300,7 +300,7 @@
 
 ```json
 "User": {
-    "_id": ObjectId("63ec5a42ae5dba49b35b6e0d"),
+    "_id": "ObjectId(63ec5a42ae5dba49b35b6e0d)",
     "username": "helloworld123",
     "email": "helloworld@gmail.com",
     "birthday": "2023-02-15T05:09:24.216Z",
@@ -337,7 +337,7 @@
 
 ```json
 "User": {
-    "_id": ObjectId("63ec5a42ae5dba49b35b6e0d"),
+    "_id": "ObjectId(63ec5a42ae5dba49b35b6e0d)",
     "username": "helloworld123",
     "email": "helloworld@gmail.com",
     "birthday": "2023-02-15T05:09:24.216Z",
