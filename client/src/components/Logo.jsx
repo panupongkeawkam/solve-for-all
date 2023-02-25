@@ -7,6 +7,7 @@ export default () => {
         className="cursor-pointer hover:opacity-90 transition"
         src="/logo.png"
         width="36"
+        alt="Solve for all logo - link to home page"
       />
     </RouterLink>
   );

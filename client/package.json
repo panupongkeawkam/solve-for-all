@@ -17,10 +17,12 @@
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
-    "react-syntax-highlighter": "^15.5.0"
+    "react-syntax-highlighter": "^15.5.0",
+    "tailwindcss": "^3.2.6"
   },
   "scripts": {
     "start": "set PORT=8080 && react-scripts start",
+    "start-mac": "PORT=8080 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -32,7 +34,8 @@
     ],
     "rules": {
       "import/no-anonymous-default-export": "off",
-      "no-unused-vars": "off"
+      "no-unused-vars": "off",
+      "react-hooks/exhaustive-deps": "off"
     }
   },
   "browserslist": {
@@ -47,7 +50,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "tailwindcss": "^3.2.6"
-  }
+  "devDependencies": {}
 }
