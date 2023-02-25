@@ -11,18 +11,27 @@ import {
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { Controller } from "@nestjs/common";
-import { CreateUserDto } from "./Dto/createUser.dto";
+import { CreateUserDto } from "./dto/createUser.dto";
 import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
+import { AuthService } from "../auth/auth.service";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
-@Controller("user")
+@Controller("users")
 export class UserController {
-	constructor(private userService: UserService) {}
+	constructor(
+		private userService: UserService,
+		private authService: AuthService,
+	) {}
 
 	@Get()
-	getUser(@Res() res: Response) {
-		res.status(HttpStatus.OK).send("HELLO");
+	async findPeople(@Req() req: Request, @Res() res: Response) {
+		console.log(req.headers?.authorization);
+		// const users = await this.userService.findAllUsername();
+		// res.status(HttpStatus.OK).json({
+		// 	users,
+		// });
 	}
 
 	@UsePipes(ValidationPipe)
@@ -34,18 +43,25 @@ export class UserController {
 			...body,
 			password: hashedPassword,
 		});
-		res.status(HttpStatus.CREATED).json(user);
+		const token = await this.authService.tokenGenerate(user);
+		res.status(HttpStatus.CREATED).json({ user, token });
 	}
 
 	@UseGuards(LocalAuthGuard)
 	@Post("login")
-	loginUser(
-		@Req() req: Request,
-		@Res() res: Response,
-	) {
-		console.log(req);
+	async loginUser(@Req() req: Request, @Res() res: Response) {
+		const token = await this.authService.tokenGenerate(req.user);
 		res.status(HttpStatus.OK).json({
-			User: req.user,
+			user: req.user,
+			token,
+		});
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get("protected")
+	getUser(@Res() res: Response) {
+		res.status(HttpStatus.OK).json({
+			msg: "Hi",
 		});
 	}
 }

@@ -4,31 +4,24 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { User } from "./Schema/user.schema";
+import { User } from "./schema/user.schema";
 import { Model } from "mongoose";
-import { CreateUserDto } from "./Dto/createUser.dto";
+import { CreateUserDto } from "./dto/createUser.dto";
 
 @Injectable()
 export class UserService {
-	constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+	constructor(
+		@InjectModel(User.name) private userModel: Model<User | null>,
+	) {}
 
 	// receive POST method
 	async createUser(createUserDto: CreateUserDto): Promise<any> {
 		try {
-			const user = await this.userModel.create(createUserDto);
-			return {
-				username: user.username,
-				email: user.email,
-				name: user.name,
-				image: user.image,
-				tags: user.tags,
-				birthDate: user.birthDate,
-				biology: user.biology,
-				_id: user._id,
-			};
+			const user: any = await this.userModel.create(createUserDto);
+			const { password, createdAt, updatedAt, ...rest } = user?._doc;
+			return rest;
 		} catch (error) {
 			const { username } = error.keyValue;
-			console.log(error);
 			if (error.code === 11000 && username)
 				throw new BadRequestException("Username is used");
 			else if (error.code === 11000)
@@ -44,8 +37,18 @@ export class UserService {
 			});
 			return findUser;
 		} catch (error) {
-			console.log(error);
 			throw new UnauthorizedException("Your username is incorrect");
 		}
+	}
+
+	async findAllUsername(): Promise<any> {
+		const users = await this.userModel
+			.find()
+			.select({
+				username: 1,
+				_id: 1,
+			})
+			.limit(10);
+		return users;
 	}
 }
