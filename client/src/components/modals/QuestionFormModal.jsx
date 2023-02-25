@@ -43,12 +43,12 @@ export default ({
   ];
 
   const tagsDummy = [
-    { title: "java" },
-    { title: "javascript" },
-    { title: "tech" },
-    { title: "cat" },
-    { title: "coffee" },
-    { title: "9arm" },
+    { _id: "1", name: "java" },
+    { _id: "2", name: "javascript" },
+    { _id: "3", name: "tech" },
+    { _id: "4", name: "cat" },
+    { _id: "5", name: "coffee" },
+    { _id: "6", name: "9arm" },
   ];
 
   function parseBase64(file) {
@@ -146,7 +146,7 @@ export default ({
   };
 
   const tagChangeHandler = (tags) => {
-    setSelectedTags([...tags]);
+    setSelectedTags(tags);
   };
 
   const submitHandler = () => {
@@ -229,11 +229,11 @@ export default ({
             background: palette["base-2"],
             borderBottom: "none",
             borderTop: "none",
+            paddingLeft: "1.75rem",
           }}
         >
-          <DialogContentText
-            style={{ marginLeft: "56px", marginBottom: "200px" }}
-          >
+          {/* modal content */}
+          <div className="pl-[56px] mb-[200px]">
             {/* question title */}
             <div className="basis-full flex flex-row mb-3">
               <div className="basis-5/6">
@@ -253,7 +253,7 @@ export default ({
               switch (body.type) {
                 case "header":
                   return (
-                    <div className="basis-full flex flex-row mb-3">
+                    <div className="basis-full flex flex-row mb-3" key={index}>
                       <div className="basis-5/6">
                         <InvisibleTextArea
                           message={body.msg}
@@ -275,7 +275,7 @@ export default ({
                   );
                 case "paragraph":
                   return (
-                    <div className="basis-full flex flex-row mb-3">
+                    <div className="basis-full flex flex-row mb-3" key={index}>
                       <div className="basis-5/6">
                         <InvisibleTextArea
                           message={body.msg}
@@ -296,7 +296,7 @@ export default ({
                   );
                 case "code":
                   return (
-                    <div className="basis-full flex flex-row mb-3">
+                    <div className="basis-full flex flex-row mb-3" key={index}>
                       <div className="basis-5/6">
                         <CodeInput
                           code={body.code}
@@ -318,7 +318,7 @@ export default ({
                   );
                 case "image":
                   return (
-                    <div className="basis-full flex flex-row mb-3">
+                    <div className="basis-full flex flex-row mb-3" key={index}>
                       <img
                         width="100"
                         className="rounded-[8px] my-2 flex-1 flex"
@@ -352,12 +352,14 @@ export default ({
             </span>
             <div className="2xl:w-1/3 xl:w-1/3 lg:w-1/2 md:w-1/2 sm:w-3/4">
               <TagInput
-                options={tagsDummy}
+                selectedTags={selectedTags}
+                tags={tagsDummy}
                 onTagChange={tagChangeHandler}
                 limitLength={5}
+                creatable
               />
             </div>
-          </DialogContentText>
+          </div>
         </DialogContent>
         <Snackbar
           open={showSnackbar}

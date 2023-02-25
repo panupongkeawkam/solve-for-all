@@ -7,8 +7,8 @@
 
 body {
   margin: 0;
-  transition: 0.3s;
   font-family: "Karla", sans-serif;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

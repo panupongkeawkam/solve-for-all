@@ -16,29 +16,19 @@ import DatePicker from "../components/inputs/DatePicker";
 import SearchField from "../components/inputs/SearchField";
 import SmallSearchField from "../components/inputs/SmallSearchField";
 import Button from "../components/buttons/Button";
-import TagInput from "../components/inputs/TagInput";
+// import TagInput from "../components/inputs/TagInput";
 import Tag from "../components/Tag";
 import MultipleAction from "../components/buttons/MultipleAction";
 import QuestionFormModal from "../components/modals/QuestionFormModal";
 import Dialog from "../components/modals/DialogModal";
 
 export default (props) => {
-  const [birthday, setBirthday] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(false);
   const [sortBy, setSortBy] = useState("popular");
   const [anchorEl, setAnchorEl] = useState(null);
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
-
-  const tagsDummy = [
-    { title: "java" },
-    { title: "javascript" },
-    { title: "tech" },
-    { title: "cat" },
-    { title: "coffee" },
-    { title: "9arm" },
-  ];
 
   const sortOptions = [
     { value: "popular", title: "Popular" },
@@ -53,14 +43,8 @@ export default (props) => {
     { icon: <Icon.ImageOutlined fontSize="16" />, name: "image" },
   ];
 
-  const [selectedTags, setSelectedTags] = useState([]);
-
   const searchQueryChangeHandler = (e) => {
     setSearchQuery(e.target.value);
-  };
-
-  const tagChangeHandler = (tags) => {
-    setSelectedTags([...tags]);
   };
 
   const sortChangeHandler = (e) => {
@@ -130,13 +114,7 @@ export default (props) => {
           onChange={searchQueryChangeHandler}
           icon={<Icon.People fontSize="12px" />}
         />
-        <Button
-          fullWidth
-          text="Submit"
-          onClick={() => {
-            console.log(selectedTags);
-          }}
-        />
+        <Button fullWidth text="Submit" onClick={() => {}} />
         <Button variant="outlined" text="Submit" />
         <Button size="small" text="Submit" />
         <Button variant="outlined" size="small" text="Submit" />
@@ -156,13 +134,9 @@ export default (props) => {
             anchorEl={anchorEl}
             anchorOrigin={{
               vertical: "bottom",
-              horizontal: "right",
+              horizontal: "left",
             }}
             keepMounted
-            transformOrigin={{
-              vertical: "left",
-              horizontal: "right",
-            }}
             open={Boolean(anchorEl)}
             onClose={closeAnchorHandler}
           >
@@ -171,7 +145,7 @@ export default (props) => {
                 <Icon.EditOutlined fontSize="20px" />
               </ListItemIcon>
               <ListItemText sx={{ mr: 3 }}>
-                <p>Edit</p>
+                <div style={{ fontSize: "16px" }}>Edit</div>
               </ListItemText>
             </MenuItem>
             <MenuItem onClick={closeAnchorHandler}>
@@ -179,7 +153,7 @@ export default (props) => {
                 <Icon.DeleteOutlined fontSize="20px" color="wrong" />
               </ListItemIcon>
               <ListItemText sx={{ mr: 3, color: palette.wrong }}>
-                <p>Delete</p>
+                <div style={{ fontSize: "16px" }}>Delete</div>
               </ListItemText>
             </MenuItem>
             {/* <div style={{ width: 240 }} className="px-3">
@@ -188,7 +162,6 @@ export default (props) => {
           </Menu>
         </div>
         <Tag title={"python"} onClick={() => {}} />
-        <TagInput options={tagsDummy} onTagChange={tagChangeHandler} />
         <Select value={sortBy} onChange={sortChangeHandler}>
           {sortOptions.map((sortOption, index) => (
             <MenuItem value={sortOption.value} key={index}>

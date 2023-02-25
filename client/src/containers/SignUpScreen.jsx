@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Stepper, Step, StepLabel, Link } from "@mui/material";
+import { Stepper, Step, StepLabel, Slide } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette.js";
@@ -9,8 +10,14 @@ import PasswordField from "../components/inputs/PasswordField.jsx";
 import TextArea from "../components/inputs/TextArea.jsx";
 import DatePicker from "../components/inputs/DatePicker.jsx";
 import Button from "../components/buttons/Button.jsx";
+import TagInput from "../components/inputs/TagInput.jsx";
+import Logo from "../components/Logo.jsx";
 
 export default () => {
+  // const [currentStepIndex, setCurrentStepIndex] = useState(2);
+  // const [currentStepComponent, setCurrentStepComponent] = useState(
+  //   <InterestingStepForm />
+  // );
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [currentStepComponent, setCurrentStepComponent] = useState(
     <AccountStepForm />
@@ -18,17 +25,30 @@ export default () => {
 
   // for a step 1
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [rePassword, setRePassword] = useState("");
   const [usernameError, setUsernameError] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
+
+  const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+
+  const [rePassword, setRePassword] = useState("");
   const [rePasswordError, setRePasswordError] = useState(false);
+  const [rePasswordErrorMessage, setRePasswordErrorMessage] = useState("");
 
   // for a step 2
   const [name, setName] = useState("");
+
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("");
+
   const [bio, setBio] = useState("");
+
   const [birthday, setBirthday] = useState(null);
+
+  // for a step 3
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const stepsLabel = ["Account", "Details", "Interesting"];
   const stepsComponent = [
@@ -37,45 +57,74 @@ export default () => {
     <InterestingStepForm />,
   ];
 
+  const tagsDummy = [
+    { _id: "1", name: "java" },
+    { _id: "2", name: "javascript" },
+    { _id: "3", name: "tech" },
+    { _id: "4", name: "cat" },
+    { _id: "5", name: "coffee" },
+    { _id: "6", name: "9arm" },
+  ];
+
   // for a step 1
-  const usernameChangeHandler = (e) => {
-    setUsername(e.target.value);
+  const usernameChangeHandler = (text) => {
+    setUsername(text);
   };
 
-  const passwordChangeHandler = (e) => {
-    setPassword(e.target.value);
+  const passwordChangeHandler = (password) => {
+    setPassword(password);
   };
 
-  const rePasswordChangeHandler = (e) => {
-    setRePassword(e.target.value);
+  const rePasswordChangeHandler = (password) => {
+    setRePassword(password);
   };
 
   // for a step 2
-  const nameChangeHandler = (e) => {
-    setName(e.target.value);
+  const nameChangeHandler = (text) => {
+    setName(text);
   };
 
-  const emailChangeHandler = (e) => {
-    setEmail(e.target.value);
+  const emailChangeHandler = (text) => {
+    setEmail(text);
   };
 
-  const bioChangeHandler = (e) => {
-    setBio(e.target.value);
+  const bioChangeHandler = (text) => {
+    setBio(text);
   };
 
   const birthdayChangeHandler = (date) => {
-    setBirthday(date.$d);
+    setBirthday(date);
   };
 
-  // previous and next button
+  // for a step 3
+  const tagChangeHandler = (tags) => {
+    setSelectedTags(tags);
+  };
+
+  // previous button
   const previousHandler = () => {
     setCurrentStepIndex(currentStepIndex - 1);
     setCurrentStepComponent(stepsComponent[currentStepIndex - 1]);
   };
 
+  // next button
   const nextHandler = () => {
     setCurrentStepIndex(currentStepIndex + 1);
     setCurrentStepComponent(stepsComponent[currentStepIndex + 1]);
+  };
+
+  // sign up
+  const signupHandler = () => {
+    console.log(
+      username,
+      password,
+      rePassword,
+      name,
+      email,
+      bio,
+      birthday,
+      selectedTags
+    );
   };
 
   // step 1
@@ -87,11 +136,11 @@ export default () => {
             value={username}
             label="Username"
             error={usernameError}
-            helpertext={usernameError ? "Invalid username" : null}
+            helperText={usernameError ? usernameErrorMessage : null}
             inputProps={{
-              maxLength: 10,
+              maxLength: 20,
             }}
-            onChange={usernameChangeHandler}
+            onTextChange={usernameChangeHandler}
           />
           <p style={{ color: palette["content-2"] }} className="mt-2">
             Username is for logging in to account, it’s cant’ be change later,
@@ -103,11 +152,11 @@ export default () => {
             value={password}
             label="Password"
             error={passwordError}
-            helpertext={passwordError ? "Invalid password" : null}
+            helperText={passwordError ? passwordErrorMessage : null}
             inputProps={{
-              maxLength: 10,
+              maxLength: 40,
             }}
-            onChange={passwordChangeHandler}
+            onPasswordChange={passwordChangeHandler}
           />
         </div>
         <div className="mb-5">
@@ -115,11 +164,11 @@ export default () => {
             value={rePassword}
             label="Re-enter password"
             error={rePasswordError}
-            helpertext={rePasswordError ? "Invalid password" : null}
+            helperText={rePasswordError ? "Invalid password" : null}
             inputProps={{
-              maxLength: 10,
+              maxLength: 40,
             }}
-            onChange={rePasswordChangeHandler}
+            onPasswordChange={rePasswordChangeHandler}
           />
           <p style={{ color: palette["content-2"] }} className="mt-2">
             Password contain only A-Z, a-z, 0-9 or _, 8-20 length characters and
@@ -138,51 +187,66 @@ export default () => {
           <TextField
             value={name}
             label="Display name"
-            // error={usernameError}
-            // helpertext={usernameError ? "Invalid username" : null}
             inputProps={{
-              maxLength: 10,
+              maxLength: 30,
             }}
-            onChange={nameChangeHandler}
+            onTextChange={nameChangeHandler}
           />
         </div>
         <div className="mb-2">
           <TextField
             value={email}
             label="Email"
-            // error={usernameError}
-            // helpertext={usernameError ? "Invalid username" : null}
+            error={emailError}
+            helperText={emailError ? emailErrorMessage : null}
             inputProps={{
-              maxLength: 10,
+              maxLength: 30,
             }}
-            onChange={emailChangeHandler}
+            onTextChange={emailChangeHandler}
           />
         </div>
         <div className="mb-2">
           <TextArea
             value={bio}
             label="Bio"
-            // error={error}
             inputProps={{
-              maxLength: 256,
+              maxLength: 300,
             }}
-            onChange={bioChangeHandler}
+            onTextChange={bioChangeHandler}
           />
         </div>
         <div className="mb-2">
           <DatePicker
             date={birthday}
-            label={birthday?.getDay()}
+            label={"Birthday"}
             onDateChange={birthdayChangeHandler}
           />
-          {birthday?.$d}
         </div>
       </div>
     );
   }
 
   // step 3
-  function InterestingStepForm() {}
+  function InterestingStepForm() {
+    return (
+      <div className="2xl:px-16 2xl:py-8 py-4">
+        <p style={{ color: palette["content-1"] }} className="mt-2">
+          Interesting tags
+        </p>
+        <p style={{ color: palette["content-2"] }} className="mt-2 mb-5">
+          Select you interesting tags then we can recommend questions topic that
+          what to interest
+        </p>
+        <TagInput
+          selectedTags={selectedTags}
+          tags={tagsDummy}
+          onTagChange={tagChangeHandler}
+          limitLength={5}
+          creatable
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -215,14 +279,16 @@ export default () => {
               >
                 Have an account?
               </div>
-              <Link
-                color="secondary"
-                underline="hover"
-                onClick={() => alert("Hello")}
+              <RouterLink
+                to="/login"
+                style={{ color: palette.secondary }}
+                className="opacity-90 hover:opacity-100 transition duration-100"
               >
+                {/* <Link color="secondary" underline="hover"> */}
                 Login
                 <Icon.ArrowForward fontSize="16px" sx={{ ml: "2px" }} />
-              </Link>
+                {/* </Link> */}
+              </RouterLink>
             </div>
             <div>
               {currentStepIndex !== 0 ? (
@@ -236,16 +302,25 @@ export default () => {
                   />
                 </span>
               ) : null}
-              <Button
-                color="content-1"
-                text="Next"
-                onClick={nextHandler}
-                endIcon={<Icon.ArrowForward />}
-              />
+              {currentStepIndex === 2 ? (
+                <Button
+                  color="primary"
+                  text="Sign up"
+                  onClick={signupHandler}
+                />
+              ) : (
+                <Button
+                  color="content-1"
+                  text="Next"
+                  onClick={nextHandler}
+                  endIcon={<Icon.ArrowForward />}
+                />
+              )}
             </div>
           </div>
         </div>
       </div>
+      <Logo />
     </div>
   );
 };

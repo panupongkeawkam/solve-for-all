@@ -1,10 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextField } from "@mui/material";
 
-export default (props) => {
+export default ({ onTextChange, ...props }) => {
+  const [value, setValue] = useState(props.value);
+
+  const changeHandler = (e) => {
+    let text = e.target.value;
+    setValue(text);
+    onTextChange(text);
+  };
+
   return (
     <TextField
       {...props}
+      value={value}
+      onChange={changeHandler}
       color="content-3"
       className="inputRounded"
       sx={{
@@ -15,7 +25,7 @@ export default (props) => {
       size="small"
       multiline
       minRows={2}
-      helperText={`${props.value.length} of 256`}
+      helperText={`${value.length} of ${props.inputProps.maxLength}`}
     />
   );
 };

@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { OutlinedInput, InputAdornment } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
-export default (props) => {
+export default ({ searchQuery, onSearchQueryChange, ...props }) => {
+  const [value, setValue] = useState(searchQuery);
+
+  const changeHandler = (e) => {
+    let searchQuery = e.target.value;
+    setValue(searchQuery);
+    onSearchQueryChange(searchQuery);
+  };
+
+  useEffect(() => {
+    setValue(searchQuery);
+  }, [searchQuery]);
+
   return (
     <OutlinedInput
       {...props}
@@ -13,6 +25,8 @@ export default (props) => {
         fontSize: "12px",
         borderRadius: "8px",
       }}
+      onChange={changeHandler}
+      value={value}
       label={null}
       fullWidth
       startAdornment={

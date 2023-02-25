@@ -51,7 +51,10 @@ export default createTheme({
             fontWeight: "bold",
             fontSize: "16px",
             textTransform: "none",
-            color: !ownerState.color.includes("content") ? palette["content-1"] : undefined,
+            color: !ownerState.color.includes("content")
+              ? palette["content-1"]
+              : undefined,
+            whiteSpace: "pre",
           };
 
           if (ownerState.variant === "outlined") {

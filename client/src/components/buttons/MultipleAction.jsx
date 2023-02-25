@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   SpeedDial,
   SpeedDialIcon,
   SpeedDialAction,
   Tooltip,
 } from "@mui/material";
-import * as Icon from "@mui/icons-material";
 
 export default ({ actions, onActionChange }) => {
   return (

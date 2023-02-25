@@ -2,12 +2,21 @@ import React, { useState } from "react";
 import { TextField, IconButton, InputAdornment } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
-export default (props) => {
+export default ({ onPasswordChange, ...props }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [value, setValue] = useState(props.value);
+
+  const changeHandler = (e) => {
+    let password = e.target.value;
+    setValue(password);
+    onPasswordChange(password);
+  };
 
   return (
     <TextField
       {...props}
+      value={value}
+      onChange={changeHandler}
       color="content-3"
       className="inputRounded"
       sx={{

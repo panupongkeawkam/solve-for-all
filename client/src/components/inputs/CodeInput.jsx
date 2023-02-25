@@ -6,7 +6,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { monokai, githubGist } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { monokai } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import palette from "../../style/palette";
 import { languages } from "../../utils/dummy";

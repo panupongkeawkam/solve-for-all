@@ -1,148 +1,182 @@
-import { useAutocomplete } from "@mui/base/AutocompleteUnstyled";
+import { useEffect, useState } from "react";
 import { Link } from "@mui/material";
-
-import DeletableTag from "../DeletableTag";
+import * as Icon from "@mui/icons-material";
 
 import palette from "../../style/palette";
 
-export default ({ options = [], onTagChange, limitLength = -1 }) => {
-  const {
-    getRootProps,
-    getInputProps,
-    getTagProps,
-    getListboxProps,
-    getOptionProps,
-    groupedOptions,
-    value,
-    setAnchorEl,
-  } = useAutocomplete({
-    multiple: true,
-    options: options,
-    getOptionLabel: (option) => option.title,
-  });
+import SmallSearchField from "./SmallSearchField";
+import DeletableTag from "../DeletableTag";
 
-  var inputProps = getInputProps();
+export default ({
+  selectedTags = [],
+  tags,
+  onTagChange,
+  limitLength = -1,
+  creatable = false,
+}) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [dropdownActive, setDropdownActive] = useState(false);
+  const [filteredTags, setFilteredTags] = useState([]);
+  const [selectedTagsState, setSelectedTagsState] = useState(selectedTags);
+
+  const searchQueryChangeHandler = (searchQuery) => {
+    setSearchQuery(searchQuery);
+  };
+
+  // set to own state and send to parent
+  const tagSelectHandler = (tag) => {
+    let currentSelectedTagsState = [...selectedTagsState];
+    currentSelectedTagsState.push(tag);
+
+    setSearchQuery("");
+    setSelectedTagsState(currentSelectedTagsState);
+    onTagChange(currentSelectedTagsState);
+  };
+
+  // set to own state and send to parent
+  const tagDeleteHandler = (tagName) => {
+    let currentSelectedTagsState = [...selectedTagsState];
+    currentSelectedTagsState = selectedTagsState.filter(
+      (tag) => tagName !== tag.name
+    );
+    setSelectedTagsState(currentSelectedTagsState);
+    onTagChange(currentSelectedTagsState);
+  };
+
+  // when tag not match can create new
+  const tagCreateHandler = () => {
+    // format to lower-case-tag-with-dash
+    let newTagName = searchQuery
+      .trim()
+      .toLocaleLowerCase()
+      .replaceAll(" ", "-");
+
+    // if new tag is already added
+    if (
+      selectedTagsState.find((selectedTag) => selectedTag.name === newTagName)
+    ) {
+      setSearchQuery("");
+      return;
+    }
+
+    let newTag = {
+      _id: null,
+      name: newTagName,
+    };
+
+    tagSelectHandler(newTag);
+  };
+
+  // watch when search query change
+  useEffect(() => {
+    setFilteredTags(
+      tags.filter(
+        (tag) =>
+          searchQuery.trim() !== "" &&
+          tag.name.includes(searchQuery.trim().toLocaleLowerCase())
+      )
+    );
+  }, [searchQuery]);
 
   return (
-    <div
-      style={{ position: "relative", width: "100%" }}
-      onMouseLeave={() => onTagChange([...value])}
-    >
-      <div {...getRootProps()}>
-        {/* input container */}
-        <div
-          ref={setAnchorEl}
-          style={{
-            borderRadius: "8px",
-            paddingTop: "2px",
-            paddingBottom: value.length === 0 ? "4px" : "8px",
-          }}
-          className={`my-2 px-3 rounded-[8px] border border-[#666] hover:border-white cursor-text`}
-        >
-          {/* selected tags list */}
-          {value.map((option, index) => (
-            <DeletableTag label={option.title} {...getTagProps({ index })} />
-          ))}
-          {/* text field to input tag */}
-          <input
-            style={{
-              background: "transparent",
-              fontSize: "12px",
-              color: palette["content-1"],
+    <div className="flex flex-col w-full">
+      <div className={`basis-full relative`}>
+        {/* search field */}
+        <div className="w-full">
+          <SmallSearchField
+            onBlur={() => setDropdownActive(false)}
+            onFocus={() => setDropdownActive(true)}
+            searchQuery={searchQuery}
+            placeholder="Find tags (e.g. graphic-design, math)"
+            onSearchQueryChange={searchQueryChangeHandler}
+            icon={<Icon.LocalOfferOutlined fontSize="12px" />}
+            disabled={selectedTagsState.length === limitLength}
+            inputProps={{
+              maxLength: 30,
             }}
-            disabled={limitLength === value.length}
-            className="mx-0 mb-0 p-0 font-[500] focus:outline-none border-0 placeholder:text-[#888]"
-            {...getInputProps()}
-            onBlur={() => onTagChange([...value])}
-            placeholder={value.length === 0 ? "Find tags" : null}
           />
         </div>
+        {/* dropdown element */}
+        <ul
+          className="absolute w-full rounded-[8px] py-2 max-h-[200px] overflow-auto z-[6000]"
+          style={{
+            backgroundColor: palette["base-3"],
+            display:
+              dropdownActive && searchQuery.trim() !== "" ? "initial" : "none",
+          }}
+        >
+          {filteredTags.length > 0 ? (
+            filteredTags.map((tag, index) =>
+              // find when tag has selected, then disable an element
+              selectedTagsState.find(
+                (selectedTag) => selectedTag.name === tag.name
+              ) !== undefined ? (
+                // disable click
+                <li
+                  key={index}
+                  className={`px-3 py-1 cursor-not-allowed`}
+                  style={{
+                    color: palette["content-2"],
+                  }}
+                >
+                  {tag.name}
+                </li>
+              ) : (
+                // enable click
+                <li
+                  key={index}
+                  className={`px-3 py-1 hover:bg-gray-700 cursor-pointer`}
+                  style={{
+                    color: palette["content-1"],
+                  }}
+                  onMouseDown={() => tagSelectHandler(tag)}
+                >
+                  {tag.name}
+                </li>
+              )
+            )
+          ) : (
+            // when filtered tag result is empty
+            <li
+              className="h-[120px] flex flex-col justify-center items-center"
+              style={{ color: palette["content-2"] }}
+            >
+              <div style={{ fontSize: "16px" }}>No tag match</div>
+              {creatable ? (
+                // create new button
+                <Link
+                  onMouseDown={() => tagCreateHandler()}
+                  color="secondary"
+                  sx={{ fontSize: "16px" }}
+                >
+                  Create new
+                </Link>
+              ) : null}
+            </li>
+          )}
+        </ul>
       </div>
-      {/* tags list container */}
-      <ul
-        {...getListboxProps()}
-        className={`bg-[${palette["base-2"]}] opacity-100 shadow-sm cursor-pointer`}
+      <div
+        className="w-full flex flex-row"
         style={{
-          backgroundColor: palette["base-2"],
-          boxShadow: "rgb(20, 20, 20, .8) 0px 48px 100px 0px",
-          borderRadius: "8px",
-          fontSize: "16px",
-          color: palette["content-1"],
-          maxHeight: 160,
-          overflow: "auto",
-          position: "absolute",
-          width: "100%",
-          zIndex: 2000,
+          display: limitLength !== -1 ? "flex" : "none",
+          fontSize: "12px",
+          color: palette["content-2"],
         }}
       >
-        {groupedOptions.length === 0 && inputProps.value.trim() ? (
-          // show create tag when tags doesn't match
-          <div
-            style={{
-              backgroundColor: palette["base-2"],
-              boxShadow: "rgb(20, 20, 20, .8) 0px 48px 100px 0px",
-              borderRadius: "8px",
-              width: "100%",
-              height: 160,
-              color: palette["content-1"],
-            }}
-            className="flex flex-col justify-center items-center"
-          >
-            <span style={{ fontSize: "12px" }}>No match tag found</span>
-            <Link
-              color="secondary"
-              underline="hover"
-              sx={{
-                fontSize: "12px",
-              }}
-              onClick={() => {
-                if (
-                  value.find((val) => val.title === inputProps.value.trim()) ===
-                  undefined
-                ) {
-                  value.push({
-                    title: inputProps.value
-                      .trim()
-                      .replaceAll(" ", "-")
-                      .toLowerCase(),
-                  });
-                  onTagChange([...value]);
-                }
-              }}
-            >
-              Create new
-            </Link>
-          </div>
-        ) : (
-          // tags list
-          groupedOptions.map((option, index) => (
-            <li
-              {...getOptionProps({ option, index })}
-              onClick={(e) => {
-                if (
-                  value.find((val) => val.title === option.title) === undefined
-                ) {
-                  getOptionProps({ option, index }).onClick(e);
-                }
-              }}
-              className="px-3 py-1"
-              style={{
-                backgroundColor: `${palette["base-2"]} !important`,
-                opacity:
-                  value.find((val) => val.title === option.title) === undefined
-                    ? 1
-                    : 0.5,
-                cursor:
-                  value.find((val) => val.title === option.title) === undefined
-                    ? "pointer"
-                    : "not-allowed",
-              }}
-            >
-              <span>{option.title}</span>
-            </li>
-          ))
-        )}
-      </ul>
+        {/* tag limit length */}
+        {selectedTagsState.length} of {limitLength} tag
+      </div>
+      {/* display all selected tags */}
+      <div className="w-full mt-3 flex flex-row flex-wrap">
+        {selectedTagsState.map((tag, index) => (
+          <DeletableTag
+            key={index}
+            label={tag.name}
+            onDelete={() => tagDeleteHandler(tag.name)}
+          />
+        ))}
+      </div>
     </div>
   );
 };
