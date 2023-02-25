@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import axios from "./utils/axios.config";
+
 import theme from "./style/mui.config";
 import store from "./store/index";
 import { fetchPosts } from "./store/postSlice";
