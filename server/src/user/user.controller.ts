@@ -11,11 +11,12 @@ import {
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { Controller } from "@nestjs/common";
-import { CreateUserDto } from "./Dto/createUser.dto";
+import { CreateUserDto } from "./dto/createUser.dto";
 import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
 import { AuthService } from "../auth/auth.service";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
 @Controller("users")
 export class UserController {
@@ -25,9 +26,12 @@ export class UserController {
 	) {}
 
 	@Get()
-	async findPeople(@Res() res: Response) {
-		const users = await this.userService.findAllUsername();
-		res.status(HttpStatus.OK).send("HELLO");
+	async findPeople(@Req() req: Request, @Res() res: Response) {
+		console.log(req.headers?.authorization);
+		// const users = await this.userService.findAllUsername();
+		// res.status(HttpStatus.OK).json({
+		// 	users,
+		// });
 	}
 
 	@UsePipes(ValidationPipe)
@@ -53,6 +57,7 @@ export class UserController {
 		});
 	}
 
+	@UseGuards(JwtAuthGuard)
 	@Get("protected")
 	getUser(@Res() res: Response) {
 		res.status(HttpStatus.OK).json({

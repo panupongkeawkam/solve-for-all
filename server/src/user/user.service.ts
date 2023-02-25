@@ -4,13 +4,15 @@ import {
 	UnauthorizedException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { User } from "./Schema/user.schema";
+import { User } from "./schema/user.schema";
 import { Model } from "mongoose";
-import { CreateUserDto } from "./Dto/createUser.dto";
+import { CreateUserDto } from "./dto/createUser.dto";
 
 @Injectable()
 export class UserService {
-	constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+	constructor(
+		@InjectModel(User.name) private userModel: Model<User | null>,
+	) {}
 
 	// receive POST method
 	async createUser(createUserDto: CreateUserDto): Promise<any> {
@@ -35,7 +37,6 @@ export class UserService {
 			});
 			return findUser;
 		} catch (error) {
-			console.log(error);
 			throw new UnauthorizedException("Your username is incorrect");
 		}
 	}
