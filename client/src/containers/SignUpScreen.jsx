@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Stepper, Step, StepLabel, Slide } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette.js";
@@ -12,12 +12,14 @@ import DatePicker from "../components/inputs/DatePicker.jsx";
 import Button from "../components/buttons/Button.jsx";
 import TagInput from "../components/inputs/TagInput.jsx";
 import Logo from "../components/Logo.jsx";
+import LoadingIndicator from "../components/LoadingIndicator.jsx";
 
 export default () => {
   // const [currentStepIndex, setCurrentStepIndex] = useState(2);
   // const [currentStepComponent, setCurrentStepComponent] = useState(
   //   <InterestingStepForm />
   // );
+  const [loading, setLoading] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [currentStepComponent, setCurrentStepComponent] = useState(
     <AccountStepForm />
@@ -50,6 +52,8 @@ export default () => {
   // for a step 3
   const [selectedTags, setSelectedTags] = useState([]);
 
+  const navigate = useNavigate();
+
   const stepsLabel = ["Account", "Details", "Interesting"];
   const stepsComponent = [
     <AccountStepForm />,
@@ -68,14 +72,20 @@ export default () => {
 
   // for a step 1
   const usernameChangeHandler = (text) => {
+    setUsernameError(false);
+    setUsernameErrorMessage("");
     setUsername(text);
   };
 
   const passwordChangeHandler = (password) => {
+    setPasswordError(false);
+    setPasswordErrorMessage("");
     setPassword(password);
   };
 
   const rePasswordChangeHandler = (password) => {
+    setRePasswordError(false);
+    setRePasswordErrorMessage("");
     setRePassword(password);
   };
 
@@ -85,6 +95,8 @@ export default () => {
   };
 
   const emailChangeHandler = (text) => {
+    setEmailError(false);
+    setEmailErrorMessage("");
     setEmail(text);
   };
 
@@ -125,6 +137,11 @@ export default () => {
       birthday,
       selectedTags
     );
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate("/");
+    }, 2000);
   };
 
   // step 1
@@ -242,7 +259,6 @@ export default () => {
           tags={tagsDummy}
           onTagChange={tagChangeHandler}
           limitLength={5}
-          creatable
         />
       </div>
     );
@@ -320,6 +336,7 @@ export default () => {
           </div>
         </div>
       </div>
+      <LoadingIndicator active={loading} />
       <Logo />
     </div>
   );

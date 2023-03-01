@@ -14,11 +14,6 @@ import Logo from "../components/Logo";
 export default (props) => {
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
 
-  const addQuestionSubmitHandler = (question) => {
-    console.log(question);
-    // POST to server
-  };
-
   const toggleAddQuestionModalHandler = () => {
     setShowAddQuestionModal(!showAddQuestionModal);
   };
@@ -56,7 +51,6 @@ export default (props) => {
         active={showAddQuestionModal}
         submitText="Publish"
         doingMessage="Asking question..."
-        onSubmit={addQuestionSubmitHandler}
         onClose={toggleAddQuestionModalHandler}
       />
     </div>

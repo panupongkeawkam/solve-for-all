@@ -24,7 +24,6 @@ export default ({
   active = false,
   submitText = "Submit",
   doingMessage,
-  onSubmit,
   onClose,
 }) => {
   const [title, setTitle] = useState("");
@@ -52,10 +51,10 @@ export default ({
   ];
 
   function parseBase64(file) {
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.readAsDataURL(file);
 
-    var result = null;
+    let result = null;
     reader.onload = function () {
       result = reader.result;
     };
@@ -68,21 +67,21 @@ export default ({
 
   const actionChangeHandler = (actionName) => {
     if (actionName === "header") {
-      var header = {
+      let header = {
         type: "header",
         msg: "",
       };
 
       setQuestionBodies([...questionBodies, header]);
     } else if (actionName === "paragraph") {
-      var paragraph = {
+      let paragraph = {
         type: "paragraph",
         msg: "",
       };
 
       setQuestionBodies([...questionBodies, paragraph]);
     } else if (actionName === "code") {
-      var code = {
+      let code = {
         type: "code",
         language: "javascript",
         code: "",
@@ -90,7 +89,7 @@ export default ({
 
       setQuestionBodies([...questionBodies, code]);
     } else if (actionName === "image") {
-      var input = document.createElement("input");
+      let input = document.createElement("input");
 
       input.type = "file";
       input.accept = "image/*";
@@ -101,7 +100,7 @@ export default ({
           // alert("Invalid file type");
           return;
         }
-        var image = {
+        let image = {
           type: "image",
           image: e.target.files[0],
         };
@@ -114,19 +113,19 @@ export default ({
   };
 
   const headerOrParagraphChangeHandler = (msg, index) => {
-    var questionBodiesVar = questionBodies;
+    let questionBodiesVar = questionBodies;
     questionBodiesVar[index].msg = msg;
     setQuestionBodies([...questionBodiesVar]);
   };
 
   const codeChangeHandler = (code, index) => {
-    var questionBodiesVar = questionBodies;
+    let questionBodiesVar = questionBodies;
     questionBodiesVar[index].code = code;
     setQuestionBodies([...questionBodiesVar]);
   };
 
   const languageChangeHandler = (language, index) => {
-    var questionBodiesVar = questionBodies;
+    let questionBodiesVar = questionBodies;
     questionBodiesVar[index].language = language;
     setQuestionBodies([...questionBodiesVar]);
   };
@@ -140,7 +139,7 @@ export default ({
   };
 
   const deleteHandler = (index) => {
-    var questionBodiesVar = questionBodies;
+    let questionBodiesVar = questionBodies;
     questionBodiesVar.splice(index, 1);
     setQuestionBodies([...questionBodiesVar]);
   };
@@ -150,11 +149,12 @@ export default ({
   };
 
   const submitHandler = () => {
-    onSubmit({
-      title,
-      ...{ body: [...questionBodies] },
-      ...{ tags: [...selectedTags] },
-    });
+    console.log(title, questionBodies, selectedTags);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onClose();
+    }, 2000);
   };
 
   return (
