@@ -13,6 +13,7 @@ export default (props) => {
         py: "1px",
         fontSize: "16px",
         borderRadius: 100,
+        width: 320,
       }}
       label={null}
       fullWidth

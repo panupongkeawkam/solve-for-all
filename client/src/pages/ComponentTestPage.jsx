@@ -23,7 +23,6 @@ import QuestionFormModal from "../components/modals/QuestionFormModal";
 import Dialog from "../components/modals/DialogModal";
 
 export default (props) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(false);
   const [sortBy, setSortBy] = useState("popular");
   const [anchorEl, setAnchorEl] = useState(null);
@@ -42,10 +41,6 @@ export default (props) => {
     { icon: <Icon.CodeOutlined fontSize="16" />, name: "code" },
     { icon: <Icon.ImageOutlined fontSize="16" />, name: "image" },
   ];
-
-  const searchQueryChangeHandler = (e) => {
-    setSearchQuery(e.target.value);
-  };
 
   const sortChangeHandler = (e) => {
     setSortBy(e.target.value);
@@ -93,27 +88,6 @@ export default (props) => {
         <span style={{ color: palette["content-2"] }}>Sub-content</span>
       </div>
       <div className="2xl:basis-1/4 md:basis-3/4">
-        <SearchField
-          value={searchQuery}
-          placeholder="Search"
-          error={error}
-          helpertext={error ? "Invalid username" : null}
-          inputProps={{
-            maxLength: 10,
-          }}
-          onChange={searchQueryChangeHandler}
-        />
-        <SmallSearchField
-          value={searchQuery}
-          placeholder="Find people by @username"
-          error={error}
-          helpertext={error ? "Invalid username" : null}
-          inputProps={{
-            maxLength: 10,
-          }}
-          onChange={searchQueryChangeHandler}
-          icon={<Icon.People fontSize="12px" />}
-        />
         <Button fullWidth text="Submit" onClick={() => {}} />
         <Button variant="outlined" text="Submit" />
         <Button size="small" text="Submit" />
