@@ -13,6 +13,7 @@
       _id: String,
       username: String,
       password: String,
+      name: String,
       email: String,
       birthDay: Date,
       image: String,

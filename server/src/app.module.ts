@@ -7,8 +7,8 @@ import { QuestionModule } from "./question/question.module";
 import { AnswerModule } from "./answer/answer.module";
 import { ReplyModule } from "./reply/reply.module";
 import { TagModule } from "./tag/tag.module";
-import { NotificationService } from './notification/notification.service';
-import { NotificationModule } from './notification/notification.module';
+import { NotificationModule } from "./notification/notification.module";
+import { FileModule } from "./file/file.module";
 
 @Module({
 	imports: [
@@ -21,6 +21,7 @@ import { NotificationModule } from './notification/notification.module';
 		ReplyModule,
 		TagModule,
 		NotificationModule,
+		FileModule,
 	],
 	controllers: [],
 	providers: [],

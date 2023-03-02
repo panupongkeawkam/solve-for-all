@@ -5,6 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { User, UserSchema } from "./schema/user.schema";
 import { AuthService } from "src/auth/auth.service";
 import { JwtModule } from "@nestjs/jwt";
+import { TagModule } from "src/tag/tag.module";
 
 @Module({
 	imports: [
@@ -15,6 +16,7 @@ import { JwtModule } from "@nestjs/jwt";
 			},
 		]),
 		JwtModule,
+		TagModule,
 	],
 	providers: [UserService, AuthService],
 	controllers: [UserController],

@@ -1,12 +1,11 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
 import { User } from "src/user/schema/user.schema";
 import { Question } from "src/question/schema/question.schema";
 import * as mongoose from "mongoose";
 
-export type AnswerDocument = HydratedDocument<Answer | null>;
+export type AnswerDocument = mongoose.HydratedDocument<Answer | null>;
 
-@Schema({ timestamps: true, collection: "Answer" })
+@Schema({ timestamps: true, collection: "Answer", selectPopulatedPaths: true })
 export class Answer {
 	@Prop({ require: true, type: mongoose.Schema.Types.ObjectId, ref: "User" })
 	answeredBy: User;

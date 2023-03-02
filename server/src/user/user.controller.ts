@@ -1,3 +1,4 @@
+import { attachCookie, destroyCookie } from "./utils/attachCookie.util";
 import {
 	Post,
 	Get,
@@ -16,6 +17,7 @@ import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
 import { AuthService } from "../auth/auth.service";
+import { LoginDto } from "./dto/login.dto";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
 @Controller("users")
@@ -25,15 +27,7 @@ export class UserController {
 		private authService: AuthService,
 	) {}
 
-	@Get()
-	async findPeople(@Req() req: Request, @Res() res: Response) {
-		console.log(req.headers?.authorization);
-		// const users = await this.userService.findAllUsername();
-		// res.status(HttpStatus.OK).json({
-		// 	users,
-		// });
-	}
-
+	// logout function use CreateUserDto for form validation
 	@UsePipes(ValidationPipe)
 	@Post("signup")
 	async createUser(@Body() body: CreateUserDto, @Res() res: Response) {
@@ -44,24 +38,32 @@ export class UserController {
 			password: hashedPassword,
 		});
 		const token = await this.authService.tokenGenerate(user);
-		res.status(HttpStatus.CREATED).json({ user, token });
+		attachCookie(res, token);
+		res.status(HttpStatus.CREATED).json({ user });
 	}
 
+	// login function use LoginDto for credentials validation
+	// use LocalAuthGuard for verification
+	@UsePipes(ValidationPipe)
 	@UseGuards(LocalAuthGuard)
 	@Post("login")
-	async loginUser(@Req() req: Request, @Res() res: Response) {
+	async loginUser(
+		@Body() body: LoginDto,
+		@Req() req: Request,
+		@Res() res: Response,
+	) {
 		const token = await this.authService.tokenGenerate(req.user);
+		attachCookie(res, token);
 		res.status(HttpStatus.OK).json({
 			user: req.user,
-			token,
 		});
 	}
 
+	// use JwtAuthGuard for identification
 	@UseGuards(JwtAuthGuard)
-	@Get("protected")
-	getUser(@Res() res: Response) {
-		res.status(HttpStatus.OK).json({
-			msg: "Hi",
-		});
+	@Post("logout")
+	async logout(@Req() req: Request, @Res() res: Response) {
+		destroyCookie(res);
+		res.status(HttpStatus.OK).send("logout successfully");
 	}
 }
