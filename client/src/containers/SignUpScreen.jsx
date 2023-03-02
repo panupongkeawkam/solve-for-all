@@ -15,10 +15,6 @@ import Logo from "../components/Logo.jsx";
 import LoadingIndicator from "../components/LoadingIndicator.jsx";
 
 export default () => {
-  // const [currentStepIndex, setCurrentStepIndex] = useState(2);
-  // const [currentStepComponent, setCurrentStepComponent] = useState(
-  //   <InterestingStepForm />
-  // );
   const [loading, setLoading] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [currentStepComponent, setCurrentStepComponent] = useState(
@@ -205,7 +201,7 @@ export default () => {
             value={name}
             label="Display name"
             inputProps={{
-              maxLength: 30,
+              maxLength: 20,
             }}
             onTextChange={nameChangeHandler}
           />

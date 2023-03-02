@@ -24,7 +24,7 @@ export default () => {
         <Routes>
           <Route path="/signup" element={<SignUpScreen />} />
           <Route path="/login" element={<LoginScreen />} />
-          <Route index path="/*" element={<HomeScreen />} />
+          <Route path="/*" element={<HomeScreen />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

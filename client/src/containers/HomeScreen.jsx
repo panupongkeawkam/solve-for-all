@@ -5,6 +5,7 @@ import {
   Route,
   Link as RouterLink,
   useLocation,
+  matchPath,
 } from "react-router-dom";
 import { IconButton, Menu } from "@mui/material";
 import * as Icon from "@mui/icons-material";
@@ -13,6 +14,7 @@ import palette from "../style/palette";
 
 import HomePage from "../pages/HomePage";
 import InterestedPage from "../pages/InterestedPage";
+import TagsPage from "../pages/TagsPage";
 import ComponentTestPage from "../pages/ComponentTestPage";
 
 import QuestionFormModal from "../components/modals/QuestionFormModal";
@@ -22,12 +24,12 @@ import Logo from "../components/Logo";
 import SearchField from "../components/inputs/SearchField";
 import User from "../components/User";
 import SideBarNavigatorButton from "../components/buttons/SideBarNavigatorButton";
+import SmallSearchField from "../components/inputs/SmallSearchField";
 
 export default () => {
   const user = useSelector((state) => state.user.user);
   const location = useLocation();
 
-  const [searchQuery, setSearchQuery] = useState("");
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
   const [showConfirmLogoutModal, setShowConfirmLogoutModal] = useState(false);
@@ -39,8 +41,12 @@ export default () => {
     }
   }, [user]);
 
-  const searchQueryChangeHandler = (e) => {
-    setSearchQuery(e.target.value);
+  const searchSubmitHandler = (searchQuery) => {
+    console.log(searchQuery);
+  };
+
+  const userSearchSubmitHandler = (searchQuery) => {
+    console.log(searchQuery);
   };
 
   const toggleAddQuestionModalHandler = () => {
@@ -82,9 +88,8 @@ export default () => {
         >
           <div className="mr-5">
             <SearchField
-              value={searchQuery}
               placeholder="Search"
-              onChange={searchQueryChangeHandler}
+              onSearchSubmit={searchSubmitHandler}
             />
           </div>
           {/* check for guest mode then change component to display */}
@@ -156,35 +161,65 @@ export default () => {
       <div className="w-full flex flex-row">
         {/* left side bar */}
         <div className="basis-1/6 2xl:px-8 px-4">
-          <SideBarNavigatorButton
-            label={"Home"}
-            activeIcon={<Icon.Home />}
-            inactiveIcon={<Icon.HomeOutlined />}
-            active={location.pathname === "/"}
-          />
-          <SideBarNavigatorButton
-            label={"Interested"}
-            activeIcon={<Icon.Grade />}
-            inactiveIcon={<Icon.GradeOutlined />}
-            active={location.pathname === "/interested"}
-          />
-          <SideBarNavigatorButton
-            label={"Tags"}
-            activeIcon={<Icon.LocalOffer />}
-            inactiveIcon={<Icon.LocalOfferOutlined />}
-            active={location.pathname === "/tags"}
-          />
+          <RouterLink to="/">
+            <SideBarNavigatorButton
+              label={"Home"}
+              activeIcon={<Icon.Home />}
+              inactiveIcon={<Icon.HomeOutlined />}
+              active={location.pathname === "/"}
+            />
+          </RouterLink>
+          {guestMode ? null : (
+            <RouterLink to="/interested">
+              <SideBarNavigatorButton
+                label={"Interested"}
+                activeIcon={<Icon.Grade />}
+                inactiveIcon={<Icon.GradeOutlined />}
+                active={location.pathname === "/interested"}
+              />
+            </RouterLink>
+          )}
+          <RouterLink to="/tags">
+            <SideBarNavigatorButton
+              label={"Tags"}
+              activeIcon={<Icon.LocalOffer />}
+              inactiveIcon={<Icon.LocalOfferOutlined />}
+              active={location.pathname === "/tags"}
+            />
+          </RouterLink>
         </div>
         {/* content pages */}
         <div className="basis-4/6 h-screen overflow-y-auto pr-3">
           <Routes>
-            <Route index path="/" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/interested" element={<InterestedPage />} />
+            <Route path="/tags" element={<TagsPage />} />
             <Route path="/test" element={<ComponentTestPage />} />
           </Routes>
         </div>
         {/* right side bar */}
-        <div className="basis-1/6 flex 2xl:pl-8 pl-4"></div>
+        <div className="basis-1/6 flex flex-col 2xl:px-8 px-4">
+          <div className="mb-5">
+            <SmallSearchField
+              icon={<Icon.PeopleAltOutlined sx={{ fontSize: "16px" }} />}
+              placeholder="Find people"
+              onSearchSubmit={userSearchSubmitHandler}
+            />
+          </div>
+          <div className="mb-5">
+            <p style={{ color: palette["content-1"] }}>Suggested people</p>
+          </div>
+          <div className="mb-3">
+            <User username="thepowerofthedarkwil" />
+          </div>
+          <div className="mb-3">
+            <User
+              name="Father"
+              username="yourfather"
+              imageUrl={"https://api.multiavatar.com/father.svg"}
+            />
+          </div>
+        </div>
       </div>
       <Logo />
       <QuestionFormModal

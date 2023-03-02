@@ -89,7 +89,7 @@ export default ({
             searchQuery={searchQuery}
             placeholder="Find tags (e.g. graphic-design, math)"
             onSearchQueryChange={searchQueryChangeHandler}
-            icon={<Icon.LocalOfferOutlined fontSize="12px" />}
+            icon={<Icon.LocalOfferOutlined sx={{ fontSize: "16px" }} />}
             disabled={selectedTagsState.length === limitLength}
             inputProps={{
               maxLength: 30,

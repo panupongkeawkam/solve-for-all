@@ -132,9 +132,6 @@ export default createTheme({
     },
     MuiMenu: {
       styleOverrides: {
-        root: {
-          backgroundColor: `rgba(0, 0, 0, 40%)`,
-        },
         list: {
           backgroundColor: palette["base-2"],
         },
