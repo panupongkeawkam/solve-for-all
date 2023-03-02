@@ -66,4 +66,11 @@ export class UserController {
 		destroyCookie(res);
 		res.status(HttpStatus.OK).send("logout successfully");
 	}
+
+	// use to test authentication
+	@UseGuards(JwtAuthGuard)
+	@Get()
+	async testCookie(@Res() res: Response) {
+		res.status(HttpStatus.OK).send("You're in");
+	}
 }
