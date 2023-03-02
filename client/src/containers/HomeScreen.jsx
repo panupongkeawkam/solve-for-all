@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Routes, Route, Link as RouterLink } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link as RouterLink,
+  useLocation,
+} from "react-router-dom";
 import { IconButton, Menu } from "@mui/material";
 import * as Icon from "@mui/icons-material";
-
-import store from "../store/index";
 
 import palette from "../style/palette";
 
@@ -18,15 +21,17 @@ import Button from "../components/buttons/Button";
 import Logo from "../components/Logo";
 import SearchField from "../components/inputs/SearchField";
 import User from "../components/User";
+import SideBarNavigatorButton from "../components/buttons/SideBarNavigatorButton";
 
 export default () => {
+  const user = useSelector((state) => state.user.user);
+  const location = useLocation();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
   const [showConfirmLogoutModal, setShowConfirmLogoutModal] = useState(false);
-  const [guestMode, setGuestMode] = useState(false);
-
-  const user = useSelector((state) => state.user.user);
+  const [guestMode, setGuestMode] = useState(!Boolean(user));
 
   useEffect(() => {
     if (!user) {
@@ -61,10 +66,11 @@ export default () => {
 
   return (
     <div
-      className="flex flex-col w-screen h-screen overflow-x-hidden px-4"
+      className="flex flex-col w-screen h-screen overflow-hidden"
       style={{ backgroundColor: palette["base-1"] }}
     >
-      <div className="w-full flex flex-row sticky top-0 py-2">
+      {/* nav bar */}
+      <div className="w-full flex flex-row py-2">
         <div className="basis-1/6 flex items-center"></div>
         <div
           className={
@@ -83,12 +89,12 @@ export default () => {
           </div>
           {/* check for guest mode then change component to display */}
           {guestMode ? (
-            <div>
+            <div className="2xl:px-8 px-4">
               <RouterLink to="/login" className="mx-3">
-                <Button text="Login" variant="outlined" size="small" />
+                <Button text="Login" variant="outlined" />
               </RouterLink>
               <RouterLink to="/signup">
-                <Button text="Sign up" size="small" />
+                <Button text="Sign up" />
               </RouterLink>
             </div>
           ) : (
@@ -137,7 +143,7 @@ export default () => {
         </div>
         {/* check for guest mode then change component to display */}
         {guestMode ? null : (
-          <div className="basis-1/6 flex items-center 2xl:pl-8 pl-4">
+          <div className="basis-1/6 flex items-center 2xl:px-8 px-4">
             <User
               name={"Dominic Torettoa"}
               username={"dom_family"}
@@ -146,15 +152,38 @@ export default () => {
           </div>
         )}
       </div>
+      {/* body */}
       <div className="w-full flex flex-row">
-        <div className="basis-1/6"></div>
-        <div className="basis-4/6">
+        {/* left side bar */}
+        <div className="basis-1/6 2xl:px-8 px-4">
+          <SideBarNavigatorButton
+            label={"Home"}
+            activeIcon={<Icon.Home />}
+            inactiveIcon={<Icon.HomeOutlined />}
+            active={location.pathname === "/"}
+          />
+          <SideBarNavigatorButton
+            label={"Interested"}
+            activeIcon={<Icon.Grade />}
+            inactiveIcon={<Icon.GradeOutlined />}
+            active={location.pathname === "/interested"}
+          />
+          <SideBarNavigatorButton
+            label={"Tags"}
+            activeIcon={<Icon.LocalOffer />}
+            inactiveIcon={<Icon.LocalOfferOutlined />}
+            active={location.pathname === "/tags"}
+          />
+        </div>
+        {/* content pages */}
+        <div className="basis-4/6 h-screen overflow-y-auto pr-3">
           <Routes>
             <Route index path="/" element={<HomePage />} />
             <Route path="/interested" element={<InterestedPage />} />
             <Route path="/test" element={<ComponentTestPage />} />
           </Routes>
         </div>
+        {/* right side bar */}
         <div className="basis-1/6 flex 2xl:pl-8 pl-4"></div>
       </div>
       <Logo />

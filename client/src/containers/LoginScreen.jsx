@@ -100,7 +100,7 @@ export default () => {
                 style={{ color: palette["content-2"], fontSize: "16px" }}
                 className="mr-1"
               >
-                Have an account?
+                Didn’t have account yet?
               </div>
               <RouterLink
                 to="/signup"

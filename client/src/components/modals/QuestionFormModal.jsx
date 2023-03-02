@@ -244,6 +244,7 @@ export default ({
                   placeholder={"Title"}
                   onTextChange={setTitle}
                   fontSize="32px"
+                  fontFamily={"Lora, serif"}
                 />
               </div>
             </div>
@@ -253,7 +254,7 @@ export default ({
               switch (body.type) {
                 case "header":
                   return (
-                    <div className="basis-full flex flex-row mb-3" key={index}>
+                    <div className="basis-full flex flex-row mb-5" key={index}>
                       <div className="basis-5/6">
                         <InvisibleTextArea
                           message={body.msg}
@@ -263,7 +264,8 @@ export default ({
                           onTextChange={(text) =>
                             headerOrParagraphChangeHandler(text, index)
                           }
-                          fontSize="20px"
+                          fontSize="24px"
+                          fontFamily={"Lora, serif"}
                         />
                       </div>
                       <div className="basis-1/6 pl-2">
@@ -275,7 +277,7 @@ export default ({
                   );
                 case "paragraph":
                   return (
-                    <div className="basis-full flex flex-row mb-3" key={index}>
+                    <div className="basis-full flex flex-row mb-5" key={index}>
                       <div className="basis-5/6">
                         <InvisibleTextArea
                           message={body.msg}
@@ -283,8 +285,9 @@ export default ({
                           onTextChange={(text) =>
                             headerOrParagraphChangeHandler(text, index)
                           }
-                          fontSize="16px"
+                          fontSize="18px"
                           onDelete={() => deleteHandler(index)}
+                          fontFamily={"Lora, serif"}
                         />
                       </div>
                       <div className="basis-1/6 pl-2">
@@ -296,7 +299,7 @@ export default ({
                   );
                 case "code":
                   return (
-                    <div className="basis-full flex flex-row mb-3" key={index}>
+                    <div className="basis-full flex flex-row mb-5" key={index}>
                       <div className="basis-5/6">
                         <CodeInput
                           code={body.code}
@@ -318,7 +321,7 @@ export default ({
                   );
                 case "image":
                   return (
-                    <div className="basis-full flex flex-row mb-3" key={index}>
+                    <div className="basis-full flex flex-row mb-5" key={index}>
                       <img
                         width="100"
                         className="rounded-[8px] my-2 flex-1 flex"

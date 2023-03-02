@@ -1,14 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: { username: "microsoftazure" },
+  user: {},
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {},
-  extraReducers: {},
+  extraReducers(builder) {},
 });
 
 export default userSlice.reducer;
