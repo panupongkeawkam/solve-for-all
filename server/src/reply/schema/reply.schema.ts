@@ -7,11 +7,10 @@ export type ReplyDocument = mongoose.HydratedDocument<Reply | null>;
 
 @Schema({ timestamps: true, collection: "Reply", selectPopulatedPaths: true })
 export class Reply {
-	@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: "User" })
+	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
 	repliedBy: User;
 
 	@Prop({
-		required: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Answer",
 	})

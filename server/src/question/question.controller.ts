@@ -82,7 +82,7 @@ export class QuestionController {
 			);
 
 			const newTags = await this.tagService.createNewTags(notExistTags);
-			
+
 			newQuestionDocument.tags = [
 				...newQuestionDocument.tags,
 				...newTags,
@@ -101,6 +101,7 @@ export class QuestionController {
 			});
 		} catch (err) {
 			console.log(err);
+			throw new BadRequestException("Please provide the values");
 		}
 	}
 }

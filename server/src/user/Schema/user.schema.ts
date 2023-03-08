@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { Tag } from "src/tag/schema/tag.schema";
+import { Tag, TagSchema } from "src/tag/schema/tag.schema";
 
 export type UserDocument = mongoose.HydratedDocument<User | null>;
 
@@ -15,7 +15,7 @@ export class User {
 	@Prop({ required: true })
 	password: string;
 
-	@Prop({ required: true, unique: true })
+	@Prop({ required: true })
 	name: string;
 
 	@Prop({ default: "" })
@@ -23,7 +23,10 @@ export class User {
 
 	@Prop({
 		type: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: "Tag", unique: true },
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Tag",
+			},
 		],
 	})
 	tags: Tag[];

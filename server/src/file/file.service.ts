@@ -7,7 +7,7 @@ import { ResponseInterface } from "./interfaces/res.interface";
 
 @Injectable()
 export class FileService {
-	// use to upload multiple image file to AWS S3 storage
+	// upload multiple files (max: 6)
 	async fileUploads(
 		files: FileInterface[],
 	): Promise<ResponseInterface[] | null> {
@@ -30,5 +30,22 @@ export class FileService {
 		}));
 
 		return responses;
+	}
+
+	// upload single file
+	async fileUpload(file: FileInterface): Promise<ResponseInterface | null> {
+		const s3Bucket = new S3();
+		const params = {
+			Bucket: process.env.AWS_BUCKET_NAME,
+			Body: file.buffer,
+			Key: `${uuid()}-${file.fileName}`,
+		};
+		const uploadedFile = await s3Bucket.upload(params).promise();
+		const response = {
+			path: uploadedFile?.Location,
+			key: uploadedFile?.Key,
+			bucket: uploadedFile?.Bucket,
+		};
+		return response || null;
 	}
 }

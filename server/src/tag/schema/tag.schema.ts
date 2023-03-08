@@ -16,7 +16,6 @@ export class Tag {
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "Question",
-				unique: true,
 			},
 		],
 	})
@@ -25,7 +24,10 @@ export class Tag {
 	@Prop({
 		default: [],
 		type: [
-			{ type: mongoose.Schema.Types.ObjectId, ref: "User", unique: true },
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
 		],
 	})
 	interestedBy: User[];
