@@ -1,21 +1,21 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
-import { User } from "src/user/schema/user.schema";
-import { HydratedDocument } from "mongoose";
 import { Tag } from "../../tag/schema/tag.schema";
+import { User } from "../../user/schema/user.schema";
 
-export type QuestionDocument = HydratedDocument<Question | null>;
+export type QuestionDocument = mongoose.HydratedDocument<Question | null>;
 
-@Schema({ timestamps: true, collection: "Question" })
+@Schema({
+	timestamps: true,
+	collection: "Question",
+	selectPopulatedPaths: true,
+})
 export class Question {
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User", required: true })
+	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
 	createdBy: User;
 
 	@Prop({ required: true })
 	title: string;
-
-	@Prop({ required: true })
-	description: string;
 
 	@Prop({ required: true })
 	body: string[];
@@ -27,23 +27,42 @@ export class Question {
 	rating: number;
 
 	@Prop({
-		type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+		type: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+				unique: true,
+			},
+		],
 		default: [],
 	})
 	likedBy: User[];
 
 	@Prop({
-		type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+		type: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
 		default: [],
 	})
 	dislikedBy: User[];
 
-	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User", default: null })
+	@Prop({
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "User",
+	})
 	solvedBy: User;
 
 	@Prop({
 		default: [],
-		type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+		type: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Tag",
+			},
+		],
 	})
 	tags: Tag[];
 }

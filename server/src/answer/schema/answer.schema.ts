@@ -1,18 +1,16 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
-import { User } from "src/user/schema/user.schema";
-import { Question } from "src/question/schema/question.schema";
+import { User, UserSchema } from "src/user/schema/user.schema";
+import { Question, QuestionSchema } from "src/question/schema/question.schema";
 import * as mongoose from "mongoose";
 
-export type AnswerDocument = HydratedDocument<Answer | null>;
+export type AnswerDocument = mongoose.HydratedDocument<Answer | null>;
 
-@Schema({ timestamps: true, collection: "Answer" })
+@Schema({ timestamps: true, collection: "Answer", selectPopulatedPaths: true })
 export class Answer {
-	@Prop({ require: true, type: mongoose.Schema.Types.ObjectId, ref: "User" })
+	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: "User" })
 	answeredBy: User;
 
 	@Prop({
-		require: true,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Question",
 	})
@@ -29,13 +27,23 @@ export class Answer {
 
 	@Prop({
 		default: [],
-		type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+		type: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
 	})
 	likedBy: User[];
 
 	@Prop({
 		default: [],
-		type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+		type: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
 	})
 	dislikedBy: User[];
 
