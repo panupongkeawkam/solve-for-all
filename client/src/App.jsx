@@ -1,16 +1,24 @@
 import React, { useEffect } from "react";
+import { Provider as StoreProvider } from "react-redux";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import axios from "./utils/axios.config";
 
-import theme from "./style/mui.config";
 import store from "./store/index";
+import theme from "./style/mui.config";
 import { fetchPosts } from "./store/postSlice";
 
-import SignUpScreen from "./containers/SignUpScreen";
-import LoginScreen from "./containers/LoginScreen";
+// app screens
 import HomeScreen from "./containers/HomeScreen";
+import LoginScreen from "./containers/LoginScreen";
+import SignUpScreen from "./containers/SignUpScreen";
+import NotFoundScreen from "./containers/NotFoundScreen";
+
+// children of HomeScreen
+import HomePage from "./pages/HomePage";
+import InterestedPage from "./pages/InterestedPage";
+import TagsPage from "./pages/TagsPage";
 
 export default () => {
   useEffect(() => {
@@ -18,15 +26,45 @@ export default () => {
     store.dispatch(fetchPosts());
   }, []);
 
+  // set up router
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <HomeScreen />,
+      children: [
+        {
+          path: "/",
+          element: <HomePage />,
+        },
+        {
+          path: "/interested",
+          element: <InterestedPage />,
+        },
+        {
+          path: "/tags",
+          element: <TagsPage />,
+        },
+      ],
+    },
+    {
+      path: "/login",
+      element: <LoginScreen />,
+    },
+    {
+      path: "/signup",
+      element: <SignUpScreen />,
+    },
+    {
+      path: "*",
+      element: <NotFoundScreen />,
+    },
+  ]);
+
   return (
-    <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/signup" element={<SignUpScreen />} />
-          <Route path="/login" element={<LoginScreen />} />
-          <Route path="/*" element={<HomeScreen />} />
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    <StoreProvider store={store}>
+      <ThemeProvider theme={theme}>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </StoreProvider>
   );
 };

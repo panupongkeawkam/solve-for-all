@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  Routes,
-  Route,
-  Link as RouterLink,
-  useLocation,
-  matchPath,
-} from "react-router-dom";
+import { Link as RouterLink, useLocation, Outlet } from "react-router-dom";
 import { IconButton, Menu } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette";
-
-import HomePage from "../pages/HomePage";
-import InterestedPage from "../pages/InterestedPage";
-import TagsPage from "../pages/TagsPage";
-import ComponentTestPage from "../pages/ComponentTestPage";
 
 import QuestionFormModal from "../components/modals/QuestionFormModal";
 import DialogModal from "../components/modals/DialogModal";
@@ -190,12 +179,8 @@ export default () => {
         </div>
         {/* content pages */}
         <div className="basis-4/6 h-screen overflow-y-auto pr-3">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/interested" element={<InterestedPage />} />
-            <Route path="/tags" element={<TagsPage />} />
-            <Route path="/test" element={<ComponentTestPage />} />
-          </Routes>
+          {/* for pages (routes children) */}
+          <Outlet />
         </div>
         {/* right side bar */}
         <div className="basis-1/6 flex flex-col 2xl:px-8 px-4">
