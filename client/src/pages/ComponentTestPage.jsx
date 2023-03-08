@@ -17,22 +17,11 @@ import Tag from "../components/Tag";
 import Dialog from "../components/modals/DialogModal";
 
 export default () => {
-  const [sortBy, setSortBy] = useState("popular");
   const [anchorEl, setAnchorEl] = useState(null);
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
   const { testId } = useParams();
-
-  const sortOptions = [
-    { value: "popular", title: "Popular" },
-    { value: "latest", title: "Latest" },
-    { value: "oldest", title: "Oldest" },
-  ];
-
-  const sortChangeHandler = (e) => {
-    setSortBy(e.target.value);
-  };
 
   const openAnchorHandler = (e) => {
     setAnchorEl(e.currentTarget);
@@ -90,13 +79,6 @@ export default () => {
           </Menu>
         </div>
         <Tag title={"python"} onClick={() => {}} />
-        <Select value={sortBy} onChange={sortChangeHandler}>
-          {sortOptions.map((sortOption, index) => (
-            <MenuItem value={sortOption.value} key={index}>
-              {sortOption.title}
-            </MenuItem>
-          ))}
-        </Select>
         <Button
           text="Show confirm modal"
           size="small"
