@@ -15,7 +15,7 @@ export default ({ title, description = "", minimized = false }) => {
           <img
             className="opacity-40 mb-3"
             width={120}
-            src="./empty-data.svg"
+            src="/empty-data.svg"
             alt="No data icon"
           ></img>
           <h2 style={{ color: palette["content-2"] }}>{title}</h2>

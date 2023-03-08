@@ -5,7 +5,7 @@ export default () => {
     <RouterLink to="/" className="absolute top-4 2xl:left-8 left-4">
       <img
         className="cursor-pointer hover:opacity-90 transition"
-        src="./logo.png"
+        src="/logo.png"
         width="36"
         alt="Solve for all logo - link to home page"
       />

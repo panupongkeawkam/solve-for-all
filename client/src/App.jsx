@@ -20,6 +20,7 @@ import HomePage from "./pages/HomePage";
 import InterestedPage from "./pages/InterestedPage";
 import TagsPage from "./pages/TagsPage";
 import ComponentTestPage from "./pages/ComponentTestPage";
+import ProfilePage from "./pages/ProfilePage";
 
 export default () => {
   useEffect(() => {
@@ -44,6 +45,10 @@ export default () => {
         {
           path: "/tags",
           element: <TagsPage />,
+        },
+        {
+          path: "/users/:userId",
+          element: <ProfilePage />,
         },
         {
           path: "/test",

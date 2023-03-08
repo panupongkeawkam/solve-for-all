@@ -15,9 +15,11 @@ import User from "../components/User";
 import SideBarNavigatorButton from "../components/buttons/SideBarNavigatorButton";
 import SmallSearchField from "../components/inputs/SmallSearchField";
 import EmptyData from "../components/EmptyData";
+import userSlice from "../store/userSlice";
 
 export default () => {
   const user = useSelector((state) => state.user.user);
+  // const suggestedUsers = useSelector((state) => state.user.suggestedUsers); *ASSUMED*
   const location = useLocation();
 
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
@@ -146,11 +148,13 @@ export default () => {
         {/* check for guest mode then change component to display */}
         {guestMode ? null : (
           <div className="basis-1/6 flex items-center 2xl:px-8 px-4">
-            <User
-              name={"Dominic Torettoa"}
-              username={"dom_family"}
-              imageUrl={null}
-            />
+            <RouterLink to={`/users/${user._id}`}>
+              <User
+                name={user.name}
+                username={user.username}
+                imageUrl={user.image}
+              />
+            </RouterLink>
           </div>
         )}
       </div>
