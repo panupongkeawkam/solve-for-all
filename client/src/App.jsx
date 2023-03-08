@@ -19,6 +19,7 @@ import NotFoundScreen from "./containers/NotFoundScreen";
 import HomePage from "./pages/HomePage";
 import InterestedPage from "./pages/InterestedPage";
 import TagsPage from "./pages/TagsPage";
+import ComponentTestPage from "./pages/ComponentTestPage";
 
 export default () => {
   useEffect(() => {
@@ -43,6 +44,10 @@ export default () => {
         {
           path: "/tags",
           element: <TagsPage />,
+        },
+        {
+          path: "/test",
+          element: <ComponentTestPage />,
         },
       ],
     },

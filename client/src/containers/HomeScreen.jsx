@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link as RouterLink, useLocation, Outlet } from "react-router-dom";
-import { IconButton, Menu } from "@mui/material";
+import { IconButton, Menu, Badge } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette";
@@ -14,6 +14,7 @@ import SearchField from "../components/inputs/SearchField";
 import User from "../components/User";
 import SideBarNavigatorButton from "../components/buttons/SideBarNavigatorButton";
 import SmallSearchField from "../components/inputs/SmallSearchField";
+import EmptyData from "../components/EmptyData";
 
 export default () => {
   const user = useSelector((state) => state.user.user);
@@ -59,6 +60,37 @@ export default () => {
     setShowConfirmLogoutModal(false);
   };
 
+  const NotificationAnchor = () => (
+    <Menu
+      id="test-box"
+      anchorEl={notificationAnchorEl}
+      transformOrigin={{ vertical: "top", horizontal: "right" }}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "right",
+      }}
+      keepMounted
+      open={Boolean(notificationAnchorEl)}
+      onClose={closeNotificationAnchorHandler}
+    >
+      <div className="flex flex-col px-5 py-2" style={{ width: 400 }}>
+        <div className="flex flex-row">
+          <p className="mr-2" style={{ color: palette["content-1"] }}>
+            Notifications
+          </p>
+          <p style={{ color: palette["content-2"] }}>12</p>
+        </div>
+        <div className="h-[360px]">
+          <EmptyData
+            title={"No notifications"}
+            description={"People didn't answer your questions"}
+            minimized
+          />
+        </div>
+      </div>
+    </Menu>
+  );
+
   return (
     <div
       className="flex flex-col w-screen h-screen overflow-hidden"
@@ -95,35 +127,11 @@ export default () => {
             <div className="flex flex-row items-center gap-x-3">
               <div>
                 <IconButton onClick={openNotificationAnchorHandler}>
-                  <Icon.NotificationsOutlined />
+                  <Badge color="wrong" badgeContent={2}>
+                    <Icon.NotificationsOutlined />
+                  </Badge>
                 </IconButton>
-                <Menu
-                  id="test-box"
-                  anchorEl={notificationAnchorEl}
-                  transformOrigin={{ vertical: "top", horizontal: "right" }}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  open={Boolean(notificationAnchorEl)}
-                  onClose={closeNotificationAnchorHandler}
-                >
-                  <div
-                    className="flex flex-col px-5 py-2"
-                    style={{ width: 400 }}
-                  >
-                    <div className="flex flex-row">
-                      <p
-                        className="mr-2"
-                        style={{ color: palette["content-1"] }}
-                      >
-                        Notifications
-                      </p>
-                      <p style={{ color: palette["content-2"] }}>12</p>
-                    </div>
-                  </div>
-                </Menu>
+                <NotificationAnchor />
               </div>
               <IconButton onClick={toggleConfirmLogoutModalHandler}>
                 <Icon.LogoutOutlined />
@@ -194,6 +202,7 @@ export default () => {
           <div className="mb-5">
             <p style={{ color: palette["content-1"] }}>Suggested people</p>
           </div>
+          {/* suggested users */}
           <div className="mb-3">
             <User username="thepowerofthedarkwil" />
           </div>

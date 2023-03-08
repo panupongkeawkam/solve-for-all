@@ -10,7 +10,7 @@ export default ({
   return (
     <div
       className={
-        "flex flex-row items-center w-full py-2 px-4 rounded-full cursor-pointer active:opacity-90 transition duration-100 mb-2"
+        "flex flex-row items-center w-full py-2 px-4 rounded-full cursor-pointer active:opacity-90 transition duration-300 mb-2"
       }
       style={{
         backgroundColor: active ? palette["base-2"] : "transparent",
