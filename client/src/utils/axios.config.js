@@ -1,13 +1,13 @@
 import axios from "axios";
 
-axios.defaults.baseURL = process.env.REACT_APP_BASE_URL
+axios.defaults.baseURL = import.meta.env.REACT_APP_SERVER_HOST
 
 const defaultAxios = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL
+  baseURL: import.meta.env.REACT_APP_SERVER_HOST
 });
 
 const authAxios = axios.create({
-  baseURL: process.env.REACT_APP_BASE_URL
+  baseURL: import.meta.env.REACT_APP_SERVER_HOST
 });
 
 authAxios.interceptors.request.use(
