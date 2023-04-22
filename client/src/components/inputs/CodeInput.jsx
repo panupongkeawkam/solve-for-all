@@ -58,7 +58,7 @@ export default ({ code, onCodeChange, language, onLanguageChange }) => {
         {codeState === "edit" ? (
           <InvisibleTextArea
             message={code}
-            placeholder={"place code here..."}
+            placeholder={"Place code here..."}
             fontSize={"12px"}
             onTextChange={onCodeChange}
             fontFamily={

@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
   Avatar,
   IconButton,
   Snackbar,
@@ -24,7 +23,6 @@ export default ({
   active = false,
   submitText = "Submit",
   doingMessage,
-  onSubmit,
   onClose,
 }) => {
   const [title, setTitle] = useState("");
@@ -52,10 +50,10 @@ export default ({
   ];
 
   function parseBase64(file) {
-    var reader = new FileReader();
+    let reader = new FileReader();
     reader.readAsDataURL(file);
 
-    var result = null;
+    let result = null;
     reader.onload = function () {
       result = reader.result;
     };
@@ -68,21 +66,21 @@ export default ({
 
   const actionChangeHandler = (actionName) => {
     if (actionName === "header") {
-      var header = {
+      let header = {
         type: "header",
         msg: "",
       };
 
       setQuestionBodies([...questionBodies, header]);
     } else if (actionName === "paragraph") {
-      var paragraph = {
+      let paragraph = {
         type: "paragraph",
         msg: "",
       };
 
       setQuestionBodies([...questionBodies, paragraph]);
     } else if (actionName === "code") {
-      var code = {
+      let code = {
         type: "code",
         language: "javascript",
         code: "",
@@ -90,7 +88,7 @@ export default ({
 
       setQuestionBodies([...questionBodies, code]);
     } else if (actionName === "image") {
-      var input = document.createElement("input");
+      let input = document.createElement("input");
 
       input.type = "file";
       input.accept = "image/*";
@@ -101,7 +99,7 @@ export default ({
           // alert("Invalid file type");
           return;
         }
-        var image = {
+        let image = {
           type: "image",
           image: e.target.files[0],
         };
@@ -114,19 +112,19 @@ export default ({
   };
 
   const headerOrParagraphChangeHandler = (msg, index) => {
-    var questionBodiesVar = questionBodies;
+    let questionBodiesVar = questionBodies;
     questionBodiesVar[index].msg = msg;
     setQuestionBodies([...questionBodiesVar]);
   };
 
   const codeChangeHandler = (code, index) => {
-    var questionBodiesVar = questionBodies;
+    let questionBodiesVar = questionBodies;
     questionBodiesVar[index].code = code;
     setQuestionBodies([...questionBodiesVar]);
   };
 
   const languageChangeHandler = (language, index) => {
-    var questionBodiesVar = questionBodies;
+    let questionBodiesVar = questionBodies;
     questionBodiesVar[index].language = language;
     setQuestionBodies([...questionBodiesVar]);
   };
@@ -140,7 +138,7 @@ export default ({
   };
 
   const deleteHandler = (index) => {
-    var questionBodiesVar = questionBodies;
+    let questionBodiesVar = questionBodies;
     questionBodiesVar.splice(index, 1);
     setQuestionBodies([...questionBodiesVar]);
   };
@@ -150,11 +148,12 @@ export default ({
   };
 
   const submitHandler = () => {
-    onSubmit({
-      title,
-      ...{ body: [...questionBodies] },
-      ...{ tags: [...selectedTags] },
-    });
+    console.log(title, questionBodies, selectedTags);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onClose();
+    }, 2000);
   };
 
   return (
@@ -244,6 +243,7 @@ export default ({
                   placeholder={"Title"}
                   onTextChange={setTitle}
                   fontSize="32px"
+                  fontFamily={"Lora, serif"}
                 />
               </div>
             </div>
@@ -253,7 +253,7 @@ export default ({
               switch (body.type) {
                 case "header":
                   return (
-                    <div className="basis-full flex flex-row mb-3" key={index}>
+                    <div className="basis-full flex flex-row mb-5" key={index}>
                       <div className="basis-5/6">
                         <InvisibleTextArea
                           message={body.msg}
@@ -263,7 +263,8 @@ export default ({
                           onTextChange={(text) =>
                             headerOrParagraphChangeHandler(text, index)
                           }
-                          fontSize="20px"
+                          fontSize="24px"
+                          fontFamily={"Lora, serif"}
                         />
                       </div>
                       <div className="basis-1/6 pl-2">
@@ -275,7 +276,7 @@ export default ({
                   );
                 case "paragraph":
                   return (
-                    <div className="basis-full flex flex-row mb-3" key={index}>
+                    <div className="basis-full flex flex-row mb-5" key={index}>
                       <div className="basis-5/6">
                         <InvisibleTextArea
                           message={body.msg}
@@ -283,8 +284,9 @@ export default ({
                           onTextChange={(text) =>
                             headerOrParagraphChangeHandler(text, index)
                           }
-                          fontSize="16px"
+                          fontSize="18px"
                           onDelete={() => deleteHandler(index)}
+                          fontFamily={"Lora, serif"}
                         />
                       </div>
                       <div className="basis-1/6 pl-2">
@@ -296,7 +298,7 @@ export default ({
                   );
                 case "code":
                   return (
-                    <div className="basis-full flex flex-row mb-3" key={index}>
+                    <div className="basis-full flex flex-row mb-5" key={index}>
                       <div className="basis-5/6">
                         <CodeInput
                           code={body.code}
@@ -318,7 +320,7 @@ export default ({
                   );
                 case "image":
                   return (
-                    <div className="basis-full flex flex-row mb-3" key={index}>
+                    <div className="basis-full flex flex-row mb-5" key={index}>
                       <img
                         width="100"
                         className="rounded-[8px] my-2 flex-1 flex"

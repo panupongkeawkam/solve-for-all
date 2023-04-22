@@ -130,5 +130,12 @@ export default createTheme({
         },
       },
     },
+    MuiMenu: {
+      styleOverrides: {
+        list: {
+          backgroundColor: palette["base-2"],
+        },
+      },
+    },
   },
 });
