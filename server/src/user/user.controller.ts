@@ -1,4 +1,4 @@
-import { attachCookie, destroyCookie } from "./utils/attachCookie.util";
+import { attachCookie, destroyCookie } from "./utils/cookie.util";
 import {
 	Post,
 	Get,
@@ -16,7 +16,7 @@ import {
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { Controller } from "@nestjs/common";
-import { CreateUserDto, EditUserDto } from "./dto/user.dto";
+import { ChangePasswordDto, CreateUserDto, EditUserDto } from "./dto/user.dto";
 import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
@@ -76,7 +76,7 @@ export class UserController {
 	@Post("logout")
 	async logout(@Req() req: Request, @Res() res: Response) {
 		destroyCookie(res);
-		res.status(HttpStatus.OK).send("logout successfully");
+		res.status(HttpStatus.OK).json({ message: "logout successfully" });
 	}
 
 	// suggest user function
@@ -92,7 +92,7 @@ export class UserController {
 	@Get(":id")
 	async findUserById(@Req() req: Request, @Res() res: Response) {
 		const user = await this.userService.findUserByUserId(req.params.id);
-		res.status(HttpStatus.OK).json(user);
+		res.status(HttpStatus.OK).json({ user });
 	}
 
 	// edit user information function
@@ -115,34 +115,64 @@ export class UserController {
 		@UploadedFile() file: Express.Multer.File,
 		@Body() info: EditUserDto,
 	) {
-		// check user permission
 		checkPermission(req.user?._id, req.params?.id);
 		const params = {
 			buffer: file.buffer,
 			fileName: file.originalname,
 		};
 		try {
+			checkPermission(req.user?._id, req.params.id);
 			const uploadedFile = await this.fileService.fileUpload(params);
 			const query = { ...info, image: uploadedFile?.path };
 			const user = await this.userService.editUserByUserId(
 				query,
 				req.params.id,
 			);
-			res.status(HttpStatus.OK).json(user);
+			res.status(HttpStatus.OK).json({ user });
 		} catch (err) {
 			console.log(err);
 			throw new BadRequestException("something went wrong");
 		}
 	}
 
+	// update user password
 	@UseGuards(JwtAuthGuard)
+	@UsePipes(ValidationPipe)
 	@Put(":id/password")
-	async updatePassword(@Req() req: Request, @Res() res: Response) {}
+	async updatePassword(
+		@Body() changePasswordDto: ChangePasswordDto,
+		@Req() req: any,
+		@Res() res: Response,
+	) {
+		checkPermission(req.user?._id, req.params?.id);
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(
+			changePasswordDto?.password,
+			salt,
+		);
+		try {
+			const status = await this.userService.changeUserPassword(
+				hashedPassword,
+				req.params?.id,
+			);
+			res.status(HttpStatus.OK).json({
+				status,
+			});
+		} catch (err) {
+			console.log(err);
+			throw new BadRequestException("something went wrong");
+		}
+	}
 
 	// use to test authentication
 	@UseGuards(JwtAuthGuard)
 	@Get("test")
 	async testCookie(@Res() res: Response) {
 		res.status(HttpStatus.OK).send("You're in");
+	}
+
+	@Get("test/no-auth")
+	async testRoute(@Res() res: Response) { 
+		return res.status(HttpStatus.OK).send("Hello there.")
 	}
 }

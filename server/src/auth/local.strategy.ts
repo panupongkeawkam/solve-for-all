@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 import { AuthService } from "./auth.service";
+import { UserDetail } from "src/user/interfaces/user.interface";
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy, "login") {
@@ -9,7 +10,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, "login") {
 		super();
 	}
 
-	async validate(username: string, password: string): Promise<any> {
+	async validate(username: string, password: string): Promise<UserDetail | null> {
 		const user = await this.authService.validateUser(username, password);
 		if (!user) {
 			throw new UnauthorizedException("Your credentials is incorrect");

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { S3 } from "aws-sdk";
+import { AWSError, S3 } from "aws-sdk";
 import { v4 as uuid } from "uuid";
 
 import { FileInterface } from "./interfaces/files.interface";
@@ -12,20 +12,22 @@ export class FileService {
 		files: FileInterface[],
 	): Promise<ResponseInterface[] | null> {
 		const s3Bucket = new S3();
-		const uploadedFiles = [];
-		for (const file of files) {
-			const params = {
-				Bucket: process.env.AWS_BUCKET_NAME,
-				Body: file.buffer,
-				Key: `${uuid()}-${file.fileName}`,
-			};
-			const uploadedFile = await s3Bucket.upload(params).promise();
-			uploadedFiles.push(uploadedFile);
-		}
+
+		// Parallel job
+		const uploadedFiles = await Promise.all(
+			files.map(async (file) => {
+				const params = {
+					Bucket: process.env.AWS_BUCKET_NAME,
+					Body: file.buffer,
+					Key: `${uuid()}-${file.fileName}`,
+				};
+				return await s3Bucket.upload(params).promise();
+			}),
+		).then((images) => images)
 
 		const responses: ResponseInterface[] = uploadedFiles.map((file) => ({
 			path: file?.Location,
-			key: file?.key,
+			key: file?.Key,
 			bucket: file?.Bucket,
 		}));
 
@@ -47,5 +49,27 @@ export class FileService {
 			bucket: uploadedFile?.Bucket,
 		};
 		return response || null;
+	}
+
+	// remove multiple file when problem is occur.
+	async removeFiles(uploadedFiles: ResponseInterface[]): Promise<void> {
+		const s3Bucket = new S3();
+		const Delete = {
+			Objects: uploadedFiles.map((file) => ({ Key: file.key })),
+			Quiet: false,
+		};
+
+		const params = {
+			Bucket: process.env.AWS_BUCKET_NAME,
+			Delete,
+		};
+		console.log(params);
+		await s3Bucket.deleteObjects(
+			params,
+			(err: AWSError, data: S3.DeleteObjectsOutput) => {
+				if (err) console.log("Error \n" + { ...err });
+				else console.log("This is deleted images \n" + { ...data });
+			},
+		);
 	}
 }

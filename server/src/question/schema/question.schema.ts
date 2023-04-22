@@ -31,7 +31,6 @@ export class Question {
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: "User",
-				unique: true,
 			},
 		],
 		default: [],

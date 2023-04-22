@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Tag } from "./schema/tag.schema";
 import { Model } from "mongoose";
-import { CreateTagInterface } from "./interfaces/createTag.interface";
+import { CreateTagInterface } from "./interfaces/create.interface";
 
 @Injectable()
 export class TagService {
@@ -34,5 +34,13 @@ export class TagService {
 			console.log("ADD TAG", err);
 			throw new BadRequestException("Some tag ID doesn't exists");
 		}
+	}
+
+	async getAllTags(): Promise<any | null> {
+		const tags = await this.tagModel.find({}).select({
+			_id: 1,
+			name: 1,
+		});
+		return tags;
 	}
 }
