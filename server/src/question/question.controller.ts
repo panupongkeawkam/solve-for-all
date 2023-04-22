@@ -8,6 +8,7 @@ import {
 	UploadedFiles,
 	HttpStatus,
 	Get,
+	Delete,
 } from "@nestjs/common";
 import { Response, Request } from "express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
@@ -102,7 +103,9 @@ export class QuestionController {
 				question: newQuestionDocument,
 			});
 		} catch (err) {
-			await this.fileService.removeFiles(uploadedFiles);
+			if (files.length > 0) {
+				await this.fileService.removeFiles(uploadedFiles);
+			}
 			console.log(err);
 			throw new BadRequestException("Please provide the values");
 		}
@@ -115,8 +118,29 @@ export class QuestionController {
 		@Res() res: Response,
 	): Promise<Response> {
 		const question = await this.questionService.findQuestionByQuestionId(
-			req?.params.id,
+			req.params?.id,
 		);
-		return res.status(HttpStatus.OK).json({ question });
+		if (question) {
+			return res.status(HttpStatus.OK).json({ question });
+		}
+		throw new BadRequestException("Question doesn't exist anymore.");
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Delete(":id")
+	async deleteQuestion(
+		@Req() req: any,
+		@Res() res: Response,
+	): Promise<Response> {
+		const status = await this.questionService.findQuestionAndDelete(
+			req.params?.id,
+			req?.user?._id,
+		);
+		if (status) {
+			return res.status(HttpStatus.OK).json({
+				success: true,
+			});
+		}
+		throw new BadRequestException("You are unauthorize.");
 	}
 }

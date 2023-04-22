@@ -7,10 +7,3 @@ export function attachCookie(res: Response, token: string) {
 		expires: new Date(Date.now() + oneDay),
 	});
 }
-
-export function destroyCookie(res: Response) {
-	res.cookie("accessToken", "", {
-		// httpOnly: true,
-		expires: new Date(),
-	});
-}
