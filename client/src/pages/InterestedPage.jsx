@@ -3,22 +3,13 @@ import { Select, MenuItem, RadioGroup, Radio } from "@mui/material";
 
 import palette from "../style/palette";
 
+import { sortOptions, filterOptions } from "../utils/dummy";
+
 import EmptyData from "../components/EmptyData";
 
 export default (props) => {
   const [sortBy, setSortBy] = useState("popular");
   const [filter, setFilter] = useState("");
-
-  const sortOptions = [
-    { value: "popular", title: "Popular" },
-    { value: "latest", title: "Latest" },
-    { value: "oldest", title: "Oldest" },
-  ];
-
-  const filterOptions = [
-    { value: "unsolved", title: "Unsolved" },
-    { value: "solved", title: "Solved" },
-  ];
 
   const sortChangeHandler = (e) => {
     setSortBy(e.target.value);

@@ -22,13 +22,14 @@ import InterestedPage from "./pages/InterestedPage";
 import TagsPage from "./pages/TagsPage";
 import ComponentTestPage from "./pages/ComponentTestPage";
 import ProfilePage from "./pages/ProfilePage";
+import QuestionPage from "./pages/QuestionPage";
 
 export default () => {
   useEffect(() => {
     document.body.style.backgroundColor = theme.palette["base-1"].main;
 
     store.dispatch(fetchQuestions());
-    store.dispatch(authenticateUser())
+    store.dispatch(authenticateUser());
   }, []);
 
   // set up router
@@ -52,6 +53,10 @@ export default () => {
         {
           path: "/users/:userId",
           element: <ProfilePage />,
+        },
+        {
+          path: "/questions/:questionId",
+          element: <QuestionPage />,
         },
         {
           path: "/test",

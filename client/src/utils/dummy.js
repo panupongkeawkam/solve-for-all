@@ -1,4 +1,4 @@
-export const languages = [
+const languages = [
   { name: "java", title: "Java" },
   { name: "javascript", title: "JavaScript" },
   { name: "python", title: "Python" },
@@ -23,3 +23,16 @@ export const languages = [
   { name: "yaml", title: "YAML" },
   { name: "markdown", title: "MarkDown" },
 ];
+
+const sortOptions = [
+  { value: "popular", title: "Popular" },
+  { value: "latest", title: "Latest" },
+  { value: "oldest", title: "Oldest" },
+];
+
+const filterOptions = [
+  { value: "unsolved", title: "Unsolved" },
+  { value: "solved", title: "Solved" },
+];
+
+export { languages, sortOptions, filterOptions };

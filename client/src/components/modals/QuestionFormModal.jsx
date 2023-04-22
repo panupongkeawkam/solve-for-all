@@ -12,6 +12,8 @@ import * as Icon from "@mui/icons-material";
 
 import palette from "../../style/palette";
 
+import { imageToObjectURL } from "../../utils/lamda";
+
 import Button from "../buttons/Button";
 import InvisibleTextArea from "../inputs/InvisibleTextArea";
 import MultipleAction from "../buttons/MultipleAction";
@@ -48,21 +50,6 @@ export default ({
     { _id: "5", name: "coffee" },
     { _id: "6", name: "9arm" },
   ];
-
-  function parseBase64(file) {
-    let reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    let result = null;
-    reader.onload = function () {
-      result = reader.result;
-    };
-    reader.onerror = function (error) {
-      throw error;
-    };
-
-    return result;
-  }
 
   const actionChangeHandler = (actionName) => {
     if (actionName === "header") {
@@ -127,14 +114,6 @@ export default ({
     let questionBodiesVar = questionBodies;
     questionBodiesVar[index].language = language;
     setQuestionBodies([...questionBodiesVar]);
-  };
-
-  const imageToObjectURL = (imageArg) => {
-    if (typeof imageArg !== "object") {
-      return imageArg;
-    } else if (imageArg) {
-      return URL.createObjectURL(imageArg);
-    }
   };
 
   const deleteHandler = (index) => {

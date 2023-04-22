@@ -192,7 +192,7 @@ export default () => {
           </RouterLink>
         </div>
         {/* content pages */}
-        <div className="basis-4/6 h-screen overflow-y-auto pr-3">
+        <div className="basis-4/6 h-screen overflow-y-auto pr-3 pb-40">
           {/* for pages (routes children) */}
           <Outlet />
         </div>

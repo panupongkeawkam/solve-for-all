@@ -3,16 +3,12 @@ import { Select, MenuItem } from "@mui/material";
 
 import palette from "../style/palette";
 
+import { sortOptions } from "../utils/dummy";
+
 import EmptyData from "../components/EmptyData";
 
 export default (props) => {
   const [sortBy, setSortBy] = useState("popular");
-
-  const sortOptions = [
-    { value: "popular", title: "Popular" },
-    { value: "latest", title: "Latest" },
-    { value: "oldest", title: "Oldest" },
-  ];
 
   const sortChangeHandler = (e) => {
     setSortBy(e.target.value);
