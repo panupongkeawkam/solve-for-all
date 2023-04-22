@@ -2,7 +2,7 @@ import { Avatar } from "@mui/material";
 
 import palette from "../style/palette";
 
-export default ({ name, username, imageUrl, onClick = () => {}, ...props }) => {
+export default ({ name, username, imageUrl, onClick = () => { }, ...props }) => {
   if (window.screen.width < 1500 && name?.length > 15) {
     name = name.slice(0, 12) + "...";
   }

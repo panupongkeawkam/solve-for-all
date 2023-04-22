@@ -18,7 +18,7 @@ export default ({
   solved,
   answered,
   tags,
-  onEdit = () => {},
+  onEdit = () => { },
   ...props
 }) => {
   const user = useSelector((state) => state.user.user);

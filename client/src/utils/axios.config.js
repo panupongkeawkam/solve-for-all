@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie"
 
 axios.defaults.baseURL = import.meta.env.REACT_APP_SERVER_HOST
 
@@ -11,14 +12,14 @@ const authAxios = axios.create({
 });
 
 authAxios.interceptors.request.use(
-  function (config) {
-    const token = "<some_token>";
+  (config) => {
+    const token = Cookies.get("accessToken");
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
-  function (error) {
+  (error) => {
     return Promise.reject(error);
   }
 );
