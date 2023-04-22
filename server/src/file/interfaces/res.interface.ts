@@ -3,4 +3,3 @@ export class ResponseInterface {
 	key: string;
 	bucket: string;
 }
-

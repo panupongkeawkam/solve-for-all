@@ -1,4 +1,9 @@
-import { IsEmail, IsNotEmpty, MinLength } from "class-validator";
+import {
+	IsEmail,
+	IsNotEmpty,
+	IsStrongPassword,
+	MinLength,
+} from "class-validator";
 import { TagInterface } from "../../tag/interfaces/tag.interface";
 
 export class CreateUserDto {
@@ -10,6 +15,7 @@ export class CreateUserDto {
 	username: string;
 
 	@IsNotEmpty({ message: "Please provide your password" })
+	@IsStrongPassword()
 	@MinLength(6)
 	password: string;
 
@@ -40,3 +46,11 @@ export class EditUserDto {
 
 	image: string;
 }
+
+export class ChangePasswordDto {
+	@IsNotEmpty({ message: "Please provide your password" })
+	@IsStrongPassword()
+	password: string;
+}
+
+
