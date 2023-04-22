@@ -1,28 +1,53 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import Cookies from "js-cookie"
+
+import axios from "../utils/axios.config";
 
 const initialState = {
-  user: {
-    _id: "63ec5a42ae5dba49b35b6e0d",
-    username: "helloworld123",
-    email: "helloworld@gmail.com",
-    name: "Hello World",
-    birthday: "2023-02-15T05:09:24.216Z",
-    image: null,
-    bio: "Hello everyone my name is Hello nice to meet you",
-    reputation: 0,
-    tags: [{ _id: "flsiunso4u45", name: "react-native" }],
-    answered: 0,
-    solved: 0,
-    createdAt: "2023-02-15T05:19:27.355Z",
-    updatedAt: "2023-02-15T05:19:27.355Z",
-  },
+  user: undefined,
+  authenticatingUser: false
 };
+
+export const authenticateUser = createAsyncThunk("users/authenticateUser", async (arg, { getState }) => {
+  const userId = Cookies.get("userId")
+
+  if (userId) {
+    try {
+      const res = await axios.get(`/api/users/${userId}`)
+      return res.data.user
+    } catch (err) {
+      // when it not found user
+      return null
+    }
+  }
+
+  return null
+});
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
-  extraReducers(builder) {},
+  reducers: {
+    setUser: (state, action) => {
+      const user = action.payload
+      Cookies.set("userId", user._id, { expires: 1 })
+      state.user = user
+    }
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(authenticateUser.pending, (state, action) => {
+        state.authenticatingUser = true
+      }).addCase(authenticateUser.fulfilled, (state, action) => {
+        state.authenticatingUser = false
+        state.user = action.payload
+      }).addCase(authenticateUser.rejected, (state, action) => {
+        state.authenticatingUser = false
+        state.user = null
+      })
+  },
 });
+
+export const { setUser } = userSlice.actions
 
 export default userSlice.reducer;

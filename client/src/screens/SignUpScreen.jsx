@@ -5,6 +5,10 @@ import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette.js";
 
+import axios from "../utils/axios.config"
+import store from "../store/index.js";
+import { setUser } from "../store/userSlice"
+
 import TextField from "../components/inputs/TextField.jsx";
 import PasswordField from "../components/inputs/PasswordField.jsx";
 import TextArea from "../components/inputs/TextArea.jsx";
@@ -123,21 +127,25 @@ export default () => {
 
   // sign up
   const signupHandler = () => {
-    console.log(
-      username,
-      password,
-      rePassword,
-      name,
-      email,
-      bio,
-      birthday,
-      selectedTags
-    );
     setLoading(true);
-    setTimeout(() => {
+    axios.post("/api/users/signup", {
+      username: username,
+      password: password,
+      name: name,
+      email: email,
+      bio: bio,
+      birthday: birthday,
+      tags: selectedTags
+    }).then(res => {
+      store.dispatch(setUser(res.data.user));
       setLoading(false);
       navigate("/");
-    }, 2000);
+    })
+
+    // setTimeout(() => {
+    //   setLoading(false);
+    //   navigate("/");
+    // }, 2000);
   };
 
   // step 1

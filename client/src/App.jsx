@@ -7,13 +7,14 @@ import axios from "./utils/axios.config";
 
 import store from "./store/index";
 import theme from "./style/mui.config";
-import { fetchPosts } from "./store/postSlice";
+import { fetchQuestions } from "./store/questionSlice";
+import { authenticateUser } from "./store/userSlice";
 
 // app screens
-import HomeScreen from "./containers/HomeScreen";
-import LoginScreen from "./containers/LoginScreen";
-import SignUpScreen from "./containers/SignUpScreen";
-import NotFoundScreen from "./containers/NotFoundScreen";
+import HomeScreen from "./screens/HomeScreen";
+import LoginScreen from "./screens/LoginScreen";
+import SignUpScreen from "./screens/SignUpScreen";
+import NotFoundScreen from "./screens/NotFoundScreen";
 
 // children of HomeScreen
 import HomePage from "./pages/HomePage";
@@ -25,7 +26,9 @@ import ProfilePage from "./pages/ProfilePage";
 export default () => {
   useEffect(() => {
     document.body.style.backgroundColor = theme.palette["base-1"].main;
-    store.dispatch(fetchPosts());
+
+    store.dispatch(fetchQuestions());
+    store.dispatch(authenticateUser())
   }, []);
 
   // set up router

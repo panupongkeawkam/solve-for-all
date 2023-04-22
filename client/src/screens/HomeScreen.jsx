@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Link as RouterLink, useLocation, Outlet } from "react-router-dom";
 import { IconButton, Menu, Badge } from "@mui/material";
 import * as Icon from "@mui/icons-material";
+import Cookies from "js-cookie"
 
 import palette from "../style/palette";
 
@@ -15,10 +16,11 @@ import User from "../components/User";
 import SideBarNavigatorButton from "../components/buttons/SideBarNavigatorButton";
 import SmallSearchField from "../components/inputs/SmallSearchField";
 import EmptyData from "../components/EmptyData";
-import userSlice from "../store/userSlice";
+import LoadingIndicator from "../components/LoadingIndicator";
 
 export default () => {
   const user = useSelector((state) => state.user.user);
+  const authenticatingUser = useSelector((state) => state.user.authenticatingUser);
   // const suggestedUsers = useSelector((state) => state.user.suggestedUsers); *ASSUMED*
   const location = useLocation();
 
@@ -28,9 +30,7 @@ export default () => {
   const [guestMode, setGuestMode] = useState(!Boolean(user));
 
   useEffect(() => {
-    if (!user) {
-      setGuestMode(true);
-    }
+    setGuestMode(!user);
   }, [user]);
 
   const searchSubmitHandler = (searchQuery) => {
@@ -58,8 +58,10 @@ export default () => {
   };
 
   const logoutHandler = () => {
-    window.location.href = "/";
+    Cookies.remove("accessToken")
+    Cookies.remove("userId")
     setShowConfirmLogoutModal(false);
+    window.location.href = "/";
   };
 
   const NotificationAnchor = () => (
@@ -234,6 +236,7 @@ export default () => {
         danger
         onClose={toggleConfirmLogoutModalHandler}
       />
+      <LoadingIndicator active={authenticatingUser} />
     </div>
   );
 };

@@ -3,12 +3,15 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette.js";
+import axios from "../utils/axios.config"
+import { setUser } from "../store/userSlice.js";
 
 import TextField from "../components/inputs/TextField.jsx";
 import PasswordField from "../components/inputs/PasswordField.jsx";
 import Logo from "../components/Logo.jsx";
 import Button from "../components/buttons/Button.jsx";
 import LoadingIndicator from "../components/LoadingIndicator.jsx";
+import store from "../store/index.js";
 
 export default () => {
   const [loading, setLoading] = useState(false);
@@ -36,12 +39,18 @@ export default () => {
 
   // login
   const loginHandler = () => {
-    console.log(username, password);
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/");
-    }, 2000);
+
+    axios.post("/api/users/login", {
+      username, password
+    }).then(res => {
+      store.dispatch(setUser(res.data.user))
+      setLoading(false)
+      window.location.href = "/"
+    }).catch(err => {
+      alert(err.response.data.message)
+      setLoading(false)
+    })
   };
 
   return (

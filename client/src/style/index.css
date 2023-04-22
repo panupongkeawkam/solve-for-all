@@ -6,7 +6,7 @@
 
 body {
   margin: 0;
-  font-family: "Karla", sans-serif;
+  font-family: "Karla", sans-serif, "IBM Plex Sans Thai", sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
