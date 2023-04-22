@@ -1,4 +1,4 @@
-import { attachCookie, destroyCookie } from "./utils/cookie.util";
+import { attachCookie } from "./utils/cookie.util";
 import {
 	Post,
 	Get,
@@ -69,14 +69,6 @@ export class UserController {
 		res.status(HttpStatus.OK).json({
 			user: req.user,
 		});
-	}
-
-	// logout function
-	@UseGuards(JwtAuthGuard)
-	@Post("logout")
-	async logout(@Req() req: Request, @Res() res: Response) {
-		destroyCookie(res);
-		res.status(HttpStatus.OK).json({ message: "logout successfully" });
 	}
 
 	// suggest user function
@@ -172,7 +164,7 @@ export class UserController {
 	}
 
 	@Get("test/no-auth")
-	async testRoute(@Res() res: Response) { 
-		return res.status(HttpStatus.OK).send("Hello there.")
+	async testRoute(@Res() res: Response) {
+		return res.status(HttpStatus.OK).send("Hello there.");
 	}
 }

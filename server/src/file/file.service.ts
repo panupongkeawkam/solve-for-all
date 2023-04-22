@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { AWSError, S3 } from "aws-sdk";
 import { v4 as uuid } from "uuid";
+import { S3, AWSError } from "aws-sdk";
 
 import { FileInterface } from "./interfaces/files.interface";
 import { ResponseInterface } from "./interfaces/res.interface";
@@ -23,7 +23,7 @@ export class FileService {
 				};
 				return await s3Bucket.upload(params).promise();
 			}),
-		).then((images) => images)
+		).then((images) => images);
 
 		const responses: ResponseInterface[] = uploadedFiles.map((file) => ({
 			path: file?.Location,

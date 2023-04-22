@@ -19,7 +19,6 @@ export class CreateUserDto {
 	@MinLength(6)
 	password: string;
 
-	@IsNotEmpty({ message: "Please provide your email" })
 	@IsEmail()
 	email: string;
 
@@ -34,7 +33,6 @@ export class EditUserDto {
 	@IsNotEmpty({ message: "Please provide your name" })
 	name: string;
 
-	@IsNotEmpty({ message: "Please provide your email" })
 	@IsEmail()
 	email: string;
 

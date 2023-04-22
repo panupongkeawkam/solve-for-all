@@ -35,4 +35,16 @@ export class QuestionService {
 		}
 		return null;
 	}
+
+	// Find question by question id then delete question
+	async findQuestionAndDelete(
+		_id: string,
+		userId: string,
+	): Promise<Question | null> {
+		const status = await this.questionModel.findOneAndDelete({
+			_id,
+			createdBy: userId,
+		});
+		return status;
+	}
 }
