@@ -9,7 +9,7 @@ import {
 import { TagService } from "./tag.service";
 import { Response, Request } from "express";
 
-@Controller("tag")
+@Controller("tags")
 export class TagController {
 	constructor(private tagService: TagService) {}
 

@@ -9,6 +9,7 @@ import {
 	HttpStatus,
 	Get,
 	Delete,
+	Put,
 } from "@nestjs/common";
 import { Response, Request } from "express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
@@ -18,6 +19,11 @@ import { TagService } from "../tag/tag.service";
 import { findExistTags, findNotExistTags } from "./utils/filter.util";
 import { FileService } from "src/file/file.service";
 import { BadRequestException } from "@nestjs/common";
+import { DeleteQuestionDto } from "./dto/deleteQuestion.dto";
+import { UserService } from "src/user/user.service";
+import { previewFormat } from "./utils/formatter.utls";
+import { isGeneratorObject } from "util/types";
+import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
 
 @Controller("questions")
 export class QuestionController {
@@ -25,6 +31,7 @@ export class QuestionController {
 		private readonly questionService: QuestionService,
 		private readonly tagService: TagService,
 		private readonly fileService: FileService,
+		private readonly userService: UserService,
 	) {}
 
 	@UseGuards(JwtAuthGuard)
@@ -85,10 +92,11 @@ export class QuestionController {
 			);
 
 			const newTags = await this.tagService.createNewTags(notExistTags);
+			const newTagsId = newTags.map((tag) => tag._id);
 
 			newQuestionDocument.tags = [
 				...newQuestionDocument.tags,
-				...newTags,
+				...newTagsId,
 			];
 			newQuestionDocument.save();
 
@@ -99,8 +107,19 @@ export class QuestionController {
 					"question",
 				);
 			}
+
+			const userDetail = await this.userService.findUserByUserIdLess(
+				newQuestionDocument.createdBy.toString(),
+			);
+
+			const response = previewFormat(
+				newQuestionDocument,
+				userDetail,
+				newTags,
+			);
+
 			return res.status(HttpStatus.CREATED).json({
-				question: newQuestionDocument,
+				question: response,
 			});
 		} catch (err) {
 			if (files.length > 0) {
@@ -117,30 +136,78 @@ export class QuestionController {
 		@Req() req: Request,
 		@Res() res: Response,
 	): Promise<Response> {
-		const question = await this.questionService.findQuestionByQuestionId(
-			req.params?.id,
-		);
+		const question: any =
+			await this.questionService.findQuestionByQuestionId(req.params?.id);
 		if (question) {
-			return res.status(HttpStatus.OK).json({ question });
+			const tagQuery = question.tags.map((tag) => tag.toString());
+			const tags = await this.tagService.findManyTags(tagQuery);
+			const createdBy = await this.userService.findUserByUserIdLess(
+				question.createdBy.toString(),
+			);
+			const response = previewFormat(question, createdBy, tags);
+			// increase viewed
+			this.questionService.increaseView(question?._id.toString());
+			return res.status(HttpStatus.OK).json({ question: response });
 		}
 		throw new BadRequestException("Question doesn't exist anymore.");
 	}
 
+	// Delete question by question id
 	@UseGuards(JwtAuthGuard)
 	@Delete(":id")
 	async deleteQuestion(
 		@Req() req: any,
 		@Res() res: Response,
 	): Promise<Response> {
-		const status = await this.questionService.findQuestionAndDelete(
-			req.params?.id,
-			req?.user?._id,
-		);
+		const query: DeleteQuestionDto = {
+			_id: req.params?.id,
+			userId: req?.user?._id,
+		};
+		const status = await this.questionService.findQuestionAndDelete(query);
 		if (status) {
 			return res.status(HttpStatus.OK).json({
 				success: true,
 			});
 		}
 		throw new BadRequestException("You are unauthorize.");
+	}
+
+	// like question by question id Not return yet
+	// (Optional) add condition is one of dislikedBy list or not
+	@UseGuards(JwtAuthGuard)
+	@Put(":id/liked")
+	async likeQuestion(@Req() req: any, @Res() res: Response): Promise<void> {
+		const query: InteractWithQuestionDto = {
+			_id: req.params.id,
+			userId: req.user?._id,
+			payload: {
+				participant: 1,
+				rating: 1,
+				action: "likedBy",
+			},
+		};
+		const question = await this.questionService.findOneAndInteract(query);
+		console.log(question);
+	}
+
+	// dislike question by question id Not return yet
+	// (Optional) add condition is one of likedBy list or not
+	@UseGuards(JwtAuthGuard)
+	@Put(":id/disliked")
+	async dislikeQuestion(
+		@Req() req: any,
+		@Res() res: Response,
+	): Promise<void> {
+		const query: InteractWithQuestionDto = {
+			_id: req.params.id,
+			userId: req.user._id,
+			payload: {
+				participant: 1,
+				rating: -1,
+				action: "dislikedBy",
+			},
+		};
+		const question = await this.questionService.findOneAndInteract(query);
+		console.log(question);
 	}
 }

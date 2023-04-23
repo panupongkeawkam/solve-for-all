@@ -26,6 +26,9 @@ export class Question {
 	@Prop({ default: 0 })
 	rating: number;
 
+	@Prop({ default: 0 })
+	answered: number;
+
 	@Prop({
 		type: [
 			{
@@ -36,6 +39,11 @@ export class Question {
 		default: [],
 	})
 	likedBy: User[];
+
+	@Prop({
+		default: 0,
+	})
+	participant: number;
 
 	@Prop({
 		type: [
