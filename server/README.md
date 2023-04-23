@@ -67,6 +67,7 @@
       viewed: Number,
       participant: Number,
       rating: Number,
+      answered: Number
       likedBy: String[],
       dislikedBy: String[],
       solvedBy: String,
@@ -190,11 +191,11 @@
 
 ```json
 {
-      "_id": "ObjectId(63ec5a42ae5dba49b3412svy)",
-      "repliedBy": "ObjectId(63ec5a42ae5dba49b33dz2fg)",
-      "message": "Wow this is very nice!",
-      "createdAt": "2023-02-15T10:55:45.116Z",
-      "updatedAt": "2023-02-15T10:55:45.116Z"
+	"_id": "ObjectId(63ec5a42ae5dba49b3412svy)",
+	"repliedBy": "ObjectId(63ec5a42ae5dba49b33dz2fg)",
+	"message": "Wow this is very nice!",
+	"createdAt": "2023-02-15T10:55:45.116Z",
+	"updatedAt": "2023-02-15T10:55:45.116Z"
 }
 ```
 

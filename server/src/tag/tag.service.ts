@@ -10,14 +10,14 @@ export class TagService {
 
 	async createNewTags(models: CreateTagInterface): Promise<any> {
 		const createdTag = await this.tagModel.insertMany(models);
-		return createdTag.map(({ _id }) => _id);
+		return createdTag.map(({ _id, name }) => ({ _id, name }));
 	}
 
 	async addQuestionOrUserIdToTag(
 		tagsId: string[],
 		targetId: string,
 		from: string,
-	): Promise<any> {
+	): Promise<void> {
 		const pushKey = from === "question" ? "questions" : "interestedBy";
 		try {
 			tagsId.forEach(async (tagId) => {
@@ -31,16 +31,27 @@ export class TagService {
 				);
 			});
 		} catch (err) {
-			console.log("ADD TAG", err);
 			throw new BadRequestException("Some tag ID doesn't exists");
 		}
 	}
 
-	async getAllTags(): Promise<any | null> {
+	async getAllTags(): Promise<Tag[] | null> {
 		const tags = await this.tagModel.find({}).select({
 			_id: 1,
 			name: 1,
 		});
+		return tags;
+	}
+
+	async findManyTags(query: string[]): Promise<Tag[] | null> {
+		const tags = await this.tagModel
+			.find({
+				_id: query,
+			})
+			.select({
+				_id: 1,
+				name: 1,
+			});
 		return tags;
 	}
 }

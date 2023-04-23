@@ -15,7 +15,7 @@ export class CreateUserDto {
 	username: string;
 
 	@IsNotEmpty({ message: "Please provide your password" })
-	@IsStrongPassword()
+	// @IsStrongPassword()
 	@MinLength(6)
 	password: string;
 
@@ -50,5 +50,3 @@ export class ChangePasswordDto {
 	@IsStrongPassword()
 	password: string;
 }
-
-

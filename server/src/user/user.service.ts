@@ -43,9 +43,8 @@ export class UserService {
 		}
 	}
 
-	async findUserByUserId(_id: string): Promise<User | null> {
-		console.log(_id);
-		const user = await this.userModel.findById(_id).select({
+	async findUserByUserId(query: string): Promise<User | null> {
+		const user = await this.userModel.findById(query).select({
 			password: 0,
 			createdAt: 0,
 			updatedAt: 0,
@@ -54,6 +53,15 @@ export class UserService {
 			return user;
 		}
 		return null;
+	}
+
+	async findUserByUserIdLess(query: string): Promise<User | null> {
+		const user = await this.userModel.findOne({ _id: query }).select({
+			name: 1,
+			username: 1,
+			image: 1,
+		});
+		return user;
 	}
 
 	// username name id
