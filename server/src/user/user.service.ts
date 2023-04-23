@@ -8,6 +8,7 @@ import { User } from "./schema/user.schema";
 import { Model } from "mongoose";
 import { CreateUserDto, EditUserDto } from "./dto/user.dto";
 import { UserDetail } from "./interfaces/user.interface";
+import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
 
 @Injectable()
 export class UserService {
@@ -126,5 +127,19 @@ export class UserService {
 			return true;
 		}
 		return false;
+	}
+
+	async reputationCompute(query: ReputationQueryDto): Promise<void> {
+		const reputation = query.isLike ? 1 : -1;
+		await this.userModel.findOneAndUpdate(
+			{
+				_id: query.createdBy,
+			},
+			{
+				$inc: {
+					reputation: reputation,
+				},
+			},
+		);
 	}
 }

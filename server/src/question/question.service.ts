@@ -85,4 +85,12 @@ export class QuestionService {
 		);
 		return question;
 	}
+
+	async findAllQuestion(): Promise<Question[] | null> {
+		// Find 10 questions is ordering by the most participant.
+		return await this.questionModel
+			.find({})
+			.sort({ participant: 1 })
+			.limit(10);
+	}
 }
