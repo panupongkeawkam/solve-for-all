@@ -8,12 +8,12 @@ dotenv.config();
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 8080,
+    port: process.env.PORT,
     host: true,
     strictPort: true,
     proxy: {
       "/api": {
-        target: process.env.REACT_APP_SERVER_HOST,
+        target: process.env.SERVER_HOST,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

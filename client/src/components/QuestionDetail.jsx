@@ -95,7 +95,7 @@ export default ({
           <div className="basis-1/2 flex flex-row flex-wrap justify-end">
             <div className="flex flex-row mr-8">
               {isSolved ? (
-                <div className="flex flex-row ">
+                <div className="flex flex-row justify-center items-center">
                   <TaskAltOutlinedIcon color={"correct"} fontSize="small" />
                   <span className="ml-2" style={{ color: palette.correct }}>
                     Solved

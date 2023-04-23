@@ -1,14 +1,14 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-axios.defaults.baseURL = import.meta.env.REACT_APP_SERVER_HOST;
+axios.defaults.baseURL = import.meta.env.SERVER_HOST;
 
 const defaultAxios = axios.create({
-  baseURL: import.meta.env.REACT_APP_SERVER_HOST,
+  baseURL: import.meta.env.SERVER_HOST,
 });
 
 const authAxios = axios.create({
-  baseURL: import.meta.env.REACT_APP_SERVER_HOST,
+  baseURL: import.meta.env.SERVER_HOST,
 });
 
 authAxios.interceptors.request.use(

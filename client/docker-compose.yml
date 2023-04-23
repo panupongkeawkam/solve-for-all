@@ -1,0 +1,9 @@
+version: "3"
+services:
+  solveforall-client:
+    image: panupongkeawkam/solveforall-client
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "${PORT}:4173"
