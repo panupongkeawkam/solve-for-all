@@ -10,6 +10,7 @@ import {
 	Get,
 	Delete,
 	Put,
+	BadGatewayException,
 } from "@nestjs/common";
 import { Response, Request } from "express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
@@ -21,8 +22,10 @@ import { FileService } from "src/file/file.service";
 import { BadRequestException } from "@nestjs/common";
 import { DeleteQuestionDto } from "./dto/deleteQuestion.dto";
 import { UserService } from "src/user/user.service";
-import { previewFormat } from "./utils/formatter.utls";
+import { previewFormat } from "./utils/formatter.utils";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
+import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
+import { PreviewQuestionDto } from "./dto/previewQuestion.dto";
 
 @Controller("questions")
 export class QuestionController {
@@ -32,6 +35,40 @@ export class QuestionController {
 		private readonly fileService: FileService,
 		private readonly userService: UserService,
 	) {}
+
+	@Get()
+	async findAllQuestion(
+		@Req() req: Request,
+		@Res() res: Response,
+	): Promise<Response | null> {
+		try {
+			const questions = await this.questionService.findAllQuestion();
+
+			const responses: PreviewQuestionDto[] = await Promise.all(
+				questions.map(async (question) => {
+					const user = await this.userService.findUserByUserIdLess(
+						question?.createdBy.toString(),
+					);
+					const tagQuery = question?.tags.map((tag) =>
+						tag.toString(),
+					);
+					const tags = await this.tagService.findManyTags(tagQuery);
+					return previewFormat(question, user, tags);
+				}),
+			);
+			if (responses) {
+				return res.status(HttpStatus.OK).json({
+					questions: responses,
+				});
+			}
+		} catch (err) {
+			console.log(
+				`Error from question controller find all question function`,
+			);
+			console.log(err);
+			throw new BadRequestException("Something when wrong on server.");
+		}
+	}
 
 	@UseGuards(JwtAuthGuard)
 	@Post()
@@ -144,6 +181,7 @@ export class QuestionController {
 				question.createdBy.toString(),
 			);
 			const response = previewFormat(question, createdBy, tags);
+
 			// increase viewed
 			this.questionService.increaseView(question?._id.toString());
 			return res.status(HttpStatus.OK).json({ question: response });
@@ -171,40 +209,50 @@ export class QuestionController {
 		throw new BadRequestException("You are unauthorize.");
 	}
 
-	// like question by question id Not return yet
+	// like and dislike question by question id Not return yet
 	@UseGuards(JwtAuthGuard)
-	@Put(":id/liked")
-	async likeQuestion(@Req() req: any, @Res() res: Response): Promise<void> {
-		const query: InteractWithQuestionDto = {
-			_id: req.params.id,
-			userId: req.user?._id,
-			payload: {
-				participant: 1,
-				rating: 1,
-				action: "likedBy",
-			},
-		};
-		const question = await this.questionService.findOneAndInteract(query);
-		console.log(question);
-	}
-
-	// dislike question by question id Not return yet
-	@UseGuards(JwtAuthGuard)
-	@Put(":id/disliked")
-	async dislikeQuestion(
+	@Put(":id")
+	async likeQuestion(
 		@Req() req: any,
 		@Res() res: Response,
-	): Promise<void> {
-		const query: InteractWithQuestionDto = {
-			_id: req.params.id,
-			userId: req.user._id,
-			payload: {
-				participant: 1,
-				rating: -1,
-				action: "dislikedBy",
-			},
-		};
-		const question = await this.questionService.findOneAndInteract(query);
-		console.log(question);
+	): Promise<Response> {
+		try {
+			const isLike = req.query.like.toLowerCase() === "true";
+			const isLikeQuery: InteractWithQuestionDto = {
+				_id: req.params.id,
+				userId: req.user?._id,
+				payload: {
+					participant: isLike ? 1 : -1,
+					rating: isLike ? 1 : -1,
+					action: isLike ? "likedBy" : "dislikedBy",
+				},
+			};
+			const question = await this.questionService.findOneAndInteract(
+				isLikeQuery,
+			);
+
+			// behind screen work
+			if (!question)
+				throw new BadRequestException(
+					"Question doesn't exists anymore.",
+				);
+
+			const reputationQuery: ReputationQueryDto = {
+				_id: req?.user?._id,
+				createdBy: question.createdBy.toString(),
+				isLike,
+			};
+
+			this.userService.reputationCompute(reputationQuery);
+			return res.status(HttpStatus.OK).json({
+				success: true,
+			});
+		} catch (err) {
+			console.log(
+				`Error from question controller like question functional`,
+			);
+			console.log(err);
+			throw new BadGatewayException("something went wrong from server");
+		}
 	}
 }
