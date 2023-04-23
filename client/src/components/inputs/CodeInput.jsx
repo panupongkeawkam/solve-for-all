@@ -74,7 +74,7 @@ export default ({ code, onCodeChange, language, onLanguageChange }) => {
               padding: 0,
               marginBottom: "3px",
               lineHeight: "16px",
-              OverflowY: "visible",
+              overflowY: "hidden",
             }}
             onClick={() => setCodeState("edit")}
           >

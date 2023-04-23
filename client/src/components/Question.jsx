@@ -32,11 +32,11 @@ export default ({
       onClick={() => onView()}
     >
       <div className="basis-auto mr-8">
-        <Avatar
-          alt={authorUsername}
-          src={authorProfilePicture}
-          sx={{ width: 64, height: 64 }}
-        />
+        {authorProfilePicture ? (
+          <Avatar alt={authorUsername} src={authorProfilePicture} sx={{ width: 64, height: 64 }} />
+        ) : (
+          <Avatar alt={authorUsername} sx={{ width: 64, height: 64, fontSize: "1.8em" }}>{authorUsername[0]?.toUpperCase()}</Avatar>
+        )}
       </div>
       <div className="basis-full flex flex-col">
         <div className="basis-full flex flex-row mb-1">

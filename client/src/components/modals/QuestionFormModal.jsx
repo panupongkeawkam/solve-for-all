@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogTitle,
@@ -14,6 +15,8 @@ import * as Icon from "@mui/icons-material";
 import palette from "../../style/palette";
 import store from "../../store/index"
 import { fetchTags } from "../../store/tagSlice";
+import { appendQuestion } from "../../store/questionSlice";
+import { authAxios } from "../../utils/axios.config";
 
 import { imageToObjectURL } from "../../utils/lamda";
 
@@ -36,6 +39,7 @@ export default ({
 
   const user = useSelector(state => state.user.user)
   const tags = useSelector(state => state.tag.tags)
+  const navigate = useNavigate()
 
   const [title, setTitle] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
@@ -127,13 +131,32 @@ export default ({
     setSelectedTags(tags);
   };
 
-  const submitHandler = () => {
+  const submitHandler = async () => {
     console.log(title, questionBodies, selectedTags);
-    setLoading(true);
-    setTimeout(() => {
+    const formData = new FormData()
+
+    formData.append("title", JSON.stringify(title))
+    formData.append("body", JSON.stringify(questionBodies))
+    formData.append("tags", JSON.stringify(selectedTags))
+    questionBodies.forEach((questionBody, index) => {
+      if (questionBody.type === "image") {
+        formData.append("images", questionBody.image)
+      }
+    })
+
+    try {
+      setLoading(true);
+      const res = await authAxios.post(`/api/questions`, formData, {
+        withCredentials: true,
+      })
+      const question = res.data.question
+      store.dispatch(appendQuestion(question))
       setLoading(false);
-      onClose();
-    }, 2000);
+      navigate(`/questions/${question._id}`)
+    } catch (err) {
+      alert(err.response.data.message)
+      setLoading(false);
+    }
   };
 
   return (
@@ -227,7 +250,7 @@ export default ({
                   placeholder={"Title"}
                   onTextChange={setTitle}
                   fontSize="32px"
-                  fontFamily={"Lora, serif"}
+                  fontFamily={"Lora, serif, IBM Plex Sans Thai, sans-serif"}
                 />
               </div>
             </div>
@@ -248,7 +271,7 @@ export default ({
                             headerOrParagraphChangeHandler(text, index)
                           }
                           fontSize="24px"
-                          fontFamily={"Lora, serif"}
+                          fontFamily={"Lora, serif, IBM Plex Sans Thai, sans-serif"}
                         />
                       </div>
                       <div className="basis-1/6 pl-2">
@@ -270,7 +293,7 @@ export default ({
                           }
                           fontSize="18px"
                           onDelete={() => deleteHandler(index)}
-                          fontFamily={"Lora, serif"}
+                          fontFamily={"Lora, serif, IBM Plex Sans Thai, sans-serif"}
                         />
                       </div>
                       <div className="basis-1/6 pl-2">
