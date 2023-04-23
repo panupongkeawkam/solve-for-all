@@ -27,6 +27,12 @@ import { checkPermission } from "../utils/permission.utils";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { FileService } from "../file/file.service";
 import { TagService } from "src/tag/tag.service";
+import { QuestionService } from "src/question/question.service";
+import { PreviewQuestionDto } from "src/question/dto/previewQuestion.dto";
+import {
+	previewQuestionFormat,
+	previewUserFormat,
+} from "src/utils/formatter.utils";
 
 @Controller("users")
 export class UserController {
@@ -35,6 +41,7 @@ export class UserController {
 		private authService: AuthService,
 		private fileService: FileService,
 		private tagService: TagService,
+		private questionService: QuestionService,
 	) {}
 
 	// sign-up function
@@ -85,8 +92,25 @@ export class UserController {
 	// find one user by user ID
 	@Get(":id")
 	async findUserById(@Req() req: Request, @Res() res: Response) {
-		const user = await this.userService.findUserByUserId(req.params.id);
-		res.status(HttpStatus.OK).json({ user });
+		const user = await this.userService.findUserByUserId(req.params?.id);
+		const questions = await this.questionService.findQuestionsByUserId(
+			req.params?.id,
+		);
+
+		const questionResponses: PreviewQuestionDto[] = await Promise.all(
+			questions.map(async (question) => {
+				const tagQuery = question.tags.map((tag) => tag.toString());
+				const tags = await this.tagService.findManyTags(tagQuery);
+				return previewQuestionFormat(question, user, tags);
+			}),
+		);
+
+		const tagQuery = user.tags.map((tag) => tag.toString());
+		const tags = await this.tagService.findManyTags(tagQuery);
+		const response = previewUserFormat(tags, user, questionResponses);
+		res.status(HttpStatus.OK).json({
+			user: response,
+		});
 	}
 
 	// edit user information function
@@ -158,39 +182,6 @@ export class UserController {
 			throw new BadRequestException("something went wrong");
 		}
 	}
-
-	// 	old User {
-	//   _id: new ObjectId("6444fb343ca4dde95cf324b3"),
-	//   username: 'ironman2',
-	//   email: 'pithawat555@gmail.com',
-	//   name: 'pithawatza',
-	//   image: 'https://solve-for-all-bucket.s3.amazonaws.com/9f1026e3-fdcc-484d-b76b-ac117aba5961-javascript_code.jpeg',
-	//   tags: [ new ObjectId("6444f761fc5bd43a7dcb0034") ],
-	//   birthday: 1998-02-10T17:00:00.000Z,
-	//   bio: 'my name is world',
-	//   reputation: 0,
-	//   answered: 0,
-	//   solved: 0,
-	//   __v: 0
-	// }
-	// new User {
-	//   _id: new ObjectId("6444fb343ca4dde95cf324b3"),
-	//   username: 'ironman2',
-	//   email: 'pithawat555@gmail.com',
-	//   name: 'pithawatza',
-	//   image: 'https://solve-for-all-bucket.s3.amazonaws.com/3a5759bd-73c4-44e2-87de-b6325a5aaa20-javascript_code.jpeg',
-	//   tags: [
-	//     new ObjectId("6444f761fc5bd43a7dcb0034"),
-	//     new ObjectId("6444f761fc5bd43a7dcb0034")
-	//   ],
-	//   birthday: 1998-02-10T17:00:00.000Z,
-	//   bio: 'my name is world',
-	//   reputation: 0,
-	//   answered: 0,
-	//   solved: 0,
-	//   __v: 0
-	// }
-	// new Tag [ '6444f761fc5bd43a7dcb0034', '6444f761fc5bd43a7dcb0034' ]
 
 	// update user password
 	@UseGuards(JwtAuthGuard)

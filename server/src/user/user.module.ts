@@ -7,6 +7,7 @@ import { AuthService } from "src/auth/auth.service";
 import { JwtModule } from "@nestjs/jwt";
 import { TagModule } from "src/tag/tag.module";
 import { FileModule } from "../file/file.module";
+import { QuestionModule } from "src/question/question.module";
 
 @Module({
 	imports: [
@@ -19,6 +20,7 @@ import { FileModule } from "../file/file.module";
 		JwtModule,
 		TagModule,
 		FileModule,
+		QuestionModule,
 	],
 	providers: [UserService, AuthService],
 	controllers: [UserController],

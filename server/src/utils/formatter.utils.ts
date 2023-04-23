@@ -1,5 +1,6 @@
 import { PreviewTagDto } from "src/tag/dto/previewTag.dto";
 import { PreviewQuestionDto } from "../question/dto/previewQuestion.dto";
+import { PreviewUserDto } from "src/user/dto/previewUser.dto";
 
 export function previewQuestionFormat(
 	question: any,
@@ -40,5 +41,25 @@ export function previewTagFormat(
 		totalQuestion: tag?.questions.length,
 		questions: questions,
 		createdAt: tag?.createdAt,
+	};
+}
+
+export function previewUserFormat(
+	tags: any,
+	user: any,
+	questions: any,
+): PreviewUserDto | null {
+	return {
+		_id: user?._id,
+		username: user?.username,
+		email: user?.email,
+		name: user?.name,
+		image: user?.image,
+		tags,
+		birthday: user?.birthday,
+		reputation: user?.reputation,
+		answered: user?.answered,
+		solved: user?.solved,
+		questions: questions,
 	};
 }

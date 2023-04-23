@@ -86,14 +86,15 @@ export class QuestionService {
 		return question;
 	}
 
+	// Find 10 questions is ordering by the most participant.
 	async findAllQuestion(): Promise<Question[] | null> {
-		// Find 10 questions is ordering by the most participant.
 		return await this.questionModel
 			.find({})
 			.sort({ participant: 1 })
 			.limit(10);
 	}
 
+	// Find questions by question ids
 	async findQuestions(query: string[]): Promise<Question[] | null> {
 		return await this.questionModel
 			.find({
@@ -101,5 +102,13 @@ export class QuestionService {
 			})
 			.sort({ participant: 1 })
 			.limit(10);
+	}
+
+	async findQuestionsByUserId(query: string): Promise<Question[] | null> {
+		return await this.questionModel
+			.find({
+				createdBy: query,
+			})
+			.sort({ participant: 1 });
 	}
 }
