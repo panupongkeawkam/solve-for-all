@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Tag } from "./schema/tag.schema";
 import { Model } from "mongoose";
@@ -31,7 +31,58 @@ export class TagService {
 				);
 			});
 		} catch (err) {
-			throw new BadRequestException("Some tag ID doesn't exists");
+			console.log(
+				"error from tag service add question or user id to tag function",
+			);
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
+		}
+	}
+
+	async pullUserIdFromTag(tagsId: string[], targetId: string): Promise<void> {
+		try {
+			tagsId.forEach(async (tagId) => {
+				await this.tagModel.findOneAndUpdate(
+					{
+						_id: tagId,
+					},
+					{
+						$pull: {
+							interestedBy: targetId,
+						},
+					},
+				);
+			});
+		} catch (err) {
+			console.log(
+				"error from tag service pull user id from tag function",
+			);
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
+		}
+	}
+
+	async pullQuestionIdFromTag(
+		tagsId: string[],
+		targetId: string,
+	): Promise<void> {
+		try {
+			tagsId.forEach(async (tagId) => {
+				await this.tagModel.findOneAndUpdate(
+					{
+						_id: tagId,
+					},
+					{
+						$pull: {
+							questions: targetId,
+						},
+					},
+				);
+			});
+		} catch (err) {
+			console.log("error from tag service pull user id from tag");
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
 
@@ -53,5 +104,14 @@ export class TagService {
 				name: 1,
 			});
 		return tags;
+	}
+
+	async findTagByTagId(query: string): Promise<Tag | null> {
+		const tag = await this.tagModel.findById(query).select({
+			_id: 1,
+			questions: 1,
+			name: 1,
+		});
+		return tag;
 	}
 }

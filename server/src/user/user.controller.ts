@@ -26,6 +26,7 @@ import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { checkPermission } from "../utils/permission.utils";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { FileService } from "../file/file.service";
+import { TagService } from "src/tag/tag.service";
 
 @Controller("users")
 export class UserController {
@@ -33,6 +34,7 @@ export class UserController {
 		private userService: UserService,
 		private authService: AuthService,
 		private fileService: FileService,
+		private tagService: TagService,
 	) {}
 
 	// sign-up function
@@ -113,19 +115,82 @@ export class UserController {
 			fileName: file.originalname,
 		};
 		try {
+			const oldUser = await this.userService.findUserByUserId(
+				req.params.id,
+			);
+			const tags = JSON.parse(req.body?.tags);
 			checkPermission(req.user?._id, req.params.id);
 			const uploadedFile = await this.fileService.fileUpload(params);
-			const query = { ...info, image: uploadedFile?.path };
+			const query = { ...info, image: uploadedFile?.path, tags };
 			const user = await this.userService.editUserByUserId(
 				query,
 				req.params.id,
 			);
+
+			const oldTagsString = oldUser.tags.map((tag) => tag.toString());
+			const newTagsString = user.tags.map((tag) => tag.toString());
+
+			const oldTagsSet = new Set(oldTagsString);
+			const newTagsSet = new Set(newTagsString);
+
+			const newTags = newTagsString.filter((tag) => {
+				return !oldTagsSet.has(tag);
+			});
+
+			const removedTags = oldTagsString.filter((tag) => {
+				return !newTagsSet.has(tag);
+			});
+
+			if (newTags.length > 0) {
+				this.tagService.addQuestionOrUserIdToTag(
+					newTags,
+					req.params?.id,
+					"user",
+				);
+			}
+			if (removedTags.length > 0) {
+				this.tagService.pullUserIdFromTag(removedTags, req.params?.id);
+			}
+
 			res.status(HttpStatus.OK).json({ user });
 		} catch (err) {
 			console.log(err);
 			throw new BadRequestException("something went wrong");
 		}
 	}
+
+	// 	old User {
+	//   _id: new ObjectId("6444fb343ca4dde95cf324b3"),
+	//   username: 'ironman2',
+	//   email: 'pithawat555@gmail.com',
+	//   name: 'pithawatza',
+	//   image: 'https://solve-for-all-bucket.s3.amazonaws.com/9f1026e3-fdcc-484d-b76b-ac117aba5961-javascript_code.jpeg',
+	//   tags: [ new ObjectId("6444f761fc5bd43a7dcb0034") ],
+	//   birthday: 1998-02-10T17:00:00.000Z,
+	//   bio: 'my name is world',
+	//   reputation: 0,
+	//   answered: 0,
+	//   solved: 0,
+	//   __v: 0
+	// }
+	// new User {
+	//   _id: new ObjectId("6444fb343ca4dde95cf324b3"),
+	//   username: 'ironman2',
+	//   email: 'pithawat555@gmail.com',
+	//   name: 'pithawatza',
+	//   image: 'https://solve-for-all-bucket.s3.amazonaws.com/3a5759bd-73c4-44e2-87de-b6325a5aaa20-javascript_code.jpeg',
+	//   tags: [
+	//     new ObjectId("6444f761fc5bd43a7dcb0034"),
+	//     new ObjectId("6444f761fc5bd43a7dcb0034")
+	//   ],
+	//   birthday: 1998-02-10T17:00:00.000Z,
+	//   bio: 'my name is world',
+	//   reputation: 0,
+	//   answered: 0,
+	//   solved: 0,
+	//   __v: 0
+	// }
+	// new Tag [ '6444f761fc5bd43a7dcb0034', '6444f761fc5bd43a7dcb0034' ]
 
 	// update user password
 	@UseGuards(JwtAuthGuard)

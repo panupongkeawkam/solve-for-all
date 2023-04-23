@@ -3,26 +3,89 @@ import {
 	Get,
 	Req,
 	Res,
-	BadGatewayException,
 	HttpStatus,
+	BadRequestException,
+	InternalServerErrorException,
+	Inject,
+	forwardRef,
 } from "@nestjs/common";
 import { TagService } from "./tag.service";
 import { Response, Request } from "express";
+import { QuestionService } from "src/question/question.service";
+import { PreviewQuestionDto } from "src/question/dto/previewQuestion.dto";
+import { UserService } from "src/user/user.service";
+import {
+	previewQuestionFormat,
+	previewTagFormat,
+} from "src/utils/formatter.utils";
+import { PreviewTagDto } from "./dto/previewTag.dto";
 
 @Controller("tags")
 export class TagController {
-	constructor(private tagService: TagService) {}
+	constructor(
+		private readonly tagService: TagService,
+		@Inject(forwardRef(() => QuestionService))
+		private readonly questionService: QuestionService,
+		@Inject(forwardRef(() => UserService))
+		private readonly userService: UserService,
+	) {}
 
 	@Get()
-	async getAllTags(@Res() res: Response, @Req() req: Request) {
+	async getAllTags(
+		@Res() res: Response,
+		@Req() req: Request,
+	): Promise<Response | null> {
 		try {
 			const tags = await this.tagService.getAllTags();
-			res.status(HttpStatus.OK).json({
+			return res.status(HttpStatus.OK).json({
 				tags,
 			});
 		} catch (err) {
+			console.log(`error from tag controller get all tag`);
 			console.log(err);
-			throw new BadGatewayException("Something went wrong");
+			throw new InternalServerErrorException("Something went wrong");
+		}
+	}
+
+	@Get(":id")
+	async getTagByTagId(@Req() req: Request, @Res() res: Response) {
+		try {
+			const tag = await this.tagService.findTagByTagId(req.params?.id);
+
+			if (!tag) {
+				throw new BadRequestException("Tag doesn't exists anymore");
+			}
+
+			const questionQuery = tag?.questions.map((question) =>
+				question.toString(),
+			);
+
+			const questions = await this.questionService.findQuestions(
+				questionQuery,
+			);
+
+			const questionsDto: PreviewQuestionDto[] = await Promise.all(
+				questions.map(async (question) => {
+					const tagQuery = question.tags?.map((tag) =>
+						tag.toString(),
+					);
+					const tags = await this.tagService.findManyTags(tagQuery);
+					const user = await this.userService.findUserByUserIdLess(
+						question.createdBy.toString(),
+					);
+					return previewQuestionFormat(question, user, tags);
+				}),
+			);
+
+			const response: PreviewTagDto = previewTagFormat(tag, questionsDto);
+
+			return res.status(HttpStatus.OK).json({
+				tag: response,
+			});
+		} catch (err) {
+			console.log(`error from tag controller get tag by tag id function`);
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
 }

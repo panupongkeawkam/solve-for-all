@@ -1,6 +1,7 @@
-import { PreviewQuestionDto } from "../dto/previewQuestion.dto";
+import { PreviewTagDto } from "src/tag/dto/previewTag.dto";
+import { PreviewQuestionDto } from "../question/dto/previewQuestion.dto";
 
-export function previewFormat(
+export function previewQuestionFormat(
 	question: any,
 	user: any,
 	tags: any,
@@ -26,5 +27,18 @@ export function previewFormat(
 		tags,
 		createdAt: question.createdAt,
 		updatedAt: question.updatedAt,
+	};
+}
+
+export function previewTagFormat(
+	tag: any,
+	questions: any,
+): PreviewTagDto | null {
+	return {
+		_id: tag?._id,
+		name: tag?.name,
+		totalQuestion: tag?.questions.length,
+		questions: questions,
+		createdAt: tag?.createdAt,
 	};
 }

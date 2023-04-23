@@ -11,6 +11,7 @@ import {
 	Delete,
 	Put,
 	BadGatewayException,
+	UnauthorizedException,
 } from "@nestjs/common";
 import { Response, Request } from "express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
@@ -22,7 +23,7 @@ import { FileService } from "src/file/file.service";
 import { BadRequestException } from "@nestjs/common";
 import { DeleteQuestionDto } from "./dto/deleteQuestion.dto";
 import { UserService } from "src/user/user.service";
-import { previewFormat } from "./utils/formatter.utils";
+import { previewQuestionFormat } from "../utils/formatter.utils";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
 import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
 import { PreviewQuestionDto } from "./dto/previewQuestion.dto";
@@ -53,7 +54,7 @@ export class QuestionController {
 						tag.toString(),
 					);
 					const tags = await this.tagService.findManyTags(tagQuery);
-					return previewFormat(question, user, tags);
+					return previewQuestionFormat(question, user, tags);
 				}),
 			);
 			if (responses) {
@@ -136,7 +137,7 @@ export class QuestionController {
 			];
 			newQuestionDocument.save();
 
-			if (existTags > 0) {
+			if (existTags.length > 0) {
 				await this.tagService.addQuestionOrUserIdToTag(
 					existTags,
 					newQuestionDocument._id,
@@ -148,7 +149,7 @@ export class QuestionController {
 				newQuestionDocument.createdBy.toString(),
 			);
 
-			const response = previewFormat(
+			const response = previewQuestionFormat(
 				newQuestionDocument,
 				userDetail,
 				newTags,
@@ -180,7 +181,7 @@ export class QuestionController {
 			const createdBy = await this.userService.findUserByUserIdLess(
 				question.createdBy.toString(),
 			);
-			const response = previewFormat(question, createdBy, tags);
+			const response = previewQuestionFormat(question, createdBy, tags);
 
 			// increase viewed
 			this.questionService.increaseView(question?._id.toString());
@@ -200,13 +201,17 @@ export class QuestionController {
 			_id: req.params?.id,
 			userId: req?.user?._id,
 		};
-		const status = await this.questionService.findQuestionAndDelete(query);
-		if (status) {
+		const question: any = await this.questionService.findQuestionAndDelete(
+			query,
+		);
+		const questionTags = question?.tags.map((tag) => tag.toString());
+		this.tagService.pullQuestionIdFromTag(questionTags, question._id);
+		if (question) {
 			return res.status(HttpStatus.OK).json({
 				success: true,
 			});
 		}
-		throw new BadRequestException("You are unauthorize.");
+		throw new UnauthorizedException("You are unauthorize.");
 	}
 
 	// like and dislike question by question id Not return yet

@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule } from "@nestjs/config";
 import { UserModule } from "./user/user.module";
@@ -13,10 +13,10 @@ import { FileModule } from "./file/file.module";
 @Module({
 	imports: [
 		UserModule,
+		QuestionModule,
 		AuthModule,
 		ConfigModule.forRoot(),
 		MongooseModule.forRoot(process.env.MONGODB_URI),
-		QuestionModule,
 		AnswerModule,
 		ReplyModule,
 		TagModule,
