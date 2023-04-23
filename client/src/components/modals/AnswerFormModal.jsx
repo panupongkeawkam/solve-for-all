@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux"
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -11,11 +11,10 @@ import {
   Alert,
 } from "@mui/material";
 import * as Icon from "@mui/icons-material";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
 import palette from "../../style/palette";
-import store from "../../store/index"
-import { fetchTags } from "../../store/tagSlice";
-import { appendQuestion } from "../../store/questionSlice";
+import store from "../../store/index";
 import { authAxios } from "../../utils/axios.config";
 
 import { imageToObjectURL } from "../../utils/lamda";
@@ -23,7 +22,6 @@ import { imageToObjectURL } from "../../utils/lamda";
 import Button from "../buttons/Button";
 import InvisibleTextArea from "../inputs/InvisibleTextArea";
 import MultipleAction from "../buttons/MultipleAction";
-import TagInput from "../inputs/TagInput";
 import CodeInput from "../inputs/CodeInput";
 import LoadingIndicator from "../LoadingIndicator";
 
@@ -31,19 +29,13 @@ export default ({
   active = false,
   submitText = "Submit",
   doingMessage,
+  targetQuestion,
   onClose,
 }) => {
-  useEffect(() => {
-    store.dispatch(fetchTags())
-  }, [])
+  const user = useSelector((state) => state.user.user);
+  const navigate = useNavigate();
 
-  const user = useSelector(state => state.user.user)
-  const tags = useSelector(state => state.tag.tags)
-  const navigate = useNavigate()
-
-  const [title, setTitle] = useState("");
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [questionBodies, setQuestionBodies] = useState([
+  const [answerBodies, setAnswerBodies] = useState([
     { type: "paragraph", msg: "" },
   ]);
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -63,14 +55,14 @@ export default ({
         msg: "",
       };
 
-      setQuestionBodies([...questionBodies, header]);
+      setAnswerBodies([...answerBodies, header]);
     } else if (actionName === "paragraph") {
       let paragraph = {
         type: "paragraph",
         msg: "",
       };
 
-      setQuestionBodies([...questionBodies, paragraph]);
+      setAnswerBodies([...answerBodies, paragraph]);
     } else if (actionName === "code") {
       let code = {
         type: "code",
@@ -78,7 +70,7 @@ export default ({
         code: "",
       };
 
-      setQuestionBodies([...questionBodies, code]);
+      setAnswerBodies([...answerBodies, code]);
     } else if (actionName === "image") {
       let input = document.createElement("input");
 
@@ -96,7 +88,7 @@ export default ({
           image: e.target.files[0],
         };
         // parseBase64(e.target.files[0]);
-        setQuestionBodies([...questionBodies, image]);
+        setAnswerBodies([...answerBodies, image]);
       };
 
       input.click();
@@ -104,59 +96,54 @@ export default ({
   };
 
   const headerOrParagraphChangeHandler = (msg, index) => {
-    let questionBodiesVar = questionBodies;
-    questionBodiesVar[index].msg = msg;
-    setQuestionBodies([...questionBodiesVar]);
+    let answerBodiesVar = answerBodies;
+    answerBodiesVar[index].msg = msg;
+    setAnswerBodies([...answerBodiesVar]);
   };
 
   const codeChangeHandler = (code, index) => {
-    let questionBodiesVar = questionBodies;
-    questionBodiesVar[index].code = code;
-    setQuestionBodies([...questionBodiesVar]);
+    let answerBodiesVar = answerBodies;
+    answerBodiesVar[index].code = code;
+    setAnswerBodies([...answerBodiesVar]);
   };
 
   const languageChangeHandler = (language, index) => {
-    let questionBodiesVar = questionBodies;
-    questionBodiesVar[index].language = language;
-    setQuestionBodies([...questionBodiesVar]);
+    let answerBodiesVar = answerBodies;
+    answerBodiesVar[index].language = language;
+    setAnswerBodies([...answerBodiesVar]);
   };
 
   const deleteHandler = (index) => {
-    let questionBodiesVar = questionBodies;
-    questionBodiesVar.splice(index, 1);
-    setQuestionBodies([...questionBodiesVar]);
-  };
-
-  const tagChangeHandler = (tags) => {
-    setSelectedTags(tags);
+    let answerBodiesVar = answerBodies;
+    answerBodiesVar.splice(index, 1);
+    setAnswerBodies([...answerBodiesVar]);
   };
 
   const submitHandler = async () => {
-    const formData = new FormData()
-
-    formData.append("title", JSON.stringify(title))
-    formData.append("body", JSON.stringify(questionBodies))
-    formData.append("tags", JSON.stringify(selectedTags))
-    questionBodies.forEach((questionBody, index) => {
-      if (questionBody.type === "image") {
-        formData.append("images", questionBody.image)
-      }
-    })
-
-    try {
-      setLoading(true);
-      const res = await authAxios.post(`/api/questions`, formData, {
-        withCredentials: true,
-      })
-      const question = res.data.question
-      store.dispatch(appendQuestion(question))
-      setLoading(false);
-      onClose()
-      navigate(`/questions/${question._id}`)
-    } catch (err) {
-      alert(err.response.data.message)
-      setLoading(false);
-    }
+    console.log(answerBodies);
+    // const formData = new FormData()
+    // formData.append("title", JSON.stringify(title))
+    // formData.append("body", JSON.stringify(answerBodies))
+    // formData.append("tags", JSON.stringify(selectedTags))
+    // answerBodies.forEach((questionBody, index) => {
+    //   if (questionBody.type === "image") {
+    //     formData.append("images", questionBody.image)
+    //   }
+    // })
+    // try {
+    //   setLoading(true);
+    //   const res = await authAxios.post(`/api/questions`, formData, {
+    //     withCredentials: true,
+    //   })
+    //   const question = res.data.question
+    //   store.dispatch(appendQuestion(question))
+    //   setLoading(false);
+    //   onClose()
+    //   navigate(`/questions/${question._id}`)
+    // } catch (err) {
+    //   alert(err.response.data.message)
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -184,13 +171,22 @@ export default ({
             style={{ backgroundColor: palette["base-2"] }}
           >
             {/* user section */}
-            <div className="basis-3/4">
-              <div className="w-full flex flex-row">
+            <div className="basis-3/4 flex flex-row">
+              <div className="flex flex-row">
                 <div className="w-auto">
                   {user?.image ? (
-                    <Avatar alt={user?.username} src={user?.image} sx={{ width: "40px", height: "40px" }} />
+                    <Avatar
+                      alt={user?.username}
+                      src={user?.image}
+                      sx={{ width: "40px", height: "40px" }}
+                    />
                   ) : (
-                    <Avatar alt={user?.username} sx={{ width: "40px", height: "40px" }}>{user?.username[0]?.toUpperCase()}</Avatar>
+                    <Avatar
+                      alt={user?.username}
+                      sx={{ width: "40px", height: "40px" }}
+                    >
+                      {user?.username[0]?.toUpperCase()}
+                    </Avatar>
                   )}
                 </div>
                 <div className="w-auto flex flex-col ml-[16px]">
@@ -212,12 +208,53 @@ export default ({
                   </div>
                 </div>
               </div>
+              <div className="mx-12">
+                <KeyboardDoubleArrowRightIcon color={"content-2"} />
+              </div>
+              <div className="flex flex-row">
+                <div className="w-auto">
+                  {targetQuestion?.createdBy?.image ? (
+                    <Avatar
+                      alt={targetQuestion?.createdBy?.username}
+                      src={targetQuestion?.createdBy?.image}
+                      sx={{ width: "40px", height: "40px" }}
+                    />
+                  ) : (
+                    <Avatar
+                      alt={targetQuestion?.createdBy?.username}
+                      sx={{ width: "40px", height: "40px" }}
+                    >
+                      {targetQuestion?.createdBy?.username[0]?.toUpperCase()}
+                    </Avatar>
+                  )}
+                </div>
+                <div className="w-auto flex flex-col ml-[16px]">
+                  <div className="flex flex-row items-end ">
+                    <p
+                      style={{ color: palette["content-1"] }}
+                      className="mr-[8px]"
+                    >
+                      {targetQuestion?.createdBy?.name}
+                    </p>
+                    <span style={{ color: palette["content-2"] }}>
+                      @{targetQuestion?.createdBy?.username}
+                    </span>
+                  </div>
+                  <div>
+                    <span style={{ color: palette["content-2"] }}>
+                      Asking question...
+                      {/* {targetQuestion?.title.slice(0, 20)}
+                      {targetQuestion?.title?.length > 17 ? "..." : ""} */}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
             {/* button section */}
             <div className="basis-1/4 flex justify-end">
               <span className="mr-2">
                 <Button
-                  text="Cancel"
+                  text="Close"
                   size="small"
                   variant="outlined"
                   onClick={onClose}
@@ -240,23 +277,8 @@ export default ({
         >
           {/* modal content */}
           <div className="pl-[56px] mb-[200px]">
-            {/* question title */}
-            <div className="basis-full flex flex-row mb-3">
-              <div className="basis-5/6">
-                <InvisibleTextArea
-                  message={title}
-                  maxLength={128}
-                  bold
-                  placeholder={"Title"}
-                  onTextChange={setTitle}
-                  fontSize="32px"
-                  fontFamily={"Lora, serif, IBM Plex Sans Thai, sans-serif"}
-                />
-              </div>
-            </div>
-
-            {/* question bodies */}
-            {questionBodies.map((body, index) => {
+            {/* answer bodies */}
+            {answerBodies.map((body, index) => {
               switch (body.type) {
                 case "header":
                   return (
@@ -271,7 +293,9 @@ export default ({
                             headerOrParagraphChangeHandler(text, index)
                           }
                           fontSize="24px"
-                          fontFamily={"Lora, serif, IBM Plex Sans Thai, sans-serif"}
+                          fontFamily={
+                            "Lora, serif, IBM Plex Sans Thai, sans-serif"
+                          }
                         />
                       </div>
                       <div className="basis-1/6 pl-2">
@@ -293,7 +317,9 @@ export default ({
                           }
                           fontSize="18px"
                           onDelete={() => deleteHandler(index)}
-                          fontFamily={"Lora, serif, IBM Plex Sans Thai, sans-serif"}
+                          fontFamily={
+                            "Lora, serif, IBM Plex Sans Thai, sans-serif"
+                          }
                         />
                       </div>
                       <div className="basis-1/6 pl-2">
@@ -350,22 +376,6 @@ export default ({
               <MultipleAction
                 actions={actions}
                 onActionChange={actionChangeHandler}
-              />
-            </div>
-            <p style={{ color: palette["content-1"] }}>
-              Select tag of question
-            </p>
-            <span style={{ color: palette["content-2"] }}>
-              Add tags to this question, will make people who interest in this
-              topic easily find it.
-            </span>
-            <div className="2xl:w-1/3 xl:w-1/3 lg:w-1/2 md:w-1/2 sm:w-3/4">
-              <TagInput
-                selectedTags={selectedTags}
-                tags={tags}
-                onTagChange={tagChangeHandler}
-                limitLength={5}
-                creatable
               />
             </div>
           </div>
