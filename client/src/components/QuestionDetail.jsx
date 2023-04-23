@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   IconButton,
@@ -21,14 +23,17 @@ import { monokai } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import palette from "../style/palette";
 import Tag from "./Tag";
-
+import { authAxios } from "../utils/axios.config";
 import { getTimeDiffString } from "../utils/lamda";
+
+import DialogModal from "./modals/DialogModal";
 
 export default ({
   title,
   authorProfilePicture,
   authorName,
   authorUsername,
+  authorId,
   totalParticipants,
   totalViewed,
   isSolved,
@@ -36,8 +41,12 @@ export default ({
   rating,
   tags,
   questionBody,
+  questionId
 }) => {
+  const navigate = useNavigate()
+  const user = useSelector(state => state.user.user)
   const [anchorEl, setAnchorEl] = useState(null);
+  const [showDeleteQuestionModal, setShowDeleteQuestionModal] = useState(false)
 
   const openAnchorHandler = (e) => {
     setAnchorEl(e.currentTarget);
@@ -47,13 +56,25 @@ export default ({
     setAnchorEl(null);
   };
 
-  const toggleDialogHandler = () => {
-    setShowDialog(!showDialog);
+  const toggleDeleteQuestionModalHandler = () => {
+    closeAnchorHandler()
+    setShowDeleteQuestionModal(!showDeleteQuestionModal)
   };
 
-  const likeHandler = () => {};
+  const deleteQuestionHandler = async () => {
+    try {
+      await authAxios.delete(`/api/questions/${questionId}`)
+      window.location.href = "/"
+      toggleDeleteQuestionModalHandler()
+    } catch (err) {
+      window.location.href = "/"
+      toggleDeleteQuestionModalHandler()
+    }
+  }
 
-  const dislikeHandler = () => {};
+  const likeHandler = () => { };
+
+  const dislikeHandler = () => { };
 
   return (
     <div
@@ -61,11 +82,11 @@ export default ({
       style={{ backgroundColor: palette["base-2"] }}
     >
       <div className="basis-auto flex flex-col mr-8">
-        <Avatar
-          alt={authorUsername}
-          src={authorProfilePicture}
-          sx={{ width: 64, height: 64 }}
-        />
+        {authorProfilePicture ? (
+          <Avatar alt={authorUsername} src={authorProfilePicture} sx={{ width: 64, height: 64 }} />
+        ) : (
+          <Avatar alt={authorUsername} sx={{ width: 64, height: 64, fontSize: "1.8em" }}>{authorUsername[0]?.toUpperCase()}</Avatar>
+        )}
         <div className="flex flex-col items-center mt-8">
           <ArrowDropUpIcon
             className="cursor-pointer transition duration-300 hover:text-[#00D25B] hover:scale-110"
@@ -84,13 +105,20 @@ export default ({
       </div>
       <div className="basis-full flex flex-col">
         <div className="basis-full flex flex-row mb-1">
-          <div className="basis-1/2 flex flex-row mb-1">
-            <p className="mr-2" style={{ color: palette["content-1"] }}>
-              {authorName}
-            </p>
-            <span style={{ color: palette["content-2"] }}>
-              @{authorUsername}
-            </span>
+          <div className="basis-1/2 flex flex-col mb-1">
+            <div className="flex flex-row mb-1">
+              <p className="mr-2" style={{ color: palette["content-1"] }}>
+                {authorName}
+              </p>
+              <span style={{ color: palette["content-2"] }}>
+                @{authorUsername}
+              </span>
+            </div>
+            <div className="basis-full flex flex-row mb-3">
+              <span style={{ color: palette["content-2"] }}>
+                {getTimeDiffString(createdAt)}
+              </span>
+            </div>
           </div>
           <div className="basis-1/2 flex flex-row flex-wrap justify-end">
             <div className="flex flex-row mr-8">
@@ -125,7 +153,7 @@ export default ({
                 {totalViewed}
               </span>
             </div>
-            <div className="ml-12">
+            {authorId === user?._id && <div className="ml-12">
               <IconButton
                 aria-controls="test-box"
                 aria-haspopup="true"
@@ -152,7 +180,7 @@ export default ({
                     <div style={{ fontSize: "16px" }}>Edit</div>
                   </ListItemText>
                 </MenuItem>
-                <MenuItem onClick={closeAnchorHandler}>
+                <MenuItem onClick={toggleDeleteQuestionModalHandler}>
                   <ListItemIcon>
                     <DeleteOutlineOutlinedIcon fontSize="20px" color="wrong" />
                   </ListItemIcon>
@@ -161,13 +189,8 @@ export default ({
                   </ListItemText>
                 </MenuItem>
               </Menu>
-            </div>
+            </div>}
           </div>
-        </div>
-        <div className="basis-full flex flex-row mb-3">
-          <span style={{ color: palette["content-2"] }}>
-            {getTimeDiffString(createdAt)}
-          </span>
         </div>
         <div className="basis-full flex flex-row mb-3">
           <h1 style={{ color: palette["content-1"] }}>{title}</h1>
@@ -240,7 +263,7 @@ export default ({
                         padding: 0,
                         marginBottom: "3px",
                         lineHeight: "16px",
-                        OverflowY: "visible",
+                        overflowY: "hidden",
                       }}
                       onClick={() => setCodeState("edit")}
                     >
@@ -254,6 +277,15 @@ export default ({
           })}
         </div>
       </div>
+      <DialogModal
+        active={showDeleteQuestionModal}
+        confirmText="Delete"
+        title={"Delete this question?"}
+        description={"This action cannot be redo, please make sure your decision"}
+        onConfirm={deleteQuestionHandler}
+        danger
+        onClose={toggleDeleteQuestionModalHandler}
+      />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import palette from "../style/palette";
 import Tag from "../components/Tag";
 
 export default ({
-  imageUrl,
+  image,
   name,
   username,
   bio,
@@ -18,6 +18,7 @@ export default ({
   solved,
   answered,
   tags,
+  _id,
   onEdit = () => { },
   ...props
 }) => {
@@ -36,11 +37,11 @@ export default ({
     >
       <div className="basis-full flex flex-row">
         <div className="2xl:pr-16 pr-12">
-          {imageUrl ? (
+          {image ? (
             <Avatar
               sx={{ width: "120px", height: "120px" }}
               alt={username}
-              src={imageUrl}
+              src={image}
             />
           ) : (
             <Avatar
@@ -62,7 +63,7 @@ export default ({
             </p>
           </div>
           <div className="basis-4/12 flex flex-row justify-end">
-            {params.userId === user._id ? (
+            {params.userId === user?._id ? (
               <Link onClick={onEdit} color="secondary" underline="none">
                 <Icon.EditOutlined sx={{ mr: 1 }} />
                 Edit

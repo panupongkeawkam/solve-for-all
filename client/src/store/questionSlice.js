@@ -7,16 +7,19 @@ const initialState = {
 };
 
 export const fetchQuestions = createAsyncThunk("questions/fetchQuestions", async () => {
-  const response = await axios.get("/posts", {
-    baseURL: "https://jsonplaceholder.typicode.com",
-  });
-  return response.data;
+  const res = await axios.get(`/api/questions`);
+  return res.data.questions;
 });
 
 export const questionSlice = createSlice({
   name: "question",
   initialState,
-  reducers: {},
+  reducers: {
+    appendQuestion: (state, action) => {
+      const question = action.payload
+      state.questionsList = [...state.questionsList, question]
+    }
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchQuestions.pending, (state, action) => {
@@ -32,8 +35,10 @@ export const questionSlice = createSlice({
       .addCase(fetchQuestions.rejected, (state, action) => {
         // console.log("fetch questions error!");
         state.fetchingQuestions = false;
-      });
+      })
   },
 });
+
+export const { appendQuestion } = questionSlice.actions
 
 export default questionSlice.reducer;

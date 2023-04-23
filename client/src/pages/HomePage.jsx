@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Select, MenuItem, RadioGroup, Radio } from "@mui/material";
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
 
 import palette from "../style/palette";
+import store from "../store/index"
+import { fetchQuestions } from "../store/questionSlice";
 
 import { sortOptions, filterOptions } from "../utils/dummy";
 
@@ -14,7 +17,11 @@ export default (props) => {
   const [filter, setFilter] = useState("");
   const navigate = useNavigate();
 
-  const questions = [{}, {}];
+  const questionsList = useSelector(state => state.question.questionsList)
+
+  useEffect(() => {
+    store.dispatch(fetchQuestions())
+  }, [])
 
   const sortChangeHandler = (e) => {
     setSortBy(e.target.value);
@@ -71,43 +78,22 @@ export default (props) => {
       </div>
       {/* content section */}
       <div className="flex flex-col w-full mb-10">
-        {questions.length > 0 ? (
-          questions.map((question, index) => (
+        {questionsList.length > 0 ? (
+          questionsList.map((question, index) => (
             <Question
               key={index}
-              title={
-                "มีใครสามารถตอบได้ไหมว่าทำไมธนาคารไทยถึงมักล่มทุกๆ เที่ยงคืนถึงประมาณตี 4 ครับ ผมสงสัย"
-              }
-              authorProfilePicture={
-                "https://yt3.googleusercontent.com/ytc/AGIKgqNZtlbC1ShH090eSfk0IXuQP4R9PQ5y8x4CeSnotA=s900-c-k-c0x00ffffff-no-rj"
-              }
-              authorName={"นายอาร์ม"}
-              authorUsername={"9arm"}
-              totalAnswers={412}
-              totalParticipants={1135}
-              totalViewed={4701}
-              isSolved={true}
-              createdAt={new Date("2023-02-15T09:40:08.111Z")}
-              rating={214}
-              tags={[
-                {
-                  _id: "63ec5a42ae5dba4au5x12svy",
-                  name: "9arm",
-                },
-                {
-                  _id: "64ec5a42ae5dba4au5x12svy",
-                  name: "bank",
-                },
-                {
-                  _id: "65ec5a42ae5dba4au5x12svy",
-                  name: "tech",
-                },
-                {
-                  _id: "66ec5a42ae5dba4au5x12svy",
-                  name: "thai",
-                },
-              ]}
-              onView={() => viewQuestionHandler("63ec5a42ae5dba49b343gd4d")}
+              title={question.title}
+              authorProfilePicture={question.createdBy.image}
+              authorName={question.createdBy.name}
+              authorUsername={question.createdBy.username}
+              totalAnswers={question.answered}
+              totalParticipants={question.participant}
+              totalViewed={question.viewed}
+              isSolved={Boolean(question.solvedBy)}
+              createdAt={new Date(question.createdAt)}
+              rating={question.rating}
+              tags={question.tags}
+              onView={() => viewQuestionHandler(question._id)}
             />
           ))
         ) : (
