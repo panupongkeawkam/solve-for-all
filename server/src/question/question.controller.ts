@@ -22,7 +22,6 @@ import { BadRequestException } from "@nestjs/common";
 import { DeleteQuestionDto } from "./dto/deleteQuestion.dto";
 import { UserService } from "src/user/user.service";
 import { previewFormat } from "./utils/formatter.utls";
-import { isGeneratorObject } from "util/types";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
 
 @Controller("questions")
@@ -173,7 +172,6 @@ export class QuestionController {
 	}
 
 	// like question by question id Not return yet
-	// (Optional) add condition is one of dislikedBy list or not
 	@UseGuards(JwtAuthGuard)
 	@Put(":id/liked")
 	async likeQuestion(@Req() req: any, @Res() res: Response): Promise<void> {
@@ -191,7 +189,6 @@ export class QuestionController {
 	}
 
 	// dislike question by question id Not return yet
-	// (Optional) add condition is one of likedBy list or not
 	@UseGuards(JwtAuthGuard)
 	@Put(":id/disliked")
 	async dislikeQuestion(
