@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux"
 import {
   Dialog,
   DialogTitle,
@@ -11,6 +12,8 @@ import {
 import * as Icon from "@mui/icons-material";
 
 import palette from "../../style/palette";
+import store from "../../store/index"
+import { fetchTags } from "../../store/tagSlice";
 
 import { imageToObjectURL } from "../../utils/lamda";
 
@@ -27,6 +30,13 @@ export default ({
   doingMessage,
   onClose,
 }) => {
+  useEffect(() => {
+    store.dispatch(fetchTags())
+  }, [])
+
+  const user = useSelector(state => state.user.user)
+  const tags = useSelector(state => state.tag.tags)
+
   const [title, setTitle] = useState("");
   const [selectedTags, setSelectedTags] = useState([]);
   const [questionBodies, setQuestionBodies] = useState([
@@ -40,15 +50,6 @@ export default ({
     { icon: <Icon.Notes fontSize="16" />, name: "paragraph" },
     { icon: <Icon.CodeOutlined fontSize="16" />, name: "code" },
     { icon: <Icon.ImageOutlined fontSize="16" />, name: "image" },
-  ];
-
-  const tagsDummy = [
-    { _id: "1", name: "java" },
-    { _id: "2", name: "javascript" },
-    { _id: "3", name: "tech" },
-    { _id: "4", name: "cat" },
-    { _id: "5", name: "coffee" },
-    { _id: "6", name: "9arm" },
   ];
 
   const actionChangeHandler = (actionName) => {
@@ -162,8 +163,12 @@ export default ({
             {/* user section */}
             <div className="basis-3/4">
               <div className="w-full flex flex-row">
-                <div className="w-auto ">
-                  <Avatar sx={{ width: "40px", height: "40px" }}>D</Avatar>
+                <div className="w-auto">
+                  {user?.image ? (
+                    <Avatar alt={user?.username} src={user?.image} sx={{ width: "40px", height: "40px" }} />
+                  ) : (
+                    <Avatar alt={user?.username} sx={{ width: "40px", height: "40px" }}>{user?.username[0]?.toUpperCase()}</Avatar>
+                  )}
                 </div>
                 <div className="w-auto flex flex-col ml-[16px]">
                   <div className="flex flex-row items-end ">
@@ -171,10 +176,10 @@ export default ({
                       style={{ color: palette["content-1"] }}
                       className="mr-[8px]"
                     >
-                      Dominic Toretto
+                      {user?.name}
                     </p>
                     <span style={{ color: palette["content-2"] }}>
-                      @dom_family
+                      @{user?.username}
                     </span>
                   </div>
                   <div>
@@ -334,7 +339,7 @@ export default ({
             <div className="2xl:w-1/3 xl:w-1/3 lg:w-1/2 md:w-1/2 sm:w-3/4">
               <TagInput
                 selectedTags={selectedTags}
-                tags={tagsDummy}
+                tags={tags}
                 onTagChange={tagChangeHandler}
                 limitLength={5}
                 creatable
