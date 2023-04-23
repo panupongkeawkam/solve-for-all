@@ -93,4 +93,13 @@ export class QuestionService {
 			.sort({ participant: 1 })
 			.limit(10);
 	}
+
+	async findQuestions(query: string[]): Promise<Question[] | null> {
+		return await this.questionModel
+			.find({
+				_id: query,
+			})
+			.sort({ participant: 1 })
+			.limit(10);
+	}
 }

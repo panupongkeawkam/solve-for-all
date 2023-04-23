@@ -40,7 +40,7 @@ export class EditUserDto {
 
 	birthday: Date;
 
-	tags: string[];
+	tags: string;
 
 	image: string;
 }
