@@ -93,7 +93,7 @@ export class UserService {
 				{
 					email: query?.email,
 					name: query?.name,
-					imagePath: query?.imagePath,
+					image: query?.image,
 					birthday: query?.birthday,
 					tags: query?.tags || [],
 					bio: query?.bio,

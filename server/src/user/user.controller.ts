@@ -118,7 +118,7 @@ export class UserController {
 	@UsePipes(ValidationPipe)
 	@Put(":id")
 	@UseInterceptors(
-		FileInterceptor("image", {
+		FileInterceptor("imageFile", {
 			fileFilter(req, file, cb) {
 				if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
 					return cb(null, false);
@@ -136,7 +136,7 @@ export class UserController {
 		checkPermission(req.user?._id, req.params?.id);
 
 		try {
-			let uploadedFile = file ? "" : info.imagePath;
+			let uploadedFile = file ? "" : info.image;
 			const oldUser = await this.userService.findUserByUserId(
 				req.params.id,
 			);
@@ -149,7 +149,7 @@ export class UserController {
 				};
 				uploadedFile = (await this.fileService.fileUpload(params)).path;
 			}
-			const query = { ...info, imagePath: uploadedFile, tags };
+			const query = { ...info, image: uploadedFile, tags };
 			const user = await this.userService.editUserByUserId(
 				query,
 				req.params.id,
