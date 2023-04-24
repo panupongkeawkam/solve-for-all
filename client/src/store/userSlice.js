@@ -4,11 +4,13 @@ import Cookies from "js-cookie"
 import axios from "../utils/axios.config";
 
 const initialState = {
-  user: undefined,
-  authenticatingUser: false
+  user: null,
+  authenticatingUser: false,
+  suggestedUsers: [],
+  suggestingUsers: false,
 };
 
-export const authenticateUser = createAsyncThunk("users/authenticateUser", async (arg, { getState }) => {
+export const authenticateUser = createAsyncThunk("users/authenticateUser", async () => {
   const userId = Cookies.get("userId")
 
   if (userId) {
@@ -23,6 +25,11 @@ export const authenticateUser = createAsyncThunk("users/authenticateUser", async
 
   return null
 });
+
+export const fetchSuggestedUsers = createAsyncThunk("users/fetchSuggestedUsers", async () => {
+  const res = await axios.get(`/api/users/suggest`)
+  return res.data.users
+})
 
 export const userSlice = createSlice({
   name: "user",
@@ -44,6 +51,15 @@ export const userSlice = createSlice({
       }).addCase(authenticateUser.rejected, (state, action) => {
         state.authenticatingUser = false
         state.user = null
+      })
+      .addCase(fetchSuggestedUsers.pending, (state, action) => {
+        state.suggestingUsers = true
+      }).addCase(fetchSuggestedUsers.fulfilled, (state, action) => {
+        state.suggestingUsers = false
+        state.suggestedUsers = action.payload
+      }).addCase(fetchSuggestedUsers.rejected, (state, action) => {
+        state.suggestingUsers = false
+        state.suggestedUsers = []
       })
   },
 });

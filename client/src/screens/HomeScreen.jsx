@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link as RouterLink, useLocation, Outlet } from "react-router-dom";
+import { Link as RouterLink, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { IconButton, Menu, Badge } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 import Cookies from "js-cookie"
 
 import palette from "../style/palette";
+import store from "../store/index";
+import { fetchSuggestedUsers } from "../store/userSlice";
 
 import QuestionFormModal from "../components/modals/QuestionFormModal";
 import DialogModal from "../components/modals/DialogModal";
@@ -21,17 +23,51 @@ import LoadingIndicator from "../components/LoadingIndicator";
 export default () => {
   const user = useSelector((state) => state.user.user);
   const authenticatingUser = useSelector((state) => state.user.authenticatingUser);
-  // const suggestedUsers = useSelector((state) => state.user.suggestedUsers); *ASSUMED*
+  const suggestedUsers = useSelector((state) => state.user.suggestedUsers);
   const location = useLocation();
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    store.dispatch(fetchSuggestedUsers())
+    // test()
+  }, [])
+
+  useEffect(() => {
+    setGuestMode(!user);
+  }, [user]);
 
   const [notificationAnchorEl, setNotificationAnchorEl] = useState(null);
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
   const [showConfirmLogoutModal, setShowConfirmLogoutModal] = useState(false);
   const [guestMode, setGuestMode] = useState(!Boolean(user));
 
-  useEffect(() => {
-    setGuestMode(!user);
-  }, [user]);
+  const filterSuggestedUsers = (suggestedUsersArg) => {
+    return suggestedUsersArg.filter(suggestedUser => suggestedUser?._id !== user?._id).slice(0, 2)
+  }
+
+  // const test = () => {
+  //   // Define an empty object to store the colors
+  //   const colors = {};
+
+  //   // Loop through ASCII codes for A-Z
+  //   for (let i = 65; i <= 90; i++) {
+  //     // Generate a random hue value between 0 and 360
+  //     const hue = Math.floor(Math.random() * 360);
+
+  //     // Convert the hue to an HSL color string
+  //     const color = `hsl(${hue}, 60%, 70%)`;
+
+  //     // Convert the ASCII code to a character
+  //     const char = String.fromCharCode(i);
+
+  //     // Add the color to the object with the character as the key
+  //     colors[char] = color;
+  //   }
+
+  //   // Example usage: get the color for the letter 'G'
+  //   const colorG = colors['G'];
+  //   console.log(colors); // Output: "hsl(215, 60%, 70%)"
+  // }
 
   const searchSubmitHandler = (searchQuery) => {
     console.log(searchQuery);
@@ -150,13 +186,13 @@ export default () => {
         {/* check for guest mode then change component to display */}
         {guestMode ? null : (
           <div className="basis-1/6 flex items-center 2xl:px-8 px-4">
-            <RouterLink to={`/users/${user._id}`}>
+            <a href={`/users/${user._id}`}>
               <User
                 name={user.name}
                 username={user.username}
                 imageUrl={user.image}
               />
-            </RouterLink>
+            </a>
           </div>
         )}
       </div>
@@ -209,16 +245,15 @@ export default () => {
             <p style={{ color: palette["content-1"] }}>Suggested people</p>
           </div>
           {/* suggested users */}
-          <div className="mb-3">
-            <User username="thepowerofthedarkwil" />
-          </div>
-          <div className="mb-3">
-            <User
-              name="Father"
-              username="yourfather"
-              imageUrl={"https://api.multiavatar.com/father.svg"}
-            />
-          </div>
+          {filterSuggestedUsers(suggestedUsers).map((suggestedUser, index) =>
+            <div className="mb-3" key={index}>
+              <User
+                name={suggestedUser.name}
+                username={suggestedUser.username}
+                onClick={() => window.location.href = `/users/${suggestedUser._id}`}
+              // imageUrl={"https://api.multiavatar.com/father.svg"}
+              />
+            </div>)}
         </div>
       </div>
       <Logo />
