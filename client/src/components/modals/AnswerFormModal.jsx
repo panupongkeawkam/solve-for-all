@@ -15,6 +15,7 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 
 import palette from "../../style/palette";
 import store from "../../store/index";
+import { appendAnswer } from "../../store/answerSlice";
 import { authAxios } from "../../utils/axios.config";
 
 import { imageToObjectURL } from "../../utils/lamda";
@@ -120,30 +121,29 @@ export default ({
   };
 
   const submitHandler = async () => {
-    console.log(answerBodies);
-    // const formData = new FormData()
-    // formData.append("title", JSON.stringify(title))
-    // formData.append("body", JSON.stringify(answerBodies))
-    // formData.append("tags", JSON.stringify(selectedTags))
-    // answerBodies.forEach((questionBody, index) => {
-    //   if (questionBody.type === "image") {
-    //     formData.append("images", questionBody.image)
-    //   }
-    // })
-    // try {
-    //   setLoading(true);
-    //   const res = await authAxios.post(`/api/questions`, formData, {
-    //     withCredentials: true,
-    //   })
-    //   const question = res.data.question
-    //   store.dispatch(appendQuestion(question))
-    //   setLoading(false);
-    //   onClose()
-    //   navigate(`/questions/${question._id}`)
-    // } catch (err) {
-    //   alert(err.response.data.message)
-    //   setLoading(false);
-    // }
+    console.log(answerBodies, targetQuestion)
+    const formData = new FormData()
+    formData.append("body", JSON.stringify(answerBodies))
+    formData.append("question", JSON.stringify({
+      _id: targetQuestion._id,
+      createdBy: targetQuestion.createdBy._id
+    }))
+    answerBodies.forEach((answerBody, index) => {
+      if (answerBody.type === "image") {
+        formData.append("images", answerBody.image)
+      }
+    })
+    try {
+      setLoading(true);
+      const res = await authAxios.post(`/api/answers`, formData)
+      const answer = res.data.answer
+      store.dispatch(appendAnswer(answer))
+      setLoading(false);
+      onClose()
+    } catch (err) {
+      alert(err.response.data.message)
+      setLoading(false);
+    }
   };
 
   return (

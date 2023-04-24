@@ -145,9 +145,7 @@ export default ({
 
     try {
       setLoading(true);
-      const res = await authAxios.post(`/api/questions`, formData, {
-        withCredentials: true,
-      })
+      const res = await authAxios.post(`/api/questions`, formData)
       const question = res.data.question
       store.dispatch(appendQuestion(question))
       setLoading(false);
