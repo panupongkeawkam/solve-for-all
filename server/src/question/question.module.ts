@@ -6,6 +6,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Question, QuestionSchema } from "./schema/question.schema";
 import { TagModule } from "../tag/tag.module";
 import { FileModule } from "../file/file.module";
+import { AnswerModule } from "src/answer/answer.module";
 
 @Module({
 	providers: [QuestionService],
@@ -20,6 +21,7 @@ import { FileModule } from "../file/file.module";
 		]),
 		forwardRef(() => TagModule),
 		forwardRef(() => FileModule),
+		forwardRef(() => AnswerModule),
 	],
 	exports: [QuestionService],
 })

@@ -28,6 +28,7 @@ import { previewQuestionFormat } from "../utils/formatter.utils";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
 import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
 import { PreviewQuestionDto } from "./dto/previewQuestion.dto";
+import { AnswerService } from "src/answer/answer.service";
 
 @Controller("questions")
 export class QuestionController {
@@ -36,6 +37,7 @@ export class QuestionController {
 		private readonly tagService: TagService,
 		private readonly fileService: FileService,
 		private readonly userService: UserService,
+		private readonly answerService: AnswerService,
 	) {}
 
 	@Get()
@@ -181,7 +183,17 @@ export class QuestionController {
 			const createdBy = await this.userService.findUserByUserIdLess(
 				question.createdBy.toString(),
 			);
-			const response = previewQuestionFormat(question, createdBy, tags);
+			const response: any = previewQuestionFormat(
+				question,
+				createdBy,
+				tags,
+			);
+
+			const answers = await this.answerService.findAnswersByQuestionId(
+				req.params?.id,
+			);
+
+			response.answers = answers;
 
 			// increase viewed
 			this.questionService.increaseView(question?._id.toString());
@@ -242,8 +254,7 @@ export class QuestionController {
 				);
 
 			const reputationQuery: ReputationQueryDto = {
-				_id: req?.user?._id,
-				createdBy: question.createdBy.toString(),
+				_id: question.createdBy.toString(),
 				isLike,
 			};
 
@@ -257,6 +268,49 @@ export class QuestionController {
 			);
 			console.log(err);
 			throw new BadGatewayException("something went wrong from server");
+		}
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Put(":id/solved")
+	async confirmSolved(
+		@Req() req: any,
+		@Res() res: Response,
+	): Promise<Response> {
+		// Increase reputation & solved in User Collection += 1 Answer owned
+		// Add answer id to solvedBy and participant += 1 in Question Collection
+		// Change isSolve = true in Answer Collection
+		try {
+			const query = {
+				_id: req.params.id,
+				answerId: req.body.answerId,
+			};
+			const question = await this.questionService.solvedQuestion(query);
+
+			if (!question)
+				throw new BadRequestException(
+					"Your answer doesn't exists anymore.",
+				);
+
+			const userReputationQuery = {
+				_id: req.body.answerOwnerId,
+				isLike: true,
+			};
+
+			// Background
+			this.userService.reputationCompute(userReputationQuery);
+			this.userService.increaseSolved(req.body.answerOwnerId);
+			this.answerService.confirmAnswerSolved(req.body.answerId);
+
+			return res.status(HttpStatus.OK).json({
+				success: true,
+			});
+		} catch (err) {
+			console.log(
+				"error from question controller confirm solved function.",
+			);
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
 }

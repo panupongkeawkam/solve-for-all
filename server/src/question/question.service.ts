@@ -1,10 +1,15 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+	BadRequestException,
+	Injectable,
+	InternalServerErrorException,
+} from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Question } from "./schema/question.schema";
 import { Model } from "mongoose";
 import { CreateQuestionDto } from "./dto/createQuestion.dto";
 import { DeleteQuestionDto } from "./dto/deleteQuestion.dto";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
+import { SolveQuestionDto } from "./dto/confirmSolve.dto";
 
 @Injectable()
 export class QuestionService {
@@ -128,5 +133,30 @@ export class QuestionService {
 				createdBy: query,
 			})
 			.sort({ participant: 1 });
+	}
+
+	async solvedQuestion(query: SolveQuestionDto): Promise<Question | null> {
+		try {
+			return await this.questionModel.findOneAndUpdate(
+				{
+					_id: query._id,
+				},
+				{
+					solvedBy: query.answerId,
+					$inc: {
+						participant: 1,
+					},
+				},
+				{
+					new: true,
+				},
+			);
+		} catch (err) {
+			console.log(
+				"error from question service solved question function.",
+			);
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
+		}
 	}
 }
