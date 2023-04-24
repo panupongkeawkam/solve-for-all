@@ -58,6 +58,7 @@ export class Question {
 	dislikedBy: User[];
 
 	@Prop({
+		default: null,
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Answer",
 	})
