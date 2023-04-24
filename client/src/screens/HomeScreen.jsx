@@ -262,7 +262,7 @@ export default () => {
                 onClick={() =>
                   (window.location.href = `/users/${suggestedUser._id}`)
                 }
-                // imageUrl={"https://api.multiavatar.com/father.svg"}
+                imageUrl={suggestedUser.image}
               />
             </div>
           ))}

@@ -25,7 +25,7 @@ export default ({ onTextChange, ...props }) => {
       size="small"
       multiline
       minRows={2}
-      helperText={`${value.length} of ${props.inputProps.maxLength}`}
+      helperText={`${value?.length} of ${props.inputProps.maxLength}`}
     />
   );
 };

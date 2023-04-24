@@ -113,18 +113,20 @@ export default ({}) => {
         </div>
       </div>
       <section>
-        {question?.answers.length > 0 ? (
+        {question?.answers?.length > 0 ? (
           question.answers.map((answer, index) => (
             <Answer
-              authorProfilePicture={""}
-              authorName={"อู๋ Spin9"}
-              authorUsername={""}
+              key={index}
+              authorProfilePicture={answer.answeredBy.image}
+              authorName={answer.answeredBy.name}
+              authorUsername={answer.answeredBy.username}
+              authorId={answer.answeredBy._id}
               solvable={solvableChecked()}
               isSolved={answer.isSolved}
               createdAt={new Date(answer.createdAt)}
               rating={answer.rating}
               answerBody={answer.body}
-              replies={answer.replies}
+              replies={[]}
               likedBy={answer.likedBy}
               dislikedBy={answer.dislikedBy}
               answerId={answer._id}

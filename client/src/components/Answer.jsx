@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar } from "@mui/material";
+import { useSelector } from "react-redux";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { monokai } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 import palette from "../style/palette";
+import { authAxios } from "../utils/axios.config";
 import { getTimeDiffString } from "../utils/lamda";
 
 import Button from "./buttons/Button";
@@ -14,16 +16,45 @@ export default ({
   authorProfilePicture,
   authorName,
   authorUsername,
+  authorId,
   solvable,
   isSolved,
   createdAt,
   rating,
   answerBody,
   replies,
+  likedBy,
+  dislikedBy,
+  answerId,
 }) => {
-  const likeHandler = () => {};
+  const user = useSelector((state) => state.user.user);
+  const [displayedRating, setDisplayedRating] = useState(rating);
+  const [likable, setLikable] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [hasDisliked, setHasDisliked] = useState(false);
 
-  const dislikeHandler = () => {};
+  useEffect(() => {
+    const likedExist = likedBy.includes(user?._id);
+    const dislikedExist = dislikedBy.includes(user?._id);
+    setHasLiked(Boolean(likedExist));
+    setHasDisliked(Boolean(dislikedExist));
+
+    setLikable(!likedExist && !dislikedExist && authorId !== user?._id);
+  }, [user]);
+
+  const likeHandler = () => {
+    setDisplayedRating(displayedRating + 1);
+    setHasLiked(true);
+    setLikable(false);
+    authAxios.put(`/api/answers/${answerId}?like=true`);
+  };
+
+  const dislikeHandler = () => {
+    setDisplayedRating(displayedRating - 1);
+    setHasDisliked(true);
+    setLikable(false);
+    authAxios.put(`/api/answers/${answerId}?like=false`);
+  };
 
   const answerSolvedHandler = () => {};
 
@@ -54,19 +85,37 @@ export default ({
             )}
           </div>
           <div className="flex flex-col items-center mt-8">
-            <ArrowDropUpIcon
-              className="cursor-pointer transition duration-300 hover:text-[#00D25B] hover:scale-110"
-              color="content-1"
-              sx={{ fontSize: 48 }}
-              onClick={likeHandler}
-            />
-            <p style={{ color: palette["content-1"] }}>{rating}</p>
-            <ArrowDropDownIcon
-              className="cursor-pointer transition duration-300 hover:text-[#DC3545] hover:scale-110"
-              color="content-1"
-              sx={{ fontSize: 48 }}
-              onClick={dislikeHandler}
-            />
+            {likable ? (
+              <>
+                <ArrowDropUpIcon
+                  className="cursor-pointer transition duration-300 hover:text-[#00D25B] hover:scale-110"
+                  color="content-1"
+                  sx={{ fontSize: 48 }}
+                  onClick={likeHandler}
+                />
+                <p style={{ color: palette["content-1"] }}>{displayedRating}</p>
+                <ArrowDropDownIcon
+                  className="cursor-pointer transition duration-300 hover:text-[#DC3545] hover:scale-110"
+                  color="content-1"
+                  sx={{ fontSize: 48 }}
+                  onClick={dislikeHandler}
+                />
+              </>
+            ) : (
+              <>
+                <ArrowDropUpIcon
+                  className="cursor-not-allowed"
+                  color={hasLiked ? "correct" : "content-3"}
+                  sx={{ fontSize: 48 }}
+                />
+                <p style={{ color: palette["content-1"] }}>{displayedRating}</p>
+                <ArrowDropDownIcon
+                  className="cursor-not-allowed"
+                  color={hasDisliked ? "wrong" : "content-3"}
+                  sx={{ fontSize: 48 }}
+                />
+              </>
+            )}
           </div>
         </div>
         <div className="basis-full flex flex-col">
