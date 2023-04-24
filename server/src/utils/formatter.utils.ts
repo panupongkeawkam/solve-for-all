@@ -2,6 +2,7 @@ import { PreviewTagDto } from "src/tag/dto/previewTag.dto";
 import { PreviewQuestionDto } from "../question/dto/previewQuestion.dto";
 import { PreviewUserDto } from "src/user/dto/previewUser.dto";
 import { PreviewAnswerDto } from "src/answer/dto/previewAnswer.dto";
+import { PreviewReplyDto } from "src/reply/dto/previewReply.dto";
 
 export function previewQuestionFormat(
 	question: any,
@@ -78,6 +79,22 @@ export function previewAnswerFormat(user: any, answer: any): PreviewAnswerDto {
 		createdAt: answer?.createdAt,
 		replies: answer?.replies,
 		answeredBy: {
+			_id: user?._id,
+			name: user?.name,
+			username: user?.username,
+			image: user?.image,
+		},
+	};
+}
+
+export function previewReplyFormat(user: any, reply: any): PreviewReplyDto {
+	return {
+		_id: reply?._id,
+		repliedIn: reply?.repliedIn,
+		message: reply?.message,
+		createdAt: reply?.createdAt,
+		updatedAt: reply?.createdAt,
+		repliedBy: {
 			_id: user?._id,
 			name: user?.name,
 			username: user?.username,
