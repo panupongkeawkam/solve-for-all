@@ -121,7 +121,6 @@ export default ({
   };
 
   const submitHandler = async () => {
-    console.log(answerBodies, targetQuestion)
     const formData = new FormData()
     formData.append("body", JSON.stringify(answerBodies))
     formData.append("question", JSON.stringify({
@@ -138,6 +137,9 @@ export default ({
       const res = await authAxios.post(`/api/answers`, formData)
       const answer = res.data.answer
       store.dispatch(appendAnswer(answer))
+      setQuestionBodies([
+        { type: "paragraph", msg: "" },
+      ])
       setLoading(false);
       onClose()
     } catch (err) {

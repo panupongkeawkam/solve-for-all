@@ -1,13 +1,14 @@
-import { useState } from "react";
-import { Stepper, Step, StepLabel, Slide } from "@mui/material";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Stepper, Step, StepLabel, Slide } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette.js";
-
 import axios from "../utils/axios.config"
 import store from "../store/index.js";
 import { setUser } from "../store/userSlice"
+import { fetchTags } from "../store/tagSlice.js";
 
 import TextField from "../components/inputs/TextField.jsx";
 import PasswordField from "../components/inputs/PasswordField.jsx";
@@ -19,6 +20,12 @@ import Logo from "../components/Logo.jsx";
 import LoadingIndicator from "../components/LoadingIndicator.jsx";
 
 export default () => {
+  useEffect(() => {
+    store.dispatch(fetchTags())
+  }, [])
+
+  const tags = useSelector(state => state.tag.tags)
+
   const [loading, setLoading] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [currentStepComponent, setCurrentStepComponent] = useState(
@@ -59,15 +66,6 @@ export default () => {
     <AccountStepForm />,
     <DetailsStepForm />,
     <InterestingStepForm />,
-  ];
-
-  const tagsDummy = [
-    { _id: "1", name: "java" },
-    { _id: "2", name: "javascript" },
-    { _id: "3", name: "tech" },
-    { _id: "4", name: "cat" },
-    { _id: "5", name: "coffee" },
-    { _id: "6", name: "9arm" },
   ];
 
   // for a step 1
@@ -141,11 +139,6 @@ export default () => {
       setLoading(false);
       navigate("/");
     })
-
-    // setTimeout(() => {
-    //   setLoading(false);
-    //   navigate("/");
-    // }, 2000);
   };
 
   // step 1
@@ -260,7 +253,7 @@ export default () => {
         </p>
         <TagInput
           selectedTags={selectedTags}
-          tags={tagsDummy}
+          tags={tags}
           onTagChange={tagChangeHandler}
           limitLength={5}
         />

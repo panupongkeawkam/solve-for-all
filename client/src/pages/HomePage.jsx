@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Select, MenuItem, RadioGroup, Radio } from "@mui/material";
-import { useSelector } from "react-redux"
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import palette from "../style/palette";
-import store from "../store/index"
+import store from "../store/index";
 import { fetchQuestions } from "../store/questionSlice";
 
 import { sortOptions, filterOptions } from "../utils/dummy";
@@ -17,11 +17,11 @@ export default (props) => {
   const [filter, setFilter] = useState("");
   const navigate = useNavigate();
 
-  const questionsList = useSelector(state => state.question.questionsList)
+  const questionsList = useSelector((state) => state.question.questionsList);
 
   useEffect(() => {
-    store.dispatch(fetchQuestions())
-  }, [])
+    store.dispatch(fetchQuestions());
+  }, []);
 
   const sortChangeHandler = (e) => {
     setSortBy(e.target.value);
@@ -34,7 +34,6 @@ export default (props) => {
 
   const viewQuestionHandler = (questionId) => {
     navigate(`/questions/${questionId}`);
-    // do something
   };
 
   return (
@@ -77,7 +76,7 @@ export default (props) => {
         </Select>
       </div>
       {/* content section */}
-      <div className="flex flex-col w-full mb-10">
+      <section className="flex flex-col w-full mb-10">
         {questionsList.length > 0 ? (
           questionsList.map((question, index) => (
             <Question
@@ -104,7 +103,7 @@ export default (props) => {
             />
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 };

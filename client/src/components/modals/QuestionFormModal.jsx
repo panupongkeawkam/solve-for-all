@@ -148,6 +148,11 @@ export default ({
       const res = await authAxios.post(`/api/questions`, formData)
       const question = res.data.question
       store.dispatch(appendQuestion(question))
+      setTitle("")
+      setQuestionBodies([
+        { type: "paragraph", msg: "" },
+      ])
+      setSelectedTags([])
       setLoading(false);
       onClose()
       navigate(`/questions/${question._id}`)
