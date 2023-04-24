@@ -16,7 +16,7 @@ export default () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const [viewingUser, setViewingUser] = useState(null);
-  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [showEditProfileModal, setShowEditProfileModal] = useState(true);
 
   useEffect(() => {
     if (userId !== user?._id) {
@@ -75,9 +75,8 @@ export default () => {
         <section className="w-full">
           {viewingUser?.questions.length ? (
             viewingUser?.questions.map((question, index) => (
-              <div className="mb-4">
+              <div className="mb-4" key={index}>
                 <Question
-                  key={index}
                   title={question.title}
                   authorProfilePicture={question.createdBy.image}
                   authorName={question.createdBy.name}

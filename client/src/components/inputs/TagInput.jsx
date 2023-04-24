@@ -168,7 +168,7 @@ export default ({
         {selectedTagsState.length} of {limitLength} tag
       </div>
       {/* display all selected tags */}
-      <div className="w-full mt-3 flex flex-row flex-wrap">
+      <div className="w-full mt-1 flex flex-row flex-wrap">
         {selectedTagsState.map((tag, index) => (
           <DeletableTag
             key={index}
