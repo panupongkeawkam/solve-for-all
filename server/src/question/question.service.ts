@@ -63,6 +63,24 @@ export class QuestionService {
 		);
 	}
 
+	async IncreaseAnsweredAndParticipant(query: string): Promise<void> {
+		console.log(query);
+		await this.questionModel.findOneAndUpdate(
+			{
+				_id: query,
+			},
+			{
+				$inc: {
+					answered: 1,
+					participant: 1,
+				},
+			},
+			{
+				new: true,
+			},
+		);
+	}
+
 	async findOneAndInteract(
 		query: InteractWithQuestionDto,
 	): Promise<Question | null> {
@@ -72,7 +90,7 @@ export class QuestionService {
 			},
 			{
 				$inc: {
-					participant: query.payload.participant,
+					participant: 1,
 					rating: query.payload.rating,
 				},
 				$push: {

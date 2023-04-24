@@ -12,6 +12,7 @@ import {
 	Put,
 	BadGatewayException,
 	UnauthorizedException,
+	InternalServerErrorException,
 } from "@nestjs/common";
 import { Response, Request } from "express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
@@ -97,7 +98,7 @@ export class QuestionController {
 			throw new BadRequestException("Title cannot be empty.");
 		}
 
-		const params = files?.map((file) => {
+		const query = files?.map((file) => {
 			return {
 				buffer: file.buffer,
 				fileName: file.originalname,
@@ -105,8 +106,7 @@ export class QuestionController {
 		});
 
 		const existTags = await findExistTags(tags);
-
-		const uploadedFiles = await this.fileService.fileUploads(params);
+		const uploadedFiles = await this.fileService.fileUploads(query);
 		try {
 			let index = 0;
 			bodies.forEach((body) => {
@@ -163,7 +163,7 @@ export class QuestionController {
 				await this.fileService.removeFiles(uploadedFiles);
 			}
 			console.log(err);
-			throw new BadRequestException("Please provide the values");
+			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
 
@@ -227,7 +227,6 @@ export class QuestionController {
 				_id: req.params.id,
 				userId: req.user?._id,
 				payload: {
-					participant: isLike ? 1 : -1,
 					rating: isLike ? 1 : -1,
 					action: isLike ? "likedBy" : "dislikedBy",
 				},

@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
 import { Tag } from "../../tag/schema/tag.schema";
 import { User } from "../../user/schema/user.schema";
+import { Answer } from "../../answer/schema/answer.schema";
 
 export type QuestionDocument = mongoose.HydratedDocument<Question | null>;
 
@@ -58,9 +59,9 @@ export class Question {
 
 	@Prop({
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
+		ref: "Answer",
 	})
-	solvedBy: User;
+	solvedBy: Answer;
 
 	@Prop({
 		default: [],
