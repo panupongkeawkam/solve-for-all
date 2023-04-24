@@ -52,7 +52,6 @@ export default ({ active = false, onClose, user }) => {
         return;
       }
       let imageFile = e.target.files[0];
-      console.log(imageFile);
       setProfilePicture(imageFile);
     };
 
@@ -105,22 +104,30 @@ export default ({ active = false, onClose, user }) => {
   };
 
   const submitEditProfileHandler = async () => {
-    console.log(name, email, bio, birthday, selectedTags);
-    // setLoading(true);
-    // const formData = new FormData();
-    // formData.append("name", JSON.stringify(name));
-    // formData.append("email", JSON.stringify(email));
-    // formData.append("bio", JSON.stringify(bio));
-    // // formData.append("birthday", JSON.stringify(birthday));
-    // formData.append("tags", JSON.stringify(selectedTags));
-    // if (typeof image === "string") {
-    //   formData.append("image", JSON.stringify(profilePicture));
-    // } else {
-    //   formData.append("image", profilePicture);
-    // }
+    console.log(
+      name,
+      email,
+      bio,
+      birthday,
+      selectedTags,
+      user?.image,
+      profilePicture
+    );
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("name", JSON.stringify(name));
+    formData.append("email", JSON.stringify(email));
+    formData.append("bio", JSON.stringify(bio));
+    formData.append("birthday", JSON.stringify(new Date(birthday)));
+    formData.append("tags", JSON.stringify(selectedTags));
+    formData.append("image", JSON.stringify(user?.image));
+    if (typeof profilePicture === "object") {
+      formData.append("imageFile", profilePicture);
+    }
 
-    // const res = await authAxios.put(`/api/users/${user?._id}`, formData);
-    // window.location.href = `/users/${user?._id}`;
+    const res = await authAxios.put(`/api/users/${user?._id}`, formData);
+    setLoading(false);
+    window.location.href = `/users/${user?._id}`;
   };
 
   return (
