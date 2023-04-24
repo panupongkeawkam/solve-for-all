@@ -58,6 +58,7 @@ export function previewUserFormat(
 		image: user?.image,
 		tags,
 		birthday: user?.birthday,
+		bio: user?.bio,
 		reputation: user?.reputation,
 		answered: user?.answered,
 		solved: user?.solved,
@@ -75,6 +76,7 @@ export function previewAnswerFormat(user: any, answer: any): PreviewAnswerDto {
 		rating: answer?.rating,
 		isSolved: answer?.isSolved,
 		createdAt: answer?.createdAt,
+		replies: answer?.replies,
 		answeredBy: {
 			_id: user?._id,
 			name: user?.name,

@@ -7,6 +7,7 @@ import { Question, QuestionSchema } from "./schema/question.schema";
 import { TagModule } from "../tag/tag.module";
 import { FileModule } from "../file/file.module";
 import { AnswerModule } from "src/answer/answer.module";
+import { ReplyModule } from "src/reply/reply.module";
 
 @Module({
 	providers: [QuestionService],
@@ -22,6 +23,7 @@ import { AnswerModule } from "src/answer/answer.module";
 		forwardRef(() => TagModule),
 		forwardRef(() => FileModule),
 		forwardRef(() => AnswerModule),
+		forwardRef(() => ReplyModule),
 	],
 	exports: [QuestionService],
 })

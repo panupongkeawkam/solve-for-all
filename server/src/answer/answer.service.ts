@@ -4,6 +4,7 @@ import { Model } from "mongoose";
 import { Answer } from "./schema/answer.schema";
 import { CreateAnswerDto } from "./dto/createAnswer.dto";
 import { InteractAnswerQueryDto } from "./dto/interactQuery.dto";
+import { PushReplyToAnswer } from "src/dto/pushReplyQuery.dto";
 
 @Injectable()
 export class AnswerService {
@@ -94,5 +95,21 @@ export class AnswerService {
 			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
+	}
+
+	async pushReplyToAnswer(query: PushReplyToAnswer): Promise<void> {
+		await this.answerModel.find(
+			{
+				_id: query._id,
+			},
+			{
+				$push: {
+					replies: query.replyId,
+				},
+			},
+			{
+				new: true,
+			},
+		);
 	}
 }

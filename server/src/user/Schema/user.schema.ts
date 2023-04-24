@@ -19,7 +19,7 @@ export class User {
 	name: string;
 
 	@Prop({ default: "" })
-	image: string;
+	imagePath: string;
 
 	@Prop({
 		type: [

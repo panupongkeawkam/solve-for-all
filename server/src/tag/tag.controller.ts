@@ -8,6 +8,8 @@ import {
 	InternalServerErrorException,
 	Inject,
 	forwardRef,
+	UseGuards,
+	UnauthorizedException,
 } from "@nestjs/common";
 import { TagService } from "./tag.service";
 import { Response, Request } from "express";
@@ -19,6 +21,8 @@ import {
 	previewTagFormat,
 } from "src/utils/formatter.utils";
 import { PreviewTagDto } from "./dto/previewTag.dto";
+import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { shuffle } from "../utils/util.util";
 
 @Controller("tags")
 export class TagController {
@@ -44,6 +48,50 @@ export class TagController {
 			console.log(`error from tag controller get all tag`);
 			console.log(err);
 			throw new InternalServerErrorException("Something went wrong");
+		}
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get("interested")
+	async filterInterestedTags(
+		@Req() req: any,
+		@Res() res: Response,
+	): Promise<Response> {
+		const user = await this.userService.findUserByUserId(req?.user?._id);
+
+		if (!user) {
+			throw new UnauthorizedException("You are unauthorize.");
+		}
+
+		try {
+			const tagsQuery = user.tags.map((tag) => tag.toString());
+			const tags = await this.tagService.findManyTagsWithQuestions(
+				tagsQuery,
+			);
+			const responses: PreviewTagDto[] = await Promise.all(
+				tags.map(async (tag) => {
+					const shuffleQuestions = shuffle(tag.questions);
+					const questions =
+						await this.questionService.findManyQuestions(
+							shuffleQuestions,
+						);
+					const responses: PreviewQuestionDto[] = questions.map(
+						(question) =>
+							previewQuestionFormat(question, user, tags),
+					);
+					return previewTagFormat(tag, responses);
+				}),
+			);
+
+			return res.status(HttpStatus.OK).json({
+				tags: responses,
+			});
+		} catch (err) {
+			console.log(
+				"error from tag controller filter interested tags function.",
+			);
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
 

@@ -90,6 +90,8 @@ export class TagService {
 		const tags = await this.tagModel.find({}).select({
 			_id: 1,
 			name: 1,
+			questions: 1,
+			interestedBy: 1,
 		});
 		return tags;
 	}
@@ -113,5 +115,18 @@ export class TagService {
 			name: 1,
 		});
 		return tag;
+	}
+
+	async findManyTagsWithQuestions(query: string[]): Promise<Tag[] | null> {
+		const tags = await this.tagModel
+			.find({
+				_id: query,
+			})
+			.select({
+				_id: 1,
+				questions: 1,
+				name: 1,
+			});
+		return tags;
 	}
 }

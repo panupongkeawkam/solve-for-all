@@ -8,6 +8,7 @@ export class PreviewUserDto {
     name: string;
     image: string;
     tags: Tag[];
+    bio: string;
     birthday: Date;
     reputation: number;
     answered: number;
