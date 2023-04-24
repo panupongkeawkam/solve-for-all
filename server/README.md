@@ -125,8 +125,6 @@
       _id: String,
       answeredBy: String,
       answeredIn: String,
-      title: String,
-      description: String,
       body: String[],
       likedBy: String[],
       dislikedBy: String[],

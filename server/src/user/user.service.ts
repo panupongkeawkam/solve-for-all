@@ -142,4 +142,20 @@ export class UserService {
 			},
 		);
 	}
+
+	async answeredCompute(query: string): Promise<void> {
+		await this.userModel.findOneAndUpdate(
+			{
+				_id: query,
+			},
+			{
+				$inc: {
+					answered: 1,
+				},
+			},
+			{
+				new: true,
+			},
+		);
+	}
 }
