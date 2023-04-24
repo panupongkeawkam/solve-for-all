@@ -8,6 +8,7 @@ export class PreviewAnswerDto {
 	};
 	answeredIn: string;
 	body: string[];
+	replies: string[];
 	likedBy: string[];
 	rating: number;
 	dislikedBy: string[];

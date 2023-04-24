@@ -32,6 +32,7 @@ import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
 import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
 import { PreviewQuestionDto } from "./dto/previewQuestion.dto";
 import { AnswerService } from "src/answer/answer.service";
+import { ReplyService } from "src/reply/reply.service";
 
 @Controller("questions")
 export class QuestionController {
@@ -41,6 +42,7 @@ export class QuestionController {
 		private readonly fileService: FileService,
 		private readonly userService: UserService,
 		private readonly answerService: AnswerService,
+		private readonly replyService: ReplyService,
 	) {}
 
 	@Get()
@@ -202,6 +204,14 @@ export class QuestionController {
 					const user = await this.userService.findUserByUserIdLess(
 						answer?.answeredBy,
 					);
+					const repliesQuery = answer?.replies.map((reply) =>
+						reply.toString(),
+					);
+					console.log(repliesQuery);
+					const replies = await this.replyService.findManyReplies(
+						repliesQuery,
+					);
+					console.log(replies);
 					return previewAnswerFormat(user, answer);
 				}),
 			);

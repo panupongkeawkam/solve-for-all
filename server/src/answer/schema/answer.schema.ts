@@ -16,9 +16,6 @@ export class Answer {
 	})
 	answeredIn: Question;
 
-	// @Prop({ required: true, minlength: 6 })
-	// title: string;
-
 	@Prop({ required: true })
 	body: string[];
 

@@ -134,18 +134,22 @@ export class UserController {
 		@Body() info: EditUserDto,
 	) {
 		checkPermission(req.user?._id, req.params?.id);
-		const params = {
-			buffer: file.buffer,
-			fileName: file.originalname,
-		};
+
 		try {
+			let uploadedFile = file ? "" : info.imagePath;
 			const oldUser = await this.userService.findUserByUserId(
 				req.params.id,
 			);
 			const tags = JSON.parse(req.body?.tags);
 			checkPermission(req.user?._id, req.params.id);
-			const uploadedFile = await this.fileService.fileUpload(params);
-			const query = { ...info, image: uploadedFile?.path, tags };
+			if (file) {
+				const params = {
+					buffer: file.buffer,
+					fileName: file.originalname,
+				};
+				uploadedFile = (await this.fileService.fileUpload(params)).path;
+			}
+			const query = { ...info, imagePath: uploadedFile, tags };
 			const user = await this.userService.editUserByUserId(
 				query,
 				req.params.id,

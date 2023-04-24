@@ -107,11 +107,16 @@ export class AnswerController {
 			};
 
 			const answer = await this.answerService.findOneAndInteract(query);
+			const userReputationQuery = {
+				_id: answer.answeredBy.toString(),
+				isLike: isLike,
+			};
 
 			// Background
 			this.questionService.increaseParticipant(
 				answer.answeredIn.toString(),
 			);
+			this.userService.reputationCompute(userReputationQuery);
 
 			return res.status(HttpStatus.OK).json({
 				success: true,
