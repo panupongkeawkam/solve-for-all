@@ -16,7 +16,7 @@ export default () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const [viewingUser, setViewingUser] = useState(null);
-  const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [showEditProfileModal, setShowEditProfileModal] = useState(true);
 
   useEffect(() => {
     if (userId !== user?._id) {

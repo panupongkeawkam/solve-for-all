@@ -9,6 +9,7 @@ import { authAxios } from "../../utils/axios.config";
 
 import SideBarNavigatorButton from "../buttons/SideBarNavigatorButton";
 import TextField from "../inputs/TextField";
+import PasswordField from "../inputs/PasswordField";
 import TextArea from "../inputs/TextArea";
 import DatePicker from "../inputs/DatePicker";
 import Button from "../buttons/Button";
@@ -33,6 +34,12 @@ export default ({ active = false, onClose, user }) => {
   const [birthday, setBirthday] = useState(user?.birthday);
 
   const [selectedTags, setSelectedTags] = useState(user?.tags);
+
+  const [username, setUsername] = useState(user?.username);
+
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [reNewPassword, setReNewPassword] = useState("");
 
   const profilePictureChangeHandler = () => {
     let input = document.createElement("input");
@@ -81,7 +88,21 @@ export default ({ active = false, onClose, user }) => {
     setBio(user?.bio);
     setBirthday(user?.birthday);
     setSelectedTags(user?.tags);
+
+    setUsername(user?.username);
   }, [user]);
+
+  const oldPasswordChangeHandler = (text) => {
+    setOldPassword(text);
+  };
+
+  const newPasswordChangeHandler = (text) => {
+    setNewPassword(text);
+  };
+
+  const reNewPasswordChangeHandler = (text) => {
+    setReNewPassword(text);
+  };
 
   const submitEditProfileHandler = async () => {
     console.log(name, email, bio, birthday, selectedTags);
@@ -151,56 +172,59 @@ export default ({ active = false, onClose, user }) => {
               {editingPage === "profile" ? (
                 <section className="flex flex-col">
                   <div
-                    className="flex flex-row"
+                    className="flex flex-row mb-6"
                     style={{ alignItems: "space-between" }}
                   >
-                    <div className="flex flex-col">
-                      <div className="mb-4">
-                        <p style={{ color: palette["content-1"] }}>
-                          Profile picture
-                        </p>
-                      </div>
-                      <div className="flex flex-row mb-6 items-center">
-                        <div className="flex flex-col">
-                          {profilePicture ? (
-                            <Avatar
-                              sx={{ width: "80px", height: "80px" }}
-                              src={
-                                typeof profilePicture === "string"
-                                  ? profilePicture
-                                  : imageToObjectURL(profilePicture)
-                              }
-                            />
-                          ) : (
-                            <Avatar
-                              sx={{
-                                width: "80px",
-                                height: "80px",
-                                fontSize: 48,
-                              }}
-                            >
-                              {user?.username[0]?.toUpperCase()}
-                            </Avatar>
-                          )}
-                        </div>
-                        <div className="flex flex-col ml-5">
-                          <Button
-                            text="Change"
-                            size="small"
-                            variant="outlined"
-                            color="content-1"
-                            onClick={profilePictureChangeHandler}
-                          />
-                        </div>
-                      </div>
+                    <div className="basis-3/4 flex flex-col">
+                      <h2 style={{ color: palette["content-2"] }}>
+                        Profile information
+                      </h2>
                     </div>
-                    <div className="basis-full flex flex-col items-end">
+                    <div className="basis-1/4 flex flex-col items-end">
                       <IconButton onClick={onClose}>
                         <Icon.CloseOutlined />
                       </IconButton>
                     </div>
                   </div>
                   <div className="flex flex-col 2xl:pr-16 lg:pr-12">
+                    <div className="mb-4">
+                      <p style={{ color: palette["content-1"] }}>
+                        Profile picture
+                      </p>
+                    </div>
+                    <div className="flex flex-row items-center mb-6">
+                      <div className="flex flex-col">
+                        {profilePicture ? (
+                          <Avatar
+                            sx={{ width: "80px", height: "80px" }}
+                            src={
+                              typeof profilePicture === "string"
+                                ? profilePicture
+                                : imageToObjectURL(profilePicture)
+                            }
+                          />
+                        ) : (
+                          <Avatar
+                            sx={{
+                              width: "80px",
+                              height: "80px",
+                              fontSize: 48,
+                            }}
+                          >
+                            {user?.username[0]?.toUpperCase()}
+                          </Avatar>
+                        )}
+                      </div>
+                      <div className="flex flex-col ml-5">
+                        <Button
+                          text="Change"
+                          size="small"
+                          variant="outlined"
+                          color="content-1"
+                          onClick={profilePictureChangeHandler}
+                        />
+                      </div>
+                    </div>
                     <div className="mb-3">
                       <p style={{ color: palette["content-1"] }}>Details</p>
                     </div>
@@ -267,10 +291,90 @@ export default ({ active = false, onClose, user }) => {
                   </div>
                 </section>
               ) : (
-                <section>
-                  <IconButton onClick={onClose}>
-                    <Icon.CloseOutlined />
-                  </IconButton>
+                <section className="flex flex-col">
+                  <div
+                    className="flex flex-row mb-6"
+                    style={{ alignItems: "space-between" }}
+                  >
+                    <div className="basis-full flex flex-col">
+                      <h2 style={{ color: palette["content-2"] }}>
+                        Security & Account
+                      </h2>
+                    </div>
+                    <div className="basis-full flex flex-col items-end">
+                      <IconButton onClick={onClose}>
+                        <Icon.CloseOutlined />
+                      </IconButton>
+                    </div>
+                  </div>
+                  <div className="flex flex-col 2xl:pr-16 lg:pr-12">
+                    <div className="mb-3">
+                      <p style={{ color: palette["content-1"] }}>Username</p>
+                    </div>
+                    <TextField
+                      value={username}
+                      label="Username"
+                      inputProps={{
+                        maxLength: 20,
+                      }}
+                      disabled
+                    />
+                    <div className="mb-6">
+                      <span style={{ color: palette["content-2"] }}>
+                        You can’t change an username because this will be
+                        identify yourself
+                      </span>
+                    </div>
+                    <div className="mb-3">
+                      <p style={{ color: palette["content-1"] }}>
+                        Change password
+                      </p>
+                    </div>
+                    <PasswordField
+                      value={oldPassword}
+                      label="Old password"
+                      // error={passwordError}
+                      // helperText={passwordError ? passwordErrorMessage : null}
+                      inputProps={{
+                        maxLength: 40,
+                      }}
+                      onPasswordChange={oldPasswordChangeHandler}
+                    />
+                    <PasswordField
+                      value={newPassword}
+                      label="New password"
+                      // error={passwordError}
+                      // helperText={passwordError ? passwordErrorMessage : null}
+                      inputProps={{
+                        maxLength: 40,
+                      }}
+                      onPasswordChange={newPasswordChangeHandler}
+                    />
+                    <PasswordField
+                      value={reNewPassword}
+                      label="Confirm new password"
+                      // error={passwordError}
+                      // helperText={passwordError ? passwordErrorMessage : null}
+                      inputProps={{
+                        maxLength: 40,
+                      }}
+                      onPasswordChange={reNewPasswordChangeHandler}
+                    />
+                    <div className="mb-6">
+                      <span style={{ color: palette["content-2"] }}>
+                        Password contain only A-Z, a-z, 0-9 or _, 8-20 length
+                        characters and includes at least 2 character and 2
+                        numeric
+                      </span>
+                    </div>
+                    <div>
+                      <Button
+                        text="Submit"
+                        size="small"
+                        // onClick={submitEditProfileHandler}
+                      />
+                    </div>
+                  </div>
                 </section>
               )}
             </div>
