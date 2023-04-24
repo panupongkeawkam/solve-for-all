@@ -2,6 +2,7 @@ import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { User } from "src/user/schema/user.schema";
 import { Question } from "src/question/schema/question.schema";
 import * as mongoose from "mongoose";
+import { Reply } from "src/reply/schema/reply.schema";
 
 export type AnswerDocument = mongoose.HydratedDocument<Answer | null>;
 
@@ -44,8 +45,16 @@ export class Answer {
 	@Prop({ default: 0 })
 	rating: number;
 
-	@Prop({ default: [] })
-	replies: string[];
+	@Prop({
+		default: [],
+		type: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: "Reply",
+			},
+		],
+	})
+	replies: Reply[];
 
 	@Prop({ default: false })
 	isSolved: boolean;

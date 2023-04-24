@@ -42,7 +42,7 @@ export class EditUserDto {
 
 	tags: string;
 
-	imagePath: string;
+	image: string;
 }
 
 export class ChangePasswordDto {
