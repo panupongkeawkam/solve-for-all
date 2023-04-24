@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useSelector } from "react-redux"
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Avatar,
@@ -41,12 +41,27 @@ export default ({
   rating,
   tags,
   questionBody,
-  questionId
+  questionId,
+  likedBy,
+  dislikedBy,
 }) => {
-  const navigate = useNavigate()
-  const user = useSelector(state => state.user.user)
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.user.user);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [showDeleteQuestionModal, setShowDeleteQuestionModal] = useState(false)
+  const [showDeleteQuestionModal, setShowDeleteQuestionModal] = useState(false);
+  const [displayedRating, setDisplayedRating] = useState(rating);
+  const [likable, setLikable] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
+  const [hasDisliked, setHasDisliked] = useState(false);
+
+  useEffect(() => {
+    const likedExist = likedBy.includes(user?._id);
+    const dislikedExist = dislikedBy.includes(user?._id);
+    setHasLiked(Boolean(likedExist));
+    setHasDisliked(Boolean(dislikedExist));
+
+    setLikable(!likedExist && !dislikedExist && authorId !== user?._id);
+  }, [user]);
 
   const openAnchorHandler = (e) => {
     setAnchorEl(e.currentTarget);
@@ -57,24 +72,34 @@ export default ({
   };
 
   const toggleDeleteQuestionModalHandler = () => {
-    closeAnchorHandler()
-    setShowDeleteQuestionModal(!showDeleteQuestionModal)
+    closeAnchorHandler();
+    setShowDeleteQuestionModal(!showDeleteQuestionModal);
   };
 
   const deleteQuestionHandler = async () => {
     try {
-      await authAxios.delete(`/api/questions/${questionId}`)
-      window.location.href = "/"
-      toggleDeleteQuestionModalHandler()
+      await authAxios.delete(`/api/questions/${questionId}`);
+      window.location.href = "/";
+      toggleDeleteQuestionModalHandler();
     } catch (err) {
-      window.location.href = "/"
-      toggleDeleteQuestionModalHandler()
+      window.location.href = "/";
+      toggleDeleteQuestionModalHandler();
     }
-  }
+  };
 
-  const likeHandler = () => { };
+  const likeHandler = () => {
+    setDisplayedRating(displayedRating + 1);
+    setHasLiked(true);
+    setLikable(false);
+    authAxios.put(`/api/questions/${questionId}?like=true`);
+  };
 
-  const dislikeHandler = () => { };
+  const dislikeHandler = () => {
+    setDisplayedRating(displayedRating - 1);
+    setHasDisliked(true);
+    setLikable(false);
+    authAxios.put(`/api/questions/${questionId}?like=false`);
+  };
 
   return (
     <div
@@ -83,24 +108,51 @@ export default ({
     >
       <div className="basis-auto flex flex-col mr-8">
         {authorProfilePicture ? (
-          <Avatar alt={authorUsername} src={authorProfilePicture} sx={{ width: 64, height: 64 }} />
+          <Avatar
+            alt={authorUsername}
+            src={authorProfilePicture}
+            sx={{ width: 64, height: 64 }}
+          />
         ) : (
-          <Avatar alt={authorUsername} sx={{ width: 64, height: 64, fontSize: "1.8em" }}>{authorUsername[0]?.toUpperCase()}</Avatar>
+          <Avatar
+            alt={authorUsername}
+            sx={{ width: 64, height: 64, fontSize: "1.8em" }}
+          >
+            {authorUsername[0]?.toUpperCase()}
+          </Avatar>
         )}
         <div className="flex flex-col items-center mt-8">
-          <ArrowDropUpIcon
-            className="cursor-pointer transition duration-300 hover:text-[#00D25B] hover:scale-110"
-            color="content-1"
-            sx={{ fontSize: 48 }}
-            onClick={likeHandler}
-          />
-          <p style={{ color: palette["content-1"] }}>{rating}</p>
-          <ArrowDropDownIcon
-            className="cursor-pointer transition duration-300 hover:text-[#DC3545] hover:scale-110"
-            color="content-1"
-            sx={{ fontSize: 48 }}
-            onClick={dislikeHandler}
-          />
+          {likable ? (
+            <>
+              <ArrowDropUpIcon
+                className="cursor-pointer transition duration-300 hover:text-[#00D25B] hover:scale-110"
+                color="content-1"
+                sx={{ fontSize: 48 }}
+                onClick={likeHandler}
+              />
+              <p style={{ color: palette["content-1"] }}>{displayedRating}</p>
+              <ArrowDropDownIcon
+                className="cursor-pointer transition duration-300 hover:text-[#DC3545] hover:scale-110"
+                color="content-1"
+                sx={{ fontSize: 48 }}
+                onClick={dislikeHandler}
+              />
+            </>
+          ) : (
+            <>
+              <ArrowDropUpIcon
+                className="cursor-not-allowed"
+                color={hasLiked ? "correct" : "content-3"}
+                sx={{ fontSize: 48 }}
+              />
+              <p style={{ color: palette["content-1"] }}>{displayedRating}</p>
+              <ArrowDropDownIcon
+                className="cursor-not-allowed"
+                color={hasDisliked ? "wrong" : "content-3"}
+                sx={{ fontSize: 48 }}
+              />
+            </>
+          )}
         </div>
       </div>
       <div className="basis-full flex flex-col">
@@ -122,74 +174,85 @@ export default ({
           </div>
           <div className="basis-1/2 flex flex-row flex-wrap justify-end">
             <div className="flex flex-row mr-8">
-              {isSolved ? (
-                <div className="flex flex-row justify-center items-center">
-                  <TaskAltOutlinedIcon color={"correct"} fontSize="small" />
-                  <span className="ml-2" style={{ color: palette.correct }}>
-                    Solved
-                  </span>
-                </div>
-              ) : (
-                <div className="flex flex-row">
-                  <AccessTimeIcon color={"content-2"} fontSize="small" />
-                  <span
-                    className="ml-2"
-                    style={{ color: palette["content-2"] }}
-                  >
-                    Asking
-                  </span>
-                </div>
-              )}
+              <div className="flex flex-row">
+                {isSolved ? (
+                  <div>
+                    <TaskAltOutlinedIcon color={"correct"} fontSize="small" />
+                    <span className="ml-2" style={{ color: palette.correct }}>
+                      Solved
+                    </span>
+                  </div>
+                ) : (
+                  <div>
+                    <AccessTimeIcon color={"content-2"} fontSize="small" />
+                    <span
+                      className="ml-2"
+                      style={{ color: palette["content-2"] }}
+                    >
+                      Asking
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex flex-row mr-8">
-              <PeopleOutlineIcon color={"content-2"} fontSize="small" />
-              <span className="ml-2" style={{ color: palette["content-2"] }}>
-                {totalParticipants}
-              </span>
+              <div>
+                <PeopleOutlineIcon color={"content-2"} fontSize="small" />
+                <span className="ml-2" style={{ color: palette["content-2"] }}>
+                  {totalParticipants}
+                </span>
+              </div>
             </div>
             <div className="flex flex-row">
-              <VisibilityOutlinedIcon color={"content-2"} fontSize="small" />
-              <span className="ml-2" style={{ color: palette["content-2"] }}>
-                {totalViewed}
-              </span>
+              <div>
+                <VisibilityOutlinedIcon color={"content-2"} fontSize="small" />
+                <span className="ml-2" style={{ color: palette["content-2"] }}>
+                  {totalViewed}
+                </span>
+              </div>
             </div>
-            {authorId === user?._id && <div className="ml-12">
-              <IconButton
-                aria-controls="test-box"
-                aria-haspopup="true"
-                onClick={openAnchorHandler}
-              >
-                <MoreHorizIcon />
-              </IconButton>
-              <Menu
-                id="test-box"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={closeAnchorHandler}
-              >
-                <MenuItem onClick={closeAnchorHandler}>
-                  <ListItemIcon>
-                    <EditOutlinedIcon fontSize="20px" />
-                  </ListItemIcon>
-                  <ListItemText sx={{ mr: 3 }}>
-                    <div style={{ fontSize: "16px" }}>Edit</div>
-                  </ListItemText>
-                </MenuItem>
-                <MenuItem onClick={toggleDeleteQuestionModalHandler}>
-                  <ListItemIcon>
-                    <DeleteOutlineOutlinedIcon fontSize="20px" color="wrong" />
-                  </ListItemIcon>
-                  <ListItemText sx={{ mr: 3, color: palette.wrong }}>
-                    <div style={{ fontSize: "16px" }}>Delete</div>
-                  </ListItemText>
-                </MenuItem>
-              </Menu>
-            </div>}
+            {authorId === user?._id && (
+              <div className="ml-12">
+                <IconButton
+                  aria-controls="test-box"
+                  aria-haspopup="true"
+                  onClick={openAnchorHandler}
+                >
+                  <MoreHorizIcon />
+                </IconButton>
+                <Menu
+                  id="test-box"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                  }}
+                  keepMounted
+                  open={Boolean(anchorEl)}
+                  onClose={closeAnchorHandler}
+                >
+                  <MenuItem onClick={closeAnchorHandler}>
+                    <ListItemIcon>
+                      <EditOutlinedIcon fontSize="20px" />
+                    </ListItemIcon>
+                    <ListItemText sx={{ mr: 3 }}>
+                      <div style={{ fontSize: "16px" }}>Edit</div>
+                    </ListItemText>
+                  </MenuItem>
+                  <MenuItem onClick={toggleDeleteQuestionModalHandler}>
+                    <ListItemIcon>
+                      <DeleteOutlineOutlinedIcon
+                        fontSize="20px"
+                        color="wrong"
+                      />
+                    </ListItemIcon>
+                    <ListItemText sx={{ mr: 3, color: palette.wrong }}>
+                      <div style={{ fontSize: "16px" }}>Delete</div>
+                    </ListItemText>
+                  </MenuItem>
+                </Menu>
+              </div>
+            )}
           </div>
         </div>
         <div className="basis-full flex flex-row mb-3">
@@ -281,7 +344,9 @@ export default ({
         active={showDeleteQuestionModal}
         confirmText="Delete"
         title={"Delete this question?"}
-        description={"This action cannot be redo, please make sure your decision"}
+        description={
+          "This action cannot be redo, please make sure your decision"
+        }
         onConfirm={deleteQuestionHandler}
         danger
         onClose={toggleDeleteQuestionModalHandler}

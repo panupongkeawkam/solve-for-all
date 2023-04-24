@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link as RouterLink, useLocation, Outlet, useNavigate } from "react-router-dom";
+import {
+  Link as RouterLink,
+  useLocation,
+  Outlet,
+  useNavigate,
+} from "react-router-dom";
 import { IconButton, Menu, Badge } from "@mui/material";
 import * as Icon from "@mui/icons-material";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 
 import palette from "../style/palette";
 import store from "../store/index";
@@ -22,15 +27,17 @@ import LoadingIndicator from "../components/LoadingIndicator";
 
 export default () => {
   const user = useSelector((state) => state.user.user);
-  const authenticatingUser = useSelector((state) => state.user.authenticatingUser);
+  const authenticatingUser = useSelector(
+    (state) => state.user.authenticatingUser
+  );
   const suggestedUsers = useSelector((state) => state.user.suggestedUsers);
   const location = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
-    store.dispatch(fetchSuggestedUsers())
+    store.dispatch(fetchSuggestedUsers());
     // test()
-  }, [])
+  }, []);
 
   useEffect(() => {
     setGuestMode(!user);
@@ -42,8 +49,10 @@ export default () => {
   const [guestMode, setGuestMode] = useState(!Boolean(user));
 
   const filterSuggestedUsers = (suggestedUsersArg) => {
-    return suggestedUsersArg.filter(suggestedUser => suggestedUser?._id !== user?._id).slice(0, 2)
-  }
+    return suggestedUsersArg
+      .filter((suggestedUser) => suggestedUser?._id !== user?._id)
+      .slice(0, 2);
+  };
 
   // const test = () => {
   //   // Define an empty object to store the colors
@@ -94,8 +103,8 @@ export default () => {
   };
 
   const logoutHandler = () => {
-    Cookies.remove("accessToken")
-    Cookies.remove("userId")
+    Cookies.remove("accessToken");
+    Cookies.remove("userId");
     setShowConfirmLogoutModal(false);
     window.location.href = "/";
   };
@@ -245,15 +254,18 @@ export default () => {
             <p style={{ color: palette["content-1"] }}>Suggested people</p>
           </div>
           {/* suggested users */}
-          {filterSuggestedUsers(suggestedUsers).map((suggestedUser, index) =>
+          {filterSuggestedUsers(suggestedUsers).map((suggestedUser, index) => (
             <div className="mb-3" key={index}>
               <User
                 name={suggestedUser.name}
                 username={suggestedUser.username}
-                onClick={() => window.location.href = `/users/${suggestedUser._id}`}
-              // imageUrl={"https://api.multiavatar.com/father.svg"}
+                onClick={() =>
+                  (window.location.href = `/users/${suggestedUser._id}`)
+                }
+                // imageUrl={"https://api.multiavatar.com/father.svg"}
               />
-            </div>)}
+            </div>
+          ))}
         </div>
       </div>
       <Logo />

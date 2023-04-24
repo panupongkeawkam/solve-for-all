@@ -3,35 +3,37 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import palette from "../style/palette";
-import axios from "../utils/axios.config"
+import axios from "../utils/axios.config";
 
 import UserDetail from "../components/UserDetail";
 import UserDetailSkeleton from "../components/skeletons/UserDetailSkeleton";
 import EmptyData from "../components/EmptyData";
 import ProfileFormModal from "../components/modals/ProfileFormModal";
+import Question from "../components/Question";
 
 export default () => {
   const user = useSelector((state) => state.user.user);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { userId } = useParams();
-  const [viewingUser, setViewingUser] = useState(null)
+  const [viewingUser, setViewingUser] = useState(null);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
 
   useEffect(() => {
     if (userId !== user?._id) {
-      axios.get(`/api/users/${userId}`)
-        .then(res => {
+      axios
+        .get(`/api/users/${userId}`)
+        .then((res) => {
           if (res.data.user !== null) {
-            setViewingUser(res.data.user)
+            setViewingUser(res.data.user);
           } else {
-            navigate('/notfound')
+            navigate("/notfound");
           }
         })
-        .catch(err => {
-          navigate('/notfound')
-        })
+        .catch((err) => {
+          navigate("/notfound");
+        });
     } else {
-      setViewingUser(user)
+      setViewingUser(user);
     }
   }, []);
 
@@ -39,13 +41,23 @@ export default () => {
     setShowEditProfileModal(!showEditProfileModal);
   };
 
+  const viewQuestionHandler = (questionId) => {
+    navigate(`/questions/${questionId}`);
+  };
+
   return (
     <>
       <div className="flex flex-col w-full pt-3">
-        <div className="w-full">
-          {Boolean(viewingUser) ?
-            <UserDetail {...viewingUser} onEdit={toggleEditProfileModalHandler} /> : <UserDetailSkeleton />}
-        </div>
+        <section className="w-full">
+          {Boolean(viewingUser) ? (
+            <UserDetail
+              {...viewingUser}
+              onEdit={toggleEditProfileModalHandler}
+            />
+          ) : (
+            <UserDetailSkeleton />
+          )}
+        </section>
         <div className="w-full py-5">
           <p style={{ color: palette["content-2"] }}>
             Question
@@ -56,19 +68,41 @@ export default () => {
                 marginLeft: "8px",
               }}
             >
-              0
+              {viewingUser?.questions.length}
             </span>
           </p>
         </div>
-        <div className="w-full">
-          <div className="w-full h-[160px]">
-            <EmptyData
-              title="No questions"
-              description="This user didn't ask any questions"
-              minimized
-            />
-          </div>
-        </div>
+        <section className="w-full">
+          {viewingUser?.questions.length ? (
+            viewingUser?.questions.map((question, index) => (
+              <div className="mb-4">
+                <Question
+                  key={index}
+                  title={question.title}
+                  authorProfilePicture={question.createdBy.image}
+                  authorName={question.createdBy.name}
+                  authorUsername={question.createdBy.username}
+                  totalAnswers={question.answered}
+                  totalParticipants={question.participant}
+                  totalViewed={question.viewed}
+                  isSolved={Boolean(question.solvedBy)}
+                  createdAt={new Date(question.createdAt)}
+                  rating={question.rating}
+                  tags={question.tags}
+                  onView={() => viewQuestionHandler(question._id)}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="w-full h-[160px]">
+              <EmptyData
+                title="No questions"
+                description="This user didn't ask any questions"
+                minimized
+              />
+            </div>
+          )}
+        </section>
       </div>
       <ProfileFormModal
         active={showEditProfileModal}

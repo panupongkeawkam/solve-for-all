@@ -12,6 +12,7 @@ import QuestionDetailSkeleton from "../components/skeletons/QuestionDetailSkelet
 import Button from "../components/buttons/Button";
 import Answer from "../components/Answer";
 import AnswerFormModal from "../components/modals/AnswerFormModal";
+import EmptyData from "../components/EmptyData";
 
 export default ({}) => {
   const { questionId } = useParams();
@@ -71,6 +72,8 @@ export default ({}) => {
             tags={question.tags}
             questionBody={question.body}
             questionId={question._id}
+            likedBy={question.likedBy}
+            dislikedBy={question.dislikedBy}
           />
         )}
       </section>
@@ -110,26 +113,32 @@ export default ({}) => {
         </div>
       </div>
       <section>
-        <Answer
-          authorProfilePicture={""}
-          authorName={"อู๋ Spin9"}
-          authorUsername={"au_spin9"}
-          solvable={solvableChecked()}
-          isSolved={question?.solvedBy?._id === "some_id"} // answer.createBy._id
-          createdAt={new Date("2023-04-22T08:55:38.842+00:00")}
-          rating={47}
-          answerBody={[
-            {
-              type: "paragraph",
-              msg: "ดังนั้นนี่จึงกลายเป็นช่วงเวลาที่ความเนิร์ดไอทีของตัวเองได้เผยสู่โลกโซเชียล เพราะเน้นการพูดคุยถึงเรื่องเทคโนโลยีที่กำลังเป็นที่สนใจในสังคม และพยายามจะทำให้เรื่องยากกลายเป็นเรื่องง่าย",
-            },
-            {
-              type: "paragraph",
-              msg: "ด้วยการสรุปเรื่องไอที และเทคโนโลยีตามความเข้าใจของตัวเองให้ผู้ติดตามได้รับรู้ เนื่องจากหลายคนอ่านข่าวแล้วก็ยังไม่เข้าใจ แต่ช่อง 9arm จะมาไลฟ์พูดคุยแบบง่าย ๆ ให้ฟังเอง",
-            },
-          ]}
-          replies={[]}
-        />
+        {question?.answers.length > 0 ? (
+          question.answers.map((answer, index) => (
+            <Answer
+              authorProfilePicture={""}
+              authorName={"อู๋ Spin9"}
+              authorUsername={""}
+              solvable={solvableChecked()}
+              isSolved={answer.isSolved}
+              createdAt={new Date(answer.createdAt)}
+              rating={answer.rating}
+              answerBody={answer.body}
+              replies={answer.replies}
+              likedBy={answer.likedBy}
+              dislikedBy={answer.dislikedBy}
+              answerId={answer._id}
+            />
+          ))
+        ) : (
+          <div className="w-full h-[160px]">
+            <EmptyData
+              title="No answers"
+              description="There is no one answered to this question"
+              minimized
+            />
+          </div>
+        )}
       </section>
       <AnswerFormModal
         active={showAnswerFormModal}
