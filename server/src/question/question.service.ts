@@ -111,10 +111,7 @@ export class QuestionService {
 
 	// Find 10 questions is ordering by the most participant.
 	async findAllQuestion(): Promise<Question[] | null> {
-		return await this.questionModel
-			.find({})
-			.sort({ participant: 1 })
-			.limit(10);
+		return await this.questionModel.find({}).sort({ participant: 1 });
 	}
 
 	// Find questions by question ids
@@ -123,8 +120,7 @@ export class QuestionService {
 			.find({
 				_id: query,
 			})
-			.sort({ participant: 1 })
-			.limit(10);
+			.sort({ participant: 1 });
 	}
 
 	async findQuestionsByUserId(query: string): Promise<Question[] | null> {
@@ -158,5 +154,18 @@ export class QuestionService {
 			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
+	}
+
+	async increaseParticipant(query: string): Promise<void> {
+		await this.questionModel.findOneAndUpdate(
+			{
+				_id: query,
+			},
+			{
+				$inc: {
+					participant: 1,
+				},
+			},
+		);
 	}
 }

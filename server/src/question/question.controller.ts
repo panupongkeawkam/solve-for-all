@@ -24,7 +24,10 @@ import { FileService } from "src/file/file.service";
 import { BadRequestException } from "@nestjs/common";
 import { DeleteQuestionDto } from "./dto/deleteQuestion.dto";
 import { UserService } from "src/user/user.service";
-import { previewQuestionFormat } from "../utils/formatter.utils";
+import {
+	previewAnswerFormat,
+	previewQuestionFormat,
+} from "../utils/formatter.utils";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
 import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
 import { PreviewQuestionDto } from "./dto/previewQuestion.dto";
@@ -189,11 +192,21 @@ export class QuestionController {
 				tags,
 			);
 
-			const answers = await this.answerService.findAnswersByQuestionId(
-				req.params?.id,
+			const answers: any =
+				await this.answerService.findAnswersByQuestionId(
+					req.params?.id,
+				);
+
+			const answerResponse = await Promise.all(
+				answers?.map(async (answer) => {
+					const user = await this.userService.findUserByUserIdLess(
+						answer?.answeredBy,
+					);
+					return previewAnswerFormat(user, answer);
+				}),
 			);
 
-			response.answers = answers;
+			response.answers = answerResponse;
 
 			// increase viewed
 			this.questionService.increaseView(question?._id.toString());
@@ -277,9 +290,6 @@ export class QuestionController {
 		@Req() req: any,
 		@Res() res: Response,
 	): Promise<Response> {
-		// Increase reputation & solved in User Collection += 1 Answer owned
-		// Add answer id to solvedBy and participant += 1 in Question Collection
-		// Change isSolve = true in Answer Collection
 		try {
 			const query = {
 				_id: req.params.id,

@@ -3,6 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Answer } from "./schema/answer.schema";
 import { CreateAnswerDto } from "./dto/createAnswer.dto";
+import { InteractAnswerQueryDto } from "./dto/interactQuery.dto";
 
 @Injectable()
 export class AnswerService {
@@ -62,5 +63,36 @@ export class AnswerService {
 				new: true,
 			},
 		);
+	}
+
+	async findOneAndInteract(
+		query: InteractAnswerQueryDto,
+	): Promise<Answer | null> {
+		const pushKey = query.rating === 1 ? "likedBy" : "dislikedBy";
+		try {
+			const answer = await this.answerModel.findOneAndUpdate(
+				{
+					_id: query._id,
+				},
+				{
+					$push: {
+						[pushKey]: query.userId,
+					},
+					$inc: {
+						rating: query.rating,
+					},
+				},
+				{
+					new: true,
+				},
+			);
+			return answer;
+		} catch (err) {
+			console.log(
+				"error from answer service find one and interact answer.",
+			);
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
+		}
 	}
 }
