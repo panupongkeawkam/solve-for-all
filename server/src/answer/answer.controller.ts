@@ -8,6 +8,7 @@ import {
 	UploadedFiles,
 	InternalServerErrorException,
 	HttpStatus,
+	Put,
 } from "@nestjs/common";
 import { Response } from "express";
 import { AnswerService } from "./answer.service";
@@ -94,6 +95,5 @@ export class AnswerController {
 			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
-		return;
 	}
 }

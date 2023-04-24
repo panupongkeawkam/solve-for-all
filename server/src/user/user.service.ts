@@ -73,6 +73,7 @@ export class UserService {
 				username: 1,
 				_id: 1,
 				name: 1,
+				image: 1,
 			})
 			.limit(10)
 			.sort({
@@ -133,7 +134,7 @@ export class UserService {
 		const reputation = query.isLike ? 1 : -1;
 		await this.userModel.findOneAndUpdate(
 			{
-				_id: query.createdBy,
+				_id: query._id,
 			},
 			{
 				$inc: {
@@ -151,6 +152,22 @@ export class UserService {
 			{
 				$inc: {
 					answered: 1,
+				},
+			},
+			{
+				new: true,
+			},
+		);
+	}
+
+	async increaseSolved(query: string): Promise<void> {
+		await this.userModel.findOneAndUpdate(
+			{
+				_id: query,
+			},
+			{
+				$inc: {
+					solved: 1,
 				},
 			},
 			{
