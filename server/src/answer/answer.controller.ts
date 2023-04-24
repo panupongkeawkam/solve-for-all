@@ -18,6 +18,7 @@ import { FileService } from "src/file/file.service";
 import { CreateAnswerDto } from "./dto/createAnswer.dto";
 import { UserService } from "src/user/user.service";
 import { QuestionService } from "src/question/question.service";
+import { InteractAnswerQueryDto } from "./dto/interactQuery.dto";
 
 @Controller("answers")
 export class AnswerController {
@@ -47,9 +48,6 @@ export class AnswerController {
 	): Promise<Response | null> {
 		const questionDetail = JSON.parse(req.body.question);
 		const bodies = JSON.parse(req.body.body);
-		console.log(questionDetail);
-		console.log(bodies);
-		console.log(files);
 
 		const query = files?.map((file) => {
 			return {
@@ -92,6 +90,34 @@ export class AnswerController {
 				await this.fileService.removeFiles(uploadedFiles);
 			}
 			console.log("error from answer controller create answer function.");
+			console.log(err);
+			throw new InternalServerErrorException("Something went wrong.");
+		}
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Put(":id")
+	async likeAnswer(@Req() req: any, @Res() res: Response): Promise<Response> {
+		try {
+			const isLike = req.query.like.toLowerCase() === "true";
+			const query: InteractAnswerQueryDto = {
+				_id: req.params?.id,
+				userId: req.user?._id,
+				rating: isLike ? 1 : -1,
+			};
+
+			const answer = await this.answerService.findOneAndInteract(query);
+
+			// Background
+			this.questionService.increaseParticipant(
+				answer.answeredIn.toString(),
+			);
+
+			return res.status(HttpStatus.OK).json({
+				success: true,
+			});
+		} catch (err) {
+			console.log("error from answer controller like answer function/");
 			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
