@@ -115,7 +115,6 @@ export class UserController {
 
 	// edit user information function
 	@UseGuards(JwtAuthGuard)
-	@UsePipes(ValidationPipe)
 	@Put(":id")
 	@UseInterceptors(
 		FileInterceptor("imageFile", {
@@ -131,12 +130,16 @@ export class UserController {
 		@Req() req: any,
 		@Res() res: Response,
 		@UploadedFile() file: Express.Multer.File,
-		@Body() info: EditUserDto,
 	) {
 		checkPermission(req.user?._id, req.params?.id);
+		const name = JSON.parse(req.body.name);
+		const email = JSON.parse(req.body.email);
+		const bio = JSON.parse(req.body.bio);
+		const birthday = JSON.parse(req.body.birthday);
+		const image = JSON.parse(req.body.image);
 
 		try {
-			let uploadedFile = file ? "" : info.image;
+			let uploadedFile = file ? "" : image;
 			const oldUser = await this.userService.findUserByUserId(
 				req.params.id,
 			);
@@ -149,7 +152,14 @@ export class UserController {
 				};
 				uploadedFile = (await this.fileService.fileUpload(params)).path;
 			}
-			const query = { ...info, image: uploadedFile, tags };
+			const query = {
+				name,
+				email,
+				bio,
+				birthday,
+				image: uploadedFile,
+				tags,
+			};
 			const user = await this.userService.editUserByUserId(
 				query,
 				req.params.id,

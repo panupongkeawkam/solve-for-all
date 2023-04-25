@@ -27,12 +27,14 @@ import { UserService } from "src/user/user.service";
 import {
 	previewAnswerFormat,
 	previewQuestionFormat,
+	previewReplyFormat,
 } from "../utils/formatter.utils";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
 import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
 import { PreviewQuestionDto } from "./dto/previewQuestion.dto";
 import { AnswerService } from "src/answer/answer.service";
 import { ReplyService } from "src/reply/reply.service";
+import { PreviewReplyDto } from "src/reply/dto/previewReply.dto";
 
 @Controller("questions")
 export class QuestionController {
@@ -207,12 +209,22 @@ export class QuestionController {
 					const repliesQuery = answer?.replies.map((reply) =>
 						reply.toString(),
 					);
-					console.log(repliesQuery);
 					const replies = await this.replyService.findManyReplies(
 						repliesQuery,
 					);
-					console.log(replies);
-					return previewAnswerFormat(user, answer);
+					const repliesResponse: PreviewReplyDto[] =
+						await Promise.all(
+							replies.map(async (reply) => {
+								const user =
+									await this.userService.findUserByUserIdLess(
+										reply.repliedBy.toString(),
+									);
+								return previewReplyFormat(user, reply);
+							}),
+						);
+					let response: any = previewAnswerFormat(user, answer);
+					response.replies = repliesResponse;
+					return response;
 				}),
 			);
 

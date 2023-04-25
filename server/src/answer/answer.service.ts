@@ -98,7 +98,7 @@ export class AnswerService {
 	}
 
 	async pushReplyToAnswer(query: PushReplyToAnswer): Promise<void> {
-		await this.answerModel.find(
+		await this.answerModel.findOneAndUpdate(
 			{
 				_id: query._id,
 			},
