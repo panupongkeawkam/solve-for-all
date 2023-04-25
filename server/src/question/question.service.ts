@@ -171,7 +171,9 @@ export class QuestionService {
 
 	async findManyQuestions(query: string[]): Promise<Question[] | null> {
 		return await this.questionModel.find({
-			_id: query,
+			_id: {
+				$in: query,
+			},
 		});
 	}
 }
