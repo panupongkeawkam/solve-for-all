@@ -5,7 +5,7 @@ import { Select, MenuItem } from "@mui/material";
 
 import axios from "../utils/axios.config";
 import palette from "../style/palette";
-import { sortOptions } from "../utils/dummy";
+import { sortAnswers } from "../utils/lamda";
 
 import QuestionDetail from "../components/QuestionDetail";
 import QuestionDetailSkeleton from "../components/skeletons/QuestionDetailSkeleton";
@@ -14,20 +14,30 @@ import Answer from "../components/Answer";
 import AnswerFormModal from "../components/modals/AnswerFormModal";
 import EmptyData from "../components/EmptyData";
 
-export default ({ }) => {
+export default ({}) => {
   const { questionId } = useParams();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
   const [questionLoading, setQuestionLoading] = useState(true);
   const [question, setQuestion] = useState(null);
-  const [sortBy, setSortBy] = useState("popular");
+  const [answers, setAnswers] = useState([]);
+  const [sortBy, setSortBy] = useState("helpful");
   const [showAnswerFormModal, setShowAddQuestionModal] = useState(false);
+
+  const sortOptions = [
+    { value: "helpful", title: "Helpful" },
+    { value: "latest", title: "Latest" },
+    { value: "oldest", title: "Oldest" },
+  ];
 
   useEffect(() => {
     axios
       .get(`/api/questions/${questionId}`)
       .then((res) => {
         setQuestion(res.data.question);
+        const sortedAnswers = sortAnswers(res.data.question.answers, sortBy);
+        console.log(sortedAnswers)
+        setAnswers(sortedAnswers);
         setQuestionLoading(false);
       })
       .catch((err) => {
@@ -36,8 +46,15 @@ export default ({ }) => {
       });
   }, []);
 
+  useEffect(() => {
+    const sortedAnswers = sortAnswers([...answers], sortBy);
+    console.log(sortedAnswers)
+    setAnswers(sortedAnswers);
+  }, [sortBy]);
+
   const sortChangeHandler = (e) => {
-    setSortBy(e.target.value);
+    const sortByValue = e.target.value;
+    setSortBy(sortByValue);
   };
 
   const toggleAnswerFormModalHandler = () => {
@@ -113,8 +130,8 @@ export default ({ }) => {
         </div>
       </div>
       <section>
-        {question?.answers?.length > 0 ? (
-          question.answers.map((answer, index) => (
+        {answers.length > 0 ? (
+          answers.map((answer, index) => (
             <Answer
               key={index}
               authorProfilePicture={answer.answeredBy.image}

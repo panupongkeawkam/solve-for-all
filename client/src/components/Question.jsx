@@ -32,21 +32,30 @@ export default ({
       style={{ backgroundColor: palette["base-2"] }}
       onClick={() => onView()}
     >
-      <div className="basis-auto mr-8 cursor-pointer hover:brightness-110 transition duration-300" onClick={(e) => {
-        e.stopPropagation();
-        window.location.href = `/users/${authorId}`
-      }}>
+      <div className="basis-auto mr-8">
         {authorProfilePicture ? (
-          <Avatar alt={authorUsername} src={authorProfilePicture} sx={{ width: 64, height: 64 }} />
+          <Avatar
+            alt={authorUsername}
+            src={authorProfilePicture}
+            sx={{ width: 64, height: 64 }}
+          />
         ) : (
-          <Avatar alt={authorUsername} sx={{ width: 64, height: 64, fontSize: "1.8em" }}>{authorUsername[0]?.toUpperCase()}</Avatar>
+          <Avatar
+            alt={authorUsername}
+            sx={{ width: 64, height: 64, fontSize: "1.8em" }}
+          >
+            {authorUsername[0]?.toUpperCase()}
+          </Avatar>
         )}
       </div>
       <div className="basis-full flex flex-col">
-        <div className="basis-full flex flex-row mb-1 cursor-pointer hover:brightness-110 transition duration-300" onClick={(e) => {
-          e.stopPropagation();
-          window.location.href = `/users/${authorId}`
-        }}>
+        <div
+          className="basis-full flex flex-row mb-1 cursor-pointer hover:brightness-110 transition duration-300"
+          onClick={(e) => {
+            e.stopPropagation();
+            window.location.href = `/users/${authorId}`;
+          }}
+        >
           <p className="mr-2" style={{ color: palette["content-1"] }}>
             {authorName}
           </p>
@@ -66,7 +75,7 @@ export default ({
               title={tag.name}
               key={index}
               onClick={(e) => {
-                window.location.href = `/tags/${tag._id}`
+                window.location.href = `/tags/${tag._id}`;
                 e.stopPropagation();
               }}
             />

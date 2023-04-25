@@ -84,10 +84,24 @@ export class TagController {
 				setOfQuestionsId,
 			);
 
-			const responses: PreviewQuestionDto[] = questions.map(
-				(question) => {
-					return previewQuestionFormat(question, user, tags);
-				},
+			const responses: PreviewQuestionDto[] = await Promise.all(
+				questions.map(async (question) => {
+					const createdBy =
+						await this.userService.findUserByUserIdLess(
+							question.createdBy.toString(),
+						);
+					const questionTagsQuery = question.tags.map((tag) =>
+						tag.toString(),
+					);
+					const questionTags = await this.tagService.findManyTags(
+						questionTagsQuery,
+					);
+					return previewQuestionFormat(
+						question,
+						createdBy,
+						questionTags,
+					);
+				}),
 			);
 
 			return res.status(HttpStatus.OK).json({

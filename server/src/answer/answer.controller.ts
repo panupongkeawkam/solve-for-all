@@ -109,7 +109,7 @@ export class AnswerController {
 			const answer = await this.answerService.findOneAndInteract(query);
 			const userReputationQuery = {
 				_id: answer.answeredBy.toString(),
-				isLike: isLike,
+				reputation: isLike ? 1 : -1,
 			};
 
 			// Background
