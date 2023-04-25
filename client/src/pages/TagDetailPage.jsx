@@ -29,7 +29,6 @@ export default ({ }) => {
         setName(res.data.tag.name)
         setTotalQuestion(res.data.tag.totalQuestion)
         setQuestions(res.data.tag.questions)
-        console.log(res.data)
       })
       .catch(err => alert(err.response.data.message))
   }, [])
@@ -73,6 +72,7 @@ export default ({ }) => {
               authorProfilePicture={question.createdBy.image}
               authorName={question.createdBy.name}
               authorUsername={question.createdBy.username}
+              authorId={question.createdBy._id}
               totalAnswers={question.answered}
               totalParticipants={question.participant}
               totalViewed={question.viewed}

@@ -11,6 +11,7 @@ import { authAxios } from "../utils/axios.config";
 import { getTimeDiffString } from "../utils/lamda";
 
 import Button from "./buttons/Button";
+import DialogModal from "./modals/DialogModal"
 
 export default ({
   authorProfilePicture,
@@ -26,12 +27,14 @@ export default ({
   likedBy,
   dislikedBy,
   answerId,
+  questionId
 }) => {
   const user = useSelector((state) => state.user.user);
   const [displayedRating, setDisplayedRating] = useState(rating);
   const [likable, setLikable] = useState(false);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasDisliked, setHasDisliked] = useState(false);
+  const [showConfirmSolveAnswerModal, setShowConfirmSolveAnswerModal] = useState(false)
 
   useEffect(() => {
     const likedExist = likedBy.includes(user?._id);
@@ -56,11 +59,22 @@ export default ({
     authAxios.put(`/api/answers/${answerId}?like=false`);
   };
 
-  const answerSolvedHandler = () => {};
+  const toggleSolveAnswerModalHandler = () => {
+    setShowConfirmSolveAnswerModal(!showConfirmSolveAnswerModal)
+  }
+
+  const answerSolvedHandler = async () => {
+    const res = await authAxios.put(`/api/questions/${questionId}/solved`, {
+      answerId: answerId,
+      answerOwnerId: authorId
+    })
+    window.location.reload()
+  };
 
   return (
     <>
       <div
+        id={answerId}
         className="flex flex-row rounded-[12px] py-5 px-8 my-2"
         style={{
           backgroundColor: palette["base-2"],
@@ -68,7 +82,10 @@ export default ({
         }}
       >
         <div className="basis-auto mr-8">
-          <div>
+          <div className="cursor-pointer hover:brightness-110 transition duration-300" onClick={(e) => {
+            e.stopPropagation();
+            window.location.href = `/users/${authorId}`
+          }}>
             {authorProfilePicture ? (
               <Avatar
                 alt={authorUsername}
@@ -120,7 +137,10 @@ export default ({
         </div>
         <div className="basis-full flex flex-col">
           <div className="basis-full flex flex-row mb-1">
-            <div className="basis-1/2 flex flex-col mb-1">
+            <div className="basis-1/2 flex flex-col mb-1 cursor-pointer hover:brightness-110 transition duration-300" onClick={(e) => {
+              e.stopPropagation();
+              window.location.href = `/users/${authorId}`
+            }}>
               <div className="flex flex-row mb-1">
                 <p className="mr-2" style={{ color: palette["content-1"] }}>
                   {authorName}
@@ -215,7 +235,7 @@ export default ({
               size="small"
               variant="outlined"
               color="correct"
-              onClick={answerSolvedHandler}
+              onClick={toggleSolveAnswerModalHandler}
             />
           )}
         </div>
@@ -227,6 +247,15 @@ export default ({
           {replies.length > 1 ? "replies" : "reply"}
         </p>
       </div>
+      <DialogModal
+        active={showConfirmSolveAnswerModal}
+        confirmText="Solve"
+        title={"Are you sure, it's solve?"}
+        description={"Make sure this answer is solved your problem on this question, because this action cannot redo"}
+        onConfirm={answerSolvedHandler}
+        correct
+        onClose={toggleSolveAnswerModalHandler}
+      />
     </>
   );
 };

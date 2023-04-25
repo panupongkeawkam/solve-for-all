@@ -16,6 +16,7 @@ export default ({
   authorProfilePicture,
   authorName,
   authorUsername,
+  authorId,
   totalAnswers,
   totalParticipants,
   totalViewed,
@@ -31,7 +32,10 @@ export default ({
       style={{ backgroundColor: palette["base-2"] }}
       onClick={() => onView()}
     >
-      <div className="basis-auto mr-8">
+      <div className="basis-auto mr-8 cursor-pointer hover:brightness-110 transition duration-300" onClick={(e) => {
+        e.stopPropagation();
+        window.location.href = `/users/${authorId}`
+      }}>
         {authorProfilePicture ? (
           <Avatar alt={authorUsername} src={authorProfilePicture} sx={{ width: 64, height: 64 }} />
         ) : (
@@ -39,7 +43,10 @@ export default ({
         )}
       </div>
       <div className="basis-full flex flex-col">
-        <div className="basis-full flex flex-row mb-1">
+        <div className="basis-full flex flex-row mb-1 cursor-pointer hover:brightness-110 transition duration-300" onClick={(e) => {
+          e.stopPropagation();
+          window.location.href = `/users/${authorId}`
+        }}>
           <p className="mr-2" style={{ color: palette["content-1"] }}>
             {authorName}
           </p>
@@ -59,7 +66,7 @@ export default ({
               title={tag.name}
               key={index}
               onClick={(e) => {
-                alert("Clicked " + tag.name + " tag");
+                window.location.href = `/tags/${tag._id}`
                 e.stopPropagation();
               }}
             />

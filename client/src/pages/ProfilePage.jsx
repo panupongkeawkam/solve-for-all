@@ -81,6 +81,7 @@ export default () => {
                   authorProfilePicture={question.createdBy.image}
                   authorName={question.createdBy.name}
                   authorUsername={question.createdBy.username}
+                  authorId={question.createdBy._id}
                   totalAnswers={question.answered}
                   totalParticipants={question.participant}
                   totalViewed={question.viewed}
