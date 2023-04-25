@@ -290,7 +290,7 @@ export class QuestionController {
 
 			const reputationQuery: ReputationQueryDto = {
 				_id: question.createdBy.toString(),
-				isLike,
+				reputation: isLike ? 1 : -1,
 			};
 
 			this.userService.reputationCompute(reputationQuery);
@@ -326,7 +326,7 @@ export class QuestionController {
 
 			const userReputationQuery = {
 				_id: req.body.answerOwnerId,
-				isLike: true,
+				reputation: 10,
 			};
 
 			// Background

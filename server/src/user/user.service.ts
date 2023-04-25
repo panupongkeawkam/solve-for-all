@@ -131,14 +131,13 @@ export class UserService {
 	}
 
 	async reputationCompute(query: ReputationQueryDto): Promise<void> {
-		const reputation = query.isLike ? 1 : -1;
 		await this.userModel.findOneAndUpdate(
 			{
 				_id: query._id,
 			},
 			{
 				$inc: {
-					reputation: reputation,
+					reputation: query.reputation,
 				},
 			},
 		);
