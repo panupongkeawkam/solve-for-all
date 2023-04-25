@@ -36,6 +36,7 @@ export default ({}) => {
       .then((res) => {
         setQuestion(res.data.question);
         const sortedAnswers = sortAnswers(res.data.question.answers, sortBy);
+        console.log(sortedAnswers)
         setAnswers(sortedAnswers);
         setQuestionLoading(false);
       })
@@ -47,6 +48,7 @@ export default ({}) => {
 
   useEffect(() => {
     const sortedAnswers = sortAnswers([...answers], sortBy);
+    console.log(sortedAnswers)
     setAnswers(sortedAnswers);
   }, [sortBy]);
 

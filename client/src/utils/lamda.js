@@ -80,12 +80,12 @@ function filterQuestions(questions, filter) {
 
 function sortAnswers(answers, condition) {
   if (condition === "helpful") {
-    answers.sort((before, after) => {
-      if (before.isSolved) {
-        return -1;
-      }
-      return before.rating >= after.rating ? -1 : 1;
-    });
+    answers.sort((before, after) => (before.rating >= after.rating ? -1 : 1));
+    const isSolvedIndex = answers.findIndex((answer) => answer.isSolved);
+    if (isSolvedIndex !== -1) {
+      const [isSolvedItem] = answers.splice(isSolvedIndex, 1);
+      answers.unshift(isSolvedItem);
+    }
   } else if (condition === "latest") {
     answers.sort((before, after) =>
       new Date(before.createdAt) >= new Date(after.createdAt) ? -1 : 1
