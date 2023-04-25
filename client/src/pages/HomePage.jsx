@@ -6,30 +6,47 @@ import { useNavigate } from "react-router-dom";
 import palette from "../style/palette";
 import store from "../store/index";
 import { fetchQuestions } from "../store/questionSlice";
-
 import { sortOptions, filterOptions } from "../utils/dummy";
+import { sortQuestions, filterQuestions } from "../utils/lamda";
 
 import EmptyData from "../components/EmptyData";
 import Question from "../components/Question";
 
 export default (props) => {
-  const [sortBy, setSortBy] = useState("popular");
-  const [filter, setFilter] = useState("");
   const navigate = useNavigate();
-
   const questionsList = useSelector((state) => state.question.questionsList);
+
+  const [sortBy, setSortBy] = useState("latest");
+  const [filter, setFilter] = useState("");
+  const [questions, setQuestions] = useState(questionsList);
 
   useEffect(() => {
     store.dispatch(fetchQuestions());
   }, []);
 
+  useEffect(() => {
+    setQuestions(questionsList);
+    extractingQuestions();
+  }, [questionsList]);
+
+  useEffect(() => {
+    extractingQuestions();
+  }, [sortBy, filter]);
+
   const sortChangeHandler = (e) => {
-    setSortBy(e.target.value);
+    const sortByValue = e.target.value;
+    setSortBy(sortByValue);
   };
 
   const filterChangeHandler = (e) => {
-    let filterValue = e.target.value;
+    const filterValue = e.target.value;
     setFilter(filterValue === filter ? "" : filterValue);
+  };
+
+  const extractingQuestions = () => {
+    let filteredQuestions = filterQuestions([...questionsList], filter);
+    let sortedQuestions = sortQuestions([...filteredQuestions], sortBy);
+    setQuestions(sortedQuestions);
   };
 
   const viewQuestionHandler = (questionId) => {
@@ -77,8 +94,8 @@ export default (props) => {
       </div>
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
-        {questionsList.length > 0 ? (
-          questionsList.map((question, index) => (
+        {questions.length > 0 ? (
+          questions.map((question, index) => (
             <Question
               key={index}
               title={question.title}

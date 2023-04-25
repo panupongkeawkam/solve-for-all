@@ -1,31 +1,90 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Select, MenuItem, RadioGroup, Radio } from "@mui/material";
 
 import palette from "../style/palette";
-import { sortOptions, filterOptions } from "../utils/dummy";
 import { authAxios } from "../utils/axios.config";
+import { sortOptions, filterOptions } from "../utils/dummy";
+import { sortQuestions, filterQuestions } from "../utils/lamda";
 
 import EmptyData from "../components/EmptyData";
 import Question from "../components/Question";
 
-export default (props) => {
-  const [sortBy, setSortBy] = useState("popular");
+export default ({}) => {
+  const navigate = useNavigate();
+
+  const [sortBy, setSortBy] = useState("latest");
   const [filter, setFilter] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [questionsComponent, setQuestionsComponent] = useState(<></>);
 
   useEffect(() => {
     authAxios.get(`/api/tags/interested`).then((res) => {
       setQuestions(res.data.questions);
+      setQuestionsComponent(
+        res.data.questions.map((question, index) => (
+          <Question
+            key={index}
+            title={question.title}
+            authorProfilePicture={question.createdBy.image}
+            authorName={question.createdBy.name}
+            authorUsername={question.createdBy.username}
+            authorId={question.createdBy._id}
+            totalAnswers={question.answered}
+            totalParticipants={question.participant}
+            totalViewed={question.viewed}
+            isSolved={Boolean(question.solvedBy)}
+            createdAt={new Date(question.createdAt)}
+            rating={question.rating}
+            tags={question.tags}
+            onView={() => viewQuestionHandler(question._id)}
+          />
+        ))
+      );
     });
   }, []);
 
+  useEffect(() => {
+    extractingQuestions();
+  }, [sortBy, filter]);
+
   const sortChangeHandler = (e) => {
-    setSortBy(e.target.value);
+    const sortByValue = e.target.value;
+    setSortBy(sortByValue);
   };
 
   const filterChangeHandler = (e) => {
-    let filterValue = e.target.value;
+    const filterValue = e.target.value;
     setFilter(filterValue === filter ? "" : filterValue);
+  };
+
+  const extractingQuestions = () => {
+    let filteredQuestions = filterQuestions([...questions], filter);
+    let sortedQuestions = sortQuestions([...filteredQuestions], sortBy);
+    setQuestionsComponent(
+      sortedQuestions.map((question, index) => (
+        <Question
+          key={index}
+          title={question.title}
+          authorProfilePicture={question.createdBy.image}
+          authorName={question.createdBy.name}
+          authorUsername={question.createdBy.username}
+          authorId={question.createdBy._id}
+          totalAnswers={question.answered}
+          totalParticipants={question.participant}
+          totalViewed={question.viewed}
+          isSolved={Boolean(question.solvedBy)}
+          createdAt={new Date(question.createdAt)}
+          rating={question.rating}
+          tags={question.tags}
+          onView={() => viewQuestionHandler(question._id)}
+        />
+      ))
+    );
+  };
+
+  const viewQuestionHandler = (questionId) => {
+    navigate(`/questions/${questionId}`);
   };
 
   return (
@@ -69,25 +128,8 @@ export default (props) => {
       </div>
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
-        {questions.length > 0 ? (
-          questions.map((question, index) => (
-            <Question
-              key={index}
-              title={question.title}
-              authorProfilePicture={question.createdBy.image}
-              authorName={question.createdBy.name}
-              authorUsername={question.createdBy.username}
-              authorId={question.createdBy._id}
-              totalAnswers={question.answered}
-              totalParticipants={question.participant}
-              totalViewed={question.viewed}
-              isSolved={Boolean(question.solvedBy)}
-              createdAt={new Date(question.createdAt)}
-              rating={question.rating}
-              tags={question.tags}
-              onView={() => viewQuestionHandler(question._id)}
-            />
-          ))
+        {questionsComponent ? (
+          questionsComponent
         ) : (
           <div className="w-full 2xl:h-[720px] h-[480px]">
             <EmptyData

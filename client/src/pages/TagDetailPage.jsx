@@ -1,54 +1,129 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
-import { Select, MenuItem } from "@mui/material";
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { Select, MenuItem, RadioGroup, Radio } from "@mui/material";
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 
 import palette from "../style/palette";
-import store from "../store/index"
-import { sortOptions } from "../utils/dummy";
-import { fetchTags } from "../store/tagSlice"
-import axios from "../utils/axios.config"
+import store from "../store/index";
+import axios from "../utils/axios.config";
+import { sortOptions, filterOptions } from "../utils/dummy";
+import { fetchTags } from "../store/tagSlice";
+import { sortQuestions, filterQuestions } from "../utils/lamda";
 
 import EmptyData from "../components/EmptyData";
-import TagDetail from "../components/TagDetail"
-import Question from "../components/Question"
+import TagDetail from "../components/TagDetail";
+import Question from "../components/Question";
 
-export default ({ }) => {
-  const navigate = useNavigate()
-  const { tagId } = useParams()
+export default ({}) => {
+  const navigate = useNavigate();
+  const { tagId } = useParams();
 
   const [sortBy, setSortBy] = useState("popular");
-  const [name, setName] = useState("")
-  const [totalQuestion, setTotalQuestion] = useState(0)
-  const [questions, setQuestions] = useState([])
+  const [filter, setFilter] = useState("");
+  const [name, setName] = useState("");
+  const [totalQuestion, setTotalQuestion] = useState(0);
+  const [questions, setQuestions] = useState([]);
+  const [questionsComponent, setQuestionsComponent] = useState([]);
 
   useEffect(() => {
-    axios.get(`/api/tags/${tagId}`)
-      .then(res => {
-        setName(res.data.tag.name)
-        setTotalQuestion(res.data.tag.totalQuestion)
-        setQuestions(res.data.tag.questions)
+    axios
+      .get(`/api/tags/${tagId}`)
+      .then((res) => {
+        setName(res.data.tag.name);
+        setTotalQuestion(res.data.tag.totalQuestion);
+        setQuestions(res.data.tag.questions);
+        setSortBy("latest");
+        extractingQuestions();
       })
-      .catch(err => alert(err.response.data.message))
-  }, [])
+      .catch((err) => alert(err.response.data.message));
+  }, []);
+
+  useEffect(() => {
+    extractingQuestions();
+  }, [sortBy, filter]);
 
   const sortChangeHandler = (e) => {
-    setSortBy(e.target.value);
+    const sortByValue = e.target.value;
+    setSortBy(sortByValue);
+  };
+
+  const filterChangeHandler = (e) => {
+    const filterValue = e.target.value;
+    setFilter(filterValue === filter ? "" : filterValue);
+  };
+
+  const extractingQuestions = () => {
+    let filteredQuestions = filterQuestions([...questions], filter);
+    let sortedQuestions = sortQuestions([...filteredQuestions], sortBy);
+    setQuestionsComponent(
+      sortedQuestions.map((question, index) => (
+        <Question
+          key={index}
+          title={question.title}
+          authorProfilePicture={question.createdBy.image}
+          authorName={question.createdBy.name}
+          authorUsername={question.createdBy.username}
+          authorId={question.createdBy._id}
+          totalAnswers={question.answered}
+          totalParticipants={question.participant}
+          totalViewed={question.viewed}
+          isSolved={Boolean(question.solvedBy)}
+          createdAt={new Date(question.createdAt)}
+          rating={question.rating}
+          tags={question.tags}
+          onView={() => viewQuestionHandler(question._id)}
+        />
+      ))
+    );
+  };
+
+  const viewQuestionHandler = (questionId) => {
+    navigate(`/questions/${questionId}`);
   };
 
   return (
     <div className="flex flex-col">
       {/* sort section */}
-      <div className="w-full flex flex-row items-end py-2 mb-3" style={{ justifyContent: "space-between" }}>
+      <div
+        className="w-full flex flex-row items-end py-2 mb-3"
+        style={{ justifyContent: "space-between" }}
+      >
         <div className="flex flex-col">
           <div className="flex flex-row items-center mb-2">
             <LocalOfferOutlinedIcon color="content-1" fontSize="large" />
-            <h1 className="ml-2" style={{ color: palette["content-1"] }}>{name}</h1>
+            <h1 className="ml-2" style={{ color: palette["content-1"] }}>
+              {name}
+            </h1>
           </div>
-          <p style={{ color: palette["content-2"] }}>{totalQuestion} questions in total</p>
+          <p style={{ color: palette["content-2"] }}>
+            {totalQuestion} questions in total
+          </p>
         </div>
-        <div>
+        <div className="flex flex-row">
+          <RadioGroup
+            row
+            value={filter}
+            name="radio-buttons-group"
+            sx={{ color: palette["content-1"], mr: 4 }}
+          >
+            {filterOptions.map((filterOption, index) => (
+              <div
+                key={index}
+                className="flex flex-row items-center justify-center mr-4"
+              >
+                <Radio
+                  color="content-1"
+                  value={filterOption.value}
+                  checked={filter === filterOption.value}
+                  onClick={filterChangeHandler}
+                />
+                <div style={{ color: palette["content-1"] }}>
+                  {filterOption.title}
+                </div>
+              </div>
+            ))}
+          </RadioGroup>
           <Select
             value={sortBy}
             onChange={sortChangeHandler}
@@ -64,30 +139,13 @@ export default ({ }) => {
       </div>
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
-        {questions.length > 0 ? (
-          questions.map((question, index) => (
-            <Question
-              key={index}
-              title={question.title}
-              authorProfilePicture={question.createdBy.image}
-              authorName={question.createdBy.name}
-              authorUsername={question.createdBy.username}
-              authorId={question.createdBy._id}
-              totalAnswers={question.answered}
-              totalParticipants={question.participant}
-              totalViewed={question.viewed}
-              isSolved={Boolean(question.solvedBy)}
-              createdAt={new Date(question.createdAt)}
-              rating={question.rating}
-              tags={question.tags}
-              onView={() => viewQuestionHandler(question._id)}
-            />
-          ))
+        {questionsComponent.length > 0 ? (
+          questionsComponent
         ) : (
           <div className="w-full 2xl:h-[720px] h-[480px]">
             <EmptyData
               title={"No questions"}
-              description={"There is no questions to recommend for you"}
+              description={"There is no questions of this tag"}
             />
           </div>
         )}

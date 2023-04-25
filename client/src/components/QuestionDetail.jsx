@@ -106,13 +106,7 @@ export default ({
       className="flex flex-row rounded-[12px] py-5 px-8 my-2"
       style={{ backgroundColor: palette["base-2"] }}
     >
-      <div
-        className="basis-auto flex flex-col mr-8 cursor-pointer hover:brightness-110 transition duration-300"
-        onClick={(e) => {
-          e.stopPropagation();
-          window.location.href = `/users/${authorId}`;
-        }}
-      >
+      <div className="basis-auto flex flex-col mr-8">
         {authorProfilePicture ? (
           <Avatar
             alt={authorUsername}
@@ -163,13 +157,7 @@ export default ({
       </div>
       <div className="basis-full flex flex-col">
         <div className="basis-full flex flex-row mb-1">
-          <div
-            className="basis-1/2 flex flex-col mb-1 cursor-pointer hover:brightness-110 transition duration-300"
-            onClick={(e) => {
-              e.stopPropagation();
-              window.location.href = `/users/${authorId}`;
-            }}
-          >
+          <div className="basis-1/2 flex flex-col mb-1">
             <div className="flex flex-row mb-1">
               <p className="mr-2" style={{ color: palette["content-1"] }}>
                 {authorName}

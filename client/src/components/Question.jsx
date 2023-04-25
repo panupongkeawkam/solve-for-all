@@ -32,13 +32,7 @@ export default ({
       style={{ backgroundColor: palette["base-2"] }}
       onClick={() => onView()}
     >
-      <div
-        className="basis-auto mr-8 cursor-pointer hover:brightness-110 transition duration-300"
-        onClick={(e) => {
-          e.stopPropagation();
-          window.location.href = `/users/${authorId}`;
-        }}
-      >
+      <div className="basis-auto mr-8">
         {authorProfilePicture ? (
           <Avatar
             alt={authorUsername}

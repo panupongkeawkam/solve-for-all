@@ -121,30 +121,32 @@ export default ({
   };
 
   const submitHandler = async () => {
-    const formData = new FormData()
-    formData.append("body", JSON.stringify(answerBodies))
-    formData.append("question", JSON.stringify({
-      _id: targetQuestion._id,
-      createdBy: targetQuestion.createdBy._id
-    }))
+    const formData = new FormData();
+    formData.append("body", JSON.stringify(answerBodies));
+    formData.append(
+      "question",
+      JSON.stringify({
+        _id: targetQuestion._id,
+        createdBy: targetQuestion.createdBy._id,
+      })
+    );
     answerBodies.forEach((answerBody, index) => {
       if (answerBody.type === "image") {
-        formData.append("images", answerBody.image)
+        formData.append("images", answerBody.image);
       }
-    })
+    });
     try {
       setLoading(true);
-      const res = await authAxios.post(`/api/answers`, formData)
-      const answer = res.data.answer
-      store.dispatch(appendAnswer(answer))
-      setAnswerBodies([
-        { type: "paragraph", msg: "" },
-      ])
+      const res = await authAxios.post(`/api/answers`, formData);
+      const answer = res.data.answer;
+      store.dispatch(appendAnswer(answer));
+      setAnswerBodies([{ type: "paragraph", msg: "" }]);
       setLoading(false);
-      onClose()
+      onClose();
+      window.location.reload();
     } catch (err) {
-      console.log(err)
-      alert(err.response.data.message)
+      console.log(err);
+      alert(err.response.data.message);
       setLoading(false);
     }
   };
