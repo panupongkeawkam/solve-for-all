@@ -264,7 +264,7 @@ export default ({
               title={tag.name}
               key={index}
               onClick={(e) => {
-                alert("Clicked " + tag.name + " tag");
+                window.location.href = `/tags/${tag._id}`
                 e.stopPropagation();
               }}
             />

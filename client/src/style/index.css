@@ -8,6 +8,7 @@ body {
   margin: 0;
   font-family: "Karla", sans-serif, "IBM Plex Sans Thai", sans-serif;
   overflow-x: hidden;
+  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

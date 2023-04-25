@@ -14,7 +14,7 @@ import Answer from "../components/Answer";
 import AnswerFormModal from "../components/modals/AnswerFormModal";
 import EmptyData from "../components/EmptyData";
 
-export default ({}) => {
+export default ({ }) => {
   const { questionId } = useParams();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
@@ -130,6 +130,7 @@ export default ({}) => {
               likedBy={answer.likedBy}
               dislikedBy={answer.dislikedBy}
               answerId={answer._id}
+              questionId={question._id}
             />
           ))
         ) : (

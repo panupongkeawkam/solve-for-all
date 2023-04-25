@@ -39,7 +39,7 @@ export default (props) => {
   return (
     <div className="flex flex-col">
       {/* filter and sort section */}
-      <div className="w-full flex flex-row justify-end items-center py-2">
+      <div className="w-full flex flex-row justify-end items-center py-2 mb-3">
         <RadioGroup
           row
           value={filter}
@@ -85,6 +85,7 @@ export default (props) => {
               authorProfilePicture={question.createdBy.image}
               authorName={question.createdBy.name}
               authorUsername={question.createdBy.username}
+              authorId={question.createdBy._id}
               totalAnswers={question.answered}
               totalParticipants={question.participant}
               totalViewed={question.viewed}
