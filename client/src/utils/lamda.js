@@ -3,6 +3,10 @@ function getTimeDiffString(dateString) {
   const now = new Date();
   const secondsDiff = Math.floor((now - date) / 1000);
 
+  if (secondsDiff === 0) {
+    return `Now`
+  }
+
   if (secondsDiff < 60) {
     return `${secondsDiff} seconds ago`;
   }
