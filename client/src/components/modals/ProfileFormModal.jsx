@@ -45,7 +45,7 @@ export default ({ active = false, onClose, user }) => {
     let input = document.createElement("input");
 
     input.type = "file";
-    input.accept = "image/*";
+    input.accept = "image/png, image/jpg, image/jpeg, image/gif";
 
     input.onchange = (e) => {
       if (!e.target.files[0].type.includes("image")) {

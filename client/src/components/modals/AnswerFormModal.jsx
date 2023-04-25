@@ -76,7 +76,7 @@ export default ({
       let input = document.createElement("input");
 
       input.type = "file";
-      input.accept = "image/*";
+      input.accept = "image/png, image/jpg, image/jpeg, image/gif";
 
       input.onchange = (e) => {
         if (!e.target.files[0].type.includes("image")) {
@@ -137,12 +137,13 @@ export default ({
       const res = await authAxios.post(`/api/answers`, formData)
       const answer = res.data.answer
       store.dispatch(appendAnswer(answer))
-      setQuestionBodies([
+      setAnswerBodies([
         { type: "paragraph", msg: "" },
       ])
       setLoading(false);
       onClose()
     } catch (err) {
+      console.log(err)
       alert(err.response.data.message)
       setLoading(false);
     }
