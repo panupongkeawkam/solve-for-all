@@ -126,6 +126,7 @@ export class TagService {
 				_id: 1,
 				questions: 1,
 				name: 1,
+				createdAt: 1,
 			});
 		return tags;
 	}

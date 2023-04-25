@@ -68,23 +68,30 @@ export class TagController {
 			const tags = await this.tagService.findManyTagsWithQuestions(
 				tagsQuery,
 			);
-			const responses: PreviewTagDto[] = await Promise.all(
-				tags.map(async (tag) => {
-					const shuffleQuestions = shuffle(tag.questions);
-					const questions =
-						await this.questionService.findManyQuestions(
-							shuffleQuestions,
-						);
-					const responses: PreviewQuestionDto[] = questions.map(
-						(question) =>
-							previewQuestionFormat(question, user, tags),
-					);
-					return previewTagFormat(tag, responses);
-				}),
+
+			let questionsId = [];
+			tags.forEach((tag) => {
+				const questions = tag.questions.map((question) =>
+					question.toString(),
+				);
+				const shuffleQuestionsId = shuffle(questions);
+				questionsId = [...questionsId, ...shuffleQuestionsId];
+			});
+
+			const setOfQuestionsId = [...new Set(questionsId)];
+
+			const questions = await this.questionService.findManyQuestions(
+				setOfQuestionsId,
+			);
+
+			const responses: PreviewQuestionDto[] = questions.map(
+				(question) => {
+					return previewQuestionFormat(question, user, tags);
+				},
 			);
 
 			return res.status(HttpStatus.OK).json({
-				tags: responses,
+				questions: responses,
 			});
 		} catch (err) {
 			console.log(
