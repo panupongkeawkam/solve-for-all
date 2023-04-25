@@ -23,6 +23,7 @@ import TagsPage from "./pages/TagsPage";
 import ComponentTestPage from "./pages/ComponentTestPage";
 import ProfilePage from "./pages/ProfilePage";
 import QuestionPage from "./pages/QuestionPage";
+import TagDetailPage from "./pages/TagDetailPage";
 
 export default () => {
   useEffect(() => {
@@ -57,6 +58,10 @@ export default () => {
         {
           path: "/questions/:questionId",
           element: <QuestionPage />,
+        },
+        {
+          path: "/tags/:tagId",
+          element: <TagDetailPage />,
         },
         {
           path: "/test",
