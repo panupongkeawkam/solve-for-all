@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Avatar } from "@mui/material";
 import { useSelector } from "react-redux";
+import { Link } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import CloseIcon from "@mui/icons-material/Close";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { monokai } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
@@ -12,6 +16,9 @@ import { getTimeDiffString } from "../utils/lamda";
 
 import Button from "./buttons/Button";
 import DialogModal from "./modals/DialogModal";
+import InvisibleTextArea from "./inputs/InvisibleTextArea";
+import ReplyForm from "./inputs/ReplyForm";
+import Reply from "./Reply";
 
 export default ({
   authorProfilePicture,
@@ -36,15 +43,19 @@ export default ({
   const [hasDisliked, setHasDisliked] = useState(false);
   const [showConfirmSolveAnswerModal, setShowConfirmSolveAnswerModal] =
     useState(false);
+  const [showReplies, setShowReplies] = useState(false);
+  const [showReplyField, setShowReplyField] = useState(false);
+  const [replyMessage, setRelyMessage] = useState("");
 
   useEffect(() => {
     const likedExist = likedBy.includes(user?._id);
     const dislikedExist = dislikedBy.includes(user?._id);
     setHasLiked(Boolean(likedExist));
     setHasDisliked(Boolean(dislikedExist));
+    setDisplayedRating(rating);
 
     setLikable(!likedExist && !dislikedExist && authorId !== user?._id);
-  }, [user]);
+  }, [user, rating]);
 
   const likeHandler = () => {
     setDisplayedRating(displayedRating + 1);
@@ -68,6 +79,25 @@ export default ({
     const res = await authAxios.put(`/api/questions/${questionId}/solved`, {
       answerId: answerId,
       answerOwnerId: authorId,
+    });
+    window.location.reload();
+  };
+
+  const toggleShowRepliesHandler = () => {
+    setShowReplies(!showReplies);
+    setShowReplyField(false);
+  };
+
+  const toggleShowReplyFieldHandler = () => {
+    setShowReplyField(!showReplyField);
+    setShowReplies(false);
+  };
+
+  const submitReplyHandler = async (message) => {
+    const res = await authAxios.post(`/api/replies`, {
+      repliedIn: answerId,
+      message: message.trim(),
+      questionId: questionId,
     });
     window.location.reload();
   };
@@ -243,11 +273,74 @@ export default ({
       </div>
       <div className="flex flex-row px-8 mt-3 mb-5">
         <div className="w-[64px] mr-8" />
-        <p style={{ color: palette["content-1"] }}>
-          {replies.length === 0 ? "No " : replies.length}{" "}
-          {replies.length > 1 ? "replies" : "reply"}
-        </p>
+        <div
+          className={
+            replies.length > 0
+              ? "flex flew-row mr-5 items-center cursor-pointer"
+              : "flex flew-row mr-5 items-center cursor-not-allowed brightness-50"
+          }
+          onClick={() => {
+            if (replies.length > 0) {
+              toggleShowRepliesHandler();
+            }
+          }}
+        >
+          <p className="mr-2" style={{ color: palette["content-1"] }}>
+            {replies.length === 0 ? "No " : replies.length}{" "}
+            {replies.length > 1 ? "replies" : "reply"}
+          </p>
+          {showReplies ? (
+            <KeyboardArrowDownIcon color="content-1" />
+          ) : (
+            <KeyboardArrowUpIcon color="content-1" />
+          )}
+        </div>
+        <div className="flex flex-row items-center">
+          <Link
+            onClick={toggleShowReplyFieldHandler}
+            color="secondary"
+            underline="none"
+            className="flex flex-row items-center"
+          >
+            <p>Reply</p>
+            {showReplyField ? (
+              <CloseIcon color="secondary" sx={{ fontSize: "18px", ml: 1 }} />
+            ) : (
+              <></>
+            )}
+          </Link>
+        </div>
       </div>
+      {showReplies ? (
+        replies.map((reply, index) => (
+          <section key={index} className="flex flex-row pl-8 mt-3 mb-5">
+            <div className="w-[64px] mr-8" />
+            <Reply
+              message={reply.message}
+              name={reply.repliedBy.name}
+              username={reply.repliedBy.username}
+              image={reply.repliedBy.image}
+              userId={reply.repliedBy._id}
+              createdAt={reply.createdAt}
+            />
+          </section>
+        ))
+      ) : (
+        <></>
+      )}
+      {showReplyField ? (
+        <div className="flex flex-row pl-8 mt-3 mb-5">
+          <div className="w-[64px] mr-8" />
+          <ReplyForm
+            name={user?.name}
+            username={user?.username}
+            image={user?.image}
+            onSubmit={submitReplyHandler}
+          />
+        </div>
+      ) : (
+        <></>
+      )}
       <DialogModal
         active={showConfirmSolveAnswerModal}
         confirmText="Solve"

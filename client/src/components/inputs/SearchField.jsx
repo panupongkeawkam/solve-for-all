@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { OutlinedInput, InputAdornment } from "@mui/material";
+import { OutlinedInput, InputAdornment, IconButton } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
 export default ({ onSearchSubmit = () => {}, ...props }) => {
@@ -12,8 +12,12 @@ export default ({ onSearchSubmit = () => {}, ...props }) => {
   const keyDownHandler = (e) => {
     if (e.key === "Enter") {
       onSearchSubmit(searchQuery.trim());
-      setSearchQuery("");
     }
+  };
+
+  const clearSearchQueryHandler = () => {
+    setSearchQuery("");
+    onSearchSubmit("");
   };
 
   return (
@@ -25,7 +29,8 @@ export default ({ onSearchSubmit = () => {}, ...props }) => {
       onKeyDown={keyDownHandler}
       sx={{
         my: 1,
-        px: 1,
+        pl: 1,
+        pr: 0,
         py: "1px",
         fontSize: "16px",
         borderRadius: 100,
@@ -35,7 +40,16 @@ export default ({ onSearchSubmit = () => {}, ...props }) => {
       fullWidth
       startAdornment={
         <InputAdornment position="start" sx={{ mx: 1 }}>
-          <Icon.Search />
+          <Icon.Search className="cursor-pointer" onClick={() => onSearchSubmit(searchQuery)} />
+        </InputAdornment>
+      }
+      endAdornment={
+        <InputAdornment position="start" sx={{ mx: 1 }}>
+          {searchQuery.trim() ? (
+            <IconButton onClick={clearSearchQueryHandler}>
+              <Icon.Close fontSize="small" />
+            </IconButton>
+          ) : null}
         </InputAdornment>
       }
       size="small"

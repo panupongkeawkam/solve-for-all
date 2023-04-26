@@ -13,6 +13,12 @@ import Cookies from "js-cookie";
 import palette from "../style/palette";
 import store from "../store/index";
 import { fetchSuggestedUsers } from "../store/userSlice";
+import {
+  setHomePageQuestionSearchQuery,
+  setInterestedPageQuestionSearchQuery,
+} from "../store/questionSlice";
+import { setTagsPageTagSearchQuery } from "../store/tagSlice";
+import { searchUsers } from "../utils/lamda";
 
 import QuestionFormModal from "../components/modals/QuestionFormModal";
 import DialogModal from "../components/modals/DialogModal";
@@ -40,6 +46,16 @@ export default () => {
   }, []);
 
   useEffect(() => {
+    const searchablePathname = ["/", "/interested", "/tags"];
+    setSearchFieldDisabled(!searchablePathname.includes(location.pathname));
+    if (location.pathname === "/tags") {
+      setSearchFieldPlaceholder("Search tags");
+    } else {
+      setSearchFieldPlaceholder("Search questions");
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     setGuestMode(!user);
   }, [user]);
 
@@ -47,11 +63,16 @@ export default () => {
   const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
   const [showConfirmLogoutModal, setShowConfirmLogoutModal] = useState(false);
   const [guestMode, setGuestMode] = useState(!Boolean(user));
+  const [searchFieldPlaceholder, setSearchFieldPlaceholder] =
+    useState("Search");
+  const [searchFieldDisabled, setSearchFieldDisabled] = useState(false);
+  const [usersSearchQuery, setUsersSearchQuery] = useState("");
 
   const filterSuggestedUsers = (suggestedUsersArg) => {
-    return suggestedUsersArg
+    const suggestedUsersVar = suggestedUsersArg
       .filter((suggestedUser) => suggestedUser?._id !== user?._id)
       .slice(0, 2);
+    return suggestedUsersVar;
   };
 
   // const test = () => {
@@ -79,11 +100,17 @@ export default () => {
   // }
 
   const searchSubmitHandler = (searchQuery) => {
-    console.log(searchQuery);
+    if (location.pathname === "/") {
+      store.dispatch(setHomePageQuestionSearchQuery(searchQuery));
+    } else if (location.pathname === "/interested") {
+      store.dispatch(setInterestedPageQuestionSearchQuery(searchQuery));
+    } else if (location.pathname === "/tags") {
+      store.dispatch(setTagsPageTagSearchQuery(searchQuery));
+    }
   };
 
   const userSearchSubmitHandler = (searchQuery) => {
-    console.log(searchQuery);
+    setUsersSearchQuery(searchQuery);
   };
 
   const toggleAddQuestionModalHandler = () => {
@@ -127,7 +154,7 @@ export default () => {
           <p className="mr-2" style={{ color: palette["content-1"] }}>
             Notifications
           </p>
-          <p style={{ color: palette["content-2"] }}>12</p>
+          <p style={{ color: palette["content-2"] }}>0</p>
         </div>
         <div className="h-[360px]">
           <EmptyData
@@ -158,7 +185,8 @@ export default () => {
         >
           <div className="mr-5">
             <SearchField
-              placeholder="Search"
+              disabled={searchFieldDisabled}
+              placeholder={searchFieldPlaceholder}
               onSearchSubmit={searchSubmitHandler}
             />
           </div>
@@ -176,7 +204,7 @@ export default () => {
             <div className="flex flex-row items-center gap-x-3">
               <div>
                 <IconButton onClick={openNotificationAnchorHandler}>
-                  <Badge color="wrong" badgeContent={2}>
+                  <Badge color="wrong" badgeContent={0}>
                     <Icon.NotificationsOutlined />
                   </Badge>
                 </IconButton>
@@ -254,7 +282,10 @@ export default () => {
             <p style={{ color: palette["content-1"] }}>Suggested people</p>
           </div>
           {/* suggested users */}
-          {filterSuggestedUsers(suggestedUsers).map((suggestedUser, index) => (
+          {(usersSearchQuery !== ""
+            ? searchUsers(suggestedUsers, usersSearchQuery)
+            : filterSuggestedUsers(suggestedUsers)
+          ).map((suggestedUser, index) => (
             <div className="mb-3" key={index}>
               <User
                 name={suggestedUser.name}

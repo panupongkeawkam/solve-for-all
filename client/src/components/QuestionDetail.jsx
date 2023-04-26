@@ -314,7 +314,7 @@ export default ({
               case "code":
                 return (
                   <div
-                    className="rounded-[8px] p-5 flex flex-col mb-5"
+                    className="rounded-[8px] p-5 flex flex-col w-full mb-5"
                     style={{ backgroundColor: palette["base-3"] }}
                     key={index}
                   >
@@ -327,7 +327,15 @@ export default ({
                         marginBottom: "3px",
                         lineHeight: "16px",
                         overflowY: "hidden",
+                        overflowX: "scroll",
                       }}
+                      lineProps={{
+                        style: {
+                          wordBreak: "break-all",
+                          whiteSpace: "pre-wrap",
+                        },
+                      }}
+                      wrapLines={true}
                       onClick={() => setCodeState("edit")}
                     >
                       {body.code}

@@ -7,7 +7,11 @@ import palette from "../style/palette";
 import store from "../store/index";
 import { fetchQuestions } from "../store/questionSlice";
 import { sortOptions, filterOptions } from "../utils/dummy";
-import { sortQuestions, filterQuestions } from "../utils/lamda";
+import {
+  sortQuestions,
+  filterQuestions,
+  searchQuestions,
+} from "../utils/lamda";
 
 import EmptyData from "../components/EmptyData";
 import Question from "../components/Question";
@@ -15,6 +19,9 @@ import Question from "../components/Question";
 export default (props) => {
   const navigate = useNavigate();
   const questionsList = useSelector((state) => state.question.questionsList);
+  const homePageQuestionSearchQuery = useSelector(
+    (state) => state.question.homePageQuestionSearchQuery
+  );
 
   const [sortBy, setSortBy] = useState("latest");
   const [filter, setFilter] = useState("");
@@ -33,6 +40,10 @@ export default (props) => {
     extractingQuestions();
   }, [sortBy, filter]);
 
+  useEffect(() => {
+    extractingQuestions();
+  }, [homePageQuestionSearchQuery]);
+
   const sortChangeHandler = (e) => {
     const sortByValue = e.target.value;
     setSortBy(sortByValue);
@@ -46,7 +57,14 @@ export default (props) => {
   const extractingQuestions = () => {
     let filteredQuestions = filterQuestions([...questionsList], filter);
     let sortedQuestions = sortQuestions([...filteredQuestions], sortBy);
-    setQuestions(sortedQuestions);
+    let searchedQuestions = sortedQuestions;
+    if (homePageQuestionSearchQuery !== "") {
+      searchedQuestions = searchQuestions(
+        sortedQuestions,
+        homePageQuestionSearchQuery
+      );
+    }
+    setQuestions(searchedQuestions);
   };
 
   const viewQuestionHandler = (questionId) => {

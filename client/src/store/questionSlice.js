@@ -4,6 +4,8 @@ import axios, { authAxios } from "../utils/axios.config";
 const initialState = {
   questionsList: [],
   fetchingQuestions: false,
+  homePageQuestionSearchQuery: "",
+  interestedPageQuestionSearchQuery: "",
 };
 
 export const fetchQuestions = createAsyncThunk(
@@ -22,6 +24,14 @@ export const questionSlice = createSlice({
       const question = action.payload;
       state.questionsList = [...state.questionsList, question];
     },
+    setHomePageQuestionSearchQuery: (state, action) => {
+      const searchQuery = action.payload;
+      state.homePageQuestionSearchQuery = searchQuery.trim();
+    },
+    setInterestedPageQuestionSearchQuery: (state, action) => {
+      const searchQuery = action.payload;
+      state.interestedPageQuestionSearchQuery = searchQuery.trim();
+    },
   },
   extraReducers(builder) {
     builder
@@ -38,6 +48,10 @@ export const questionSlice = createSlice({
   },
 });
 
-export const { appendQuestion } = questionSlice.actions;
+export const {
+  appendQuestion,
+  setHomePageQuestionSearchQuery,
+  setInterestedPageQuestionSearchQuery,
+} = questionSlice.actions;
 
 export default questionSlice.reducer;

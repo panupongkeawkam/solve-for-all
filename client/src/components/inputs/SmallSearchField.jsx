@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { OutlinedInput, InputAdornment } from "@mui/material";
+import { OutlinedInput, InputAdornment, IconButton } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
 export default ({
@@ -20,8 +20,12 @@ export default ({
   const keyDownHandler = (e) => {
     if (e.key === "Enter") {
       onSearchSubmit(value.trim());
-      setValue("");
     }
+  };
+
+  const clearSearchQueryHandler = () => {
+    setValue("");
+    onSearchSubmit("");
   };
 
   useEffect(() => {
@@ -34,7 +38,8 @@ export default ({
       color="content-3"
       sx={{
         my: 1,
-        px: "4px",
+        pl: "4px",
+        pr: "0px",
         fontSize: "12px",
         borderRadius: "8px",
       }}
@@ -45,6 +50,15 @@ export default ({
       startAdornment={
         <InputAdornment position="start" sx={{ mx: 1 }}>
           {icon || <Icon.Search sx={{ fontSize: "16px" }} />}
+        </InputAdornment>
+      }
+      endAdornment={
+        <InputAdornment position="start" sx={{ mx: 1 }}>
+          {value.trim() ? (
+            <IconButton onClick={clearSearchQueryHandler}>
+              {<Icon.Close sx={{ fontSize: "12px" }} />}
+            </IconButton>
+          ) : null}
         </InputAdornment>
       }
       size="small"
