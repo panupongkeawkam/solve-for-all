@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Select, MenuItem, RadioGroup, Radio } from "@mui/material";
 
 import palette from "../style/palette";
 import { authAxios } from "../utils/axios.config";
 import { sortOptions, filterOptions } from "../utils/dummy";
-import { sortQuestions, filterQuestions } from "../utils/lamda";
+import {
+  sortQuestions,
+  filterQuestions,
+  searchQuestions,
+} from "../utils/lamda";
 
 import EmptyData from "../components/EmptyData";
 import Question from "../components/Question";
 
 export default ({}) => {
   const navigate = useNavigate();
+  const interestedPageQuestionSearchQuery = useSelector(
+    (state) => state.question.interestedPageQuestionSearchQuery
+  );
 
   const [sortBy, setSortBy] = useState("latest");
   const [filter, setFilter] = useState("");
   const [questions, setQuestions] = useState([]);
-  const [questionsComponent, setQuestionsComponent] = useState(<></>);
+  const [questionsComponent, setQuestionsComponent] = useState([]);
 
   useEffect(() => {
     authAxios.get(`/api/tags/interested`).then((res) => {
@@ -48,6 +56,10 @@ export default ({}) => {
     extractingQuestions();
   }, [sortBy, filter]);
 
+  useEffect(() => {
+    extractingQuestions();
+  }, [interestedPageQuestionSearchQuery]);
+
   const sortChangeHandler = (e) => {
     const sortByValue = e.target.value;
     setSortBy(sortByValue);
@@ -61,8 +73,15 @@ export default ({}) => {
   const extractingQuestions = () => {
     let filteredQuestions = filterQuestions([...questions], filter);
     let sortedQuestions = sortQuestions([...filteredQuestions], sortBy);
+    let searchedQuestions = sortedQuestions;
+    if (interestedPageQuestionSearchQuery !== "") {
+      searchedQuestions = searchQuestions(
+        sortedQuestions,
+        interestedPageQuestionSearchQuery
+      );
+    }
     setQuestionsComponent(
-      sortedQuestions.map((question, index) => (
+      searchedQuestions.map((question, index) => (
         <Question
           key={index}
           title={question.title}
@@ -128,7 +147,7 @@ export default ({}) => {
       </div>
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
-        {questionsComponent ? (
+        {questionsComponent.length > 0 ? (
           questionsComponent
         ) : (
           <div className="w-full 2xl:h-[720px] h-[480px]">

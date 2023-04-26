@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette";
+import { formatDate } from "../utils/lamda";
 
 import Tag from "../components/Tag";
 
@@ -19,7 +20,7 @@ export default ({
   answered,
   tags,
   _id,
-  onEdit = () => { },
+  onEdit = () => {},
   ...props
 }) => {
   const user = useSelector((state) => state.user.user);
@@ -94,7 +95,9 @@ export default ({
             <div className="mb-2" style={{ color: palette["content-2"] }}>
               Birthday
             </div>
-            <p style={{ color: palette["content-1"] }}>{birthday}</p>
+            <p style={{ color: palette["content-1"] }}>
+              {formatDate(birthday)}
+            </p>
           </div>
           <div className="basis-1/2 mb-6">
             <div className="mb-2" style={{ color: palette["content-2"] }}>

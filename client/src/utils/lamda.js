@@ -54,6 +54,30 @@ function imageToObjectURL(imageArg) {
   }
 }
 
+function formatDate(dateString) {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${year}`;
+}
+
 function sortQuestions(questions, condition) {
   if (condition === "popular") {
     questions.sort((before, after) => (before.viewed >= after.viewed ? -1 : 1));
@@ -98,10 +122,35 @@ function sortAnswers(answers, condition) {
   return answers;
 }
 
+function searchQuestions(questions, query) {
+  const searchedQuestions = questions.filter((question) =>
+    question.title.toLowerCase().includes(query)
+  );
+  return searchedQuestions;
+}
+
+function searchTags(tags, query) {
+  const searchedTags = tags.filter((tag) =>
+    tag.name.toLowerCase().includes(query)
+  );
+  return searchedTags;
+}
+
+function searchUsers(users, query) {
+  const searchedUsers = users.filter((users) =>
+    users.username.toLowerCase().includes(query)
+  );
+  return searchedUsers;
+}
+
 export {
   getTimeDiffString,
   imageToObjectURL,
+  formatDate,
   sortQuestions,
   filterQuestions,
   sortAnswers,
+  searchQuestions,
+  searchTags,
+  searchUsers,
 };

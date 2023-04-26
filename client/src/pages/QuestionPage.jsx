@@ -36,7 +36,6 @@ export default ({}) => {
       .then((res) => {
         setQuestion(res.data.question);
         const sortedAnswers = sortAnswers(res.data.question.answers, sortBy);
-        console.log(sortedAnswers)
         setAnswers(sortedAnswers);
         setQuestionLoading(false);
       })
@@ -48,7 +47,6 @@ export default ({}) => {
 
   useEffect(() => {
     const sortedAnswers = sortAnswers([...answers], sortBy);
-    console.log(sortedAnswers)
     setAnswers(sortedAnswers);
   }, [sortBy]);
 
@@ -143,7 +141,7 @@ export default ({}) => {
               createdAt={new Date(answer.createdAt)}
               rating={answer.rating}
               answerBody={answer.body}
-              replies={[]}
+              replies={answer.replies}
               likedBy={answer.likedBy}
               dislikedBy={answer.dislikedBy}
               answerId={answer._id}
