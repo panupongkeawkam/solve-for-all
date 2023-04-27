@@ -5,6 +5,7 @@ import * as Icon from "@mui/icons-material";
 
 import palette from "../style/palette";
 import { formatDate } from "../utils/lamda";
+import { avatarColors } from "../utils/dummy";
 
 import Tag from "../components/Tag";
 
@@ -46,7 +47,12 @@ export default ({
             />
           ) : (
             <Avatar
-              sx={{ width: "120px", height: "120px", fontSize: 64 }}
+              sx={{
+                width: "120px",
+                height: "120px",
+                fontSize: 64,
+                backgroundColor: avatarColors[username[0]?.toUpperCase()],
+              }}
               alt={username}
             >
               {username[0]?.toUpperCase()}
@@ -83,7 +89,7 @@ export default ({
             <div className="mb-2" style={{ color: palette["content-2"] }}>
               Email
             </div>
-            <p style={{ color: palette["content-1"] }}>{email}</p>
+            <p style={{ color: palette["content-1"] }}>{email ? email : "-"}</p>
           </div>
           <div className="basis-1/2 mb-6">
             <div className="mb-2" style={{ color: palette["content-2"] }}>
@@ -96,7 +102,7 @@ export default ({
               Birthday
             </div>
             <p style={{ color: palette["content-1"] }}>
-              {formatDate(birthday)}
+              {birthday ? formatDate(birthday) : "-"}
             </p>
           </div>
           <div className="basis-1/2 mb-6">

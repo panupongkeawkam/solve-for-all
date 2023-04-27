@@ -1,14 +1,27 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { Stepper, Step, StepLabel, Slide } from "@mui/material";
+import {
+  Stepper,
+  Step,
+  StepLabel,
+  Slide,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import * as Icon from "@mui/icons-material";
+import Cookies from "js-cookie";
 
 import palette from "../style/palette.js";
-import axios from "../utils/axios.config"
+import axios from "../utils/axios.config";
 import store from "../store/index.js";
-import { setUser } from "../store/userSlice"
+import { setUser } from "../store/userSlice";
 import { fetchTags } from "../store/tagSlice.js";
+import {
+  validateUsername,
+  validatePassword,
+  validateEmail,
+} from "../utils/lamda.js";
 
 import TextField from "../components/inputs/TextField.jsx";
 import PasswordField from "../components/inputs/PasswordField.jsx";
@@ -20,13 +33,20 @@ import Logo from "../components/Logo.jsx";
 import LoadingIndicator from "../components/LoadingIndicator.jsx";
 
 export default () => {
-  useEffect(() => {
-    store.dispatch(fetchTags())
-  }, [])
+  if (Cookies.get("accessToken")) {
+    window.location.href = "/";
+    return;
+  }
 
-  const tags = useSelector(state => state.tag.tags)
+  useEffect(() => {
+    store.dispatch(fetchTags());
+  }, []);
+
+  const tags = useSelector((state) => state.tag.tags);
 
   const [loading, setLoading] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Error");
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [currentStepComponent, setCurrentStepComponent] = useState(
     <AccountStepForm />
@@ -119,6 +139,51 @@ export default () => {
 
   // next button
   const nextHandler = () => {
+    if (currentStepIndex === 0 && !validateUsername(username.trim())) {
+      setShowSnackbar(true);
+      setErrorMessage("Invalid username");
+      return;
+    }
+
+    if (currentStepIndex === 0 && !validatePassword(password.trim())) {
+      setShowSnackbar(true);
+      setErrorMessage("Invalid password");
+      return;
+    } else if (
+      currentStepIndex === 0 &&
+      password.trim() !== rePassword.trim()
+    ) {
+      setShowSnackbar(true);
+      setErrorMessage("Password not match each other");
+      return;
+    }
+
+    if (currentStepIndex === 1 && name.trim() === "") {
+      setShowSnackbar(true);
+      setErrorMessage("Name cannot empty");
+      return;
+    } else if (currentStepIndex === 1 && name.trim().length < 4) {
+      setShowSnackbar(true);
+      setErrorMessage("Name length minimum is 4");
+      return;
+    }
+
+    if (currentStepIndex === 1 && !validateEmail(email.trim())) {
+      setShowSnackbar(true);
+      setErrorMessage("Invalid email");
+      return;
+    }
+
+    if (currentStepIndex === 1 && birthday === null) {
+      setShowSnackbar(true);
+      setErrorMessage("Birthday cannot empty");
+      return;
+    } else if (currentStepIndex === 1 && new Date(birthday) > new Date()) {
+      setShowSnackbar(true);
+      setErrorMessage("Birthday can't be future");
+      return;
+    }
+
     setCurrentStepIndex(currentStepIndex + 1);
     setCurrentStepComponent(stepsComponent[currentStepIndex + 1]);
   };
@@ -126,19 +191,28 @@ export default () => {
   // sign up
   const signupHandler = () => {
     setLoading(true);
-    axios.post("/api/users/signup", {
-      username: username,
-      password: password,
-      name: name,
-      email: email,
-      bio: bio,
-      birthday: birthday,
-      tags: selectedTags
-    }).then(res => {
-      store.dispatch(setUser(res.data.user));
-      setLoading(false);
-      navigate("/");
-    })
+    axios
+      .post("/api/users/signup", {
+        username: username,
+        password: password,
+        name: name,
+        email: email,
+        bio: bio,
+        birthday: birthday,
+        tags: selectedTags,
+      })
+      .then((res) => {
+        store.dispatch(setUser(res.data.user));
+        setLoading(false);
+        navigate("/");
+      })
+      .catch((err) => {
+        setLoading(false);
+        setShowSnackbar(true);
+        setErrorMessage(
+          err.response.data.message || "Something when wrong, please try again"
+        );
+      });
   };
 
   // step 1
@@ -333,6 +407,20 @@ export default () => {
           </div>
         </div>
       </div>
+      <Slide direction="up" in={showSnackbar} mountOnEnter unmountOnExit>
+        <Snackbar
+          open={showSnackbar}
+          autoHideDuration={5000}
+          onClose={() => setShowSnackbar(false)}
+        >
+          <Alert
+            severity="error"
+            sx={{ width: "100%", border: `1px solid ${palette.wrong}` }}
+          >
+            {errorMessage}
+          </Alert>
+        </Snackbar>
+      </Slide>
       <LoadingIndicator active={loading} />
       <Logo />
     </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Avatar } from "@mui/material";
 
 import palette from "../../style/palette";
+import { avatarColors } from "../../utils/dummy";
 
 import Button from "../buttons/Button";
 import InvisibleTextArea from "./InvisibleTextArea";
@@ -16,7 +17,11 @@ export default ({ image, username, name, onSubmit }) => {
     >
       <div className="mr-6">
         {image ? (
-          <Avatar alt={username} src={image} />
+          <Avatar
+            alt={username}
+            src={image}
+            sx={{ backgroundColor: avatarColors[username[0]?.toUpperCase()] }}
+          />
         ) : (
           <Avatar alt={username}>{username[0]?.toUpperCase()}</Avatar>
         )}
@@ -36,6 +41,7 @@ export default ({ image, username, name, onSubmit }) => {
           </div>
           <div className="basis-1/2 flex flex-row justify-end items-start">
             <Button
+              disabled={!message.trim()}
               text="Submit"
               size="small"
               variant="outlined"

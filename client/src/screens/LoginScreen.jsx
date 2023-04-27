@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import { Snackbar, Slide, Alert } from "@mui/material";
 import * as Icon from "@mui/icons-material";
+import Cookies from "js-cookie";
 
 import palette from "../style/palette.js";
-import axios from "../utils/axios.config"
+import axios from "../utils/axios.config";
 import { setUser } from "../store/userSlice.js";
 
 import TextField from "../components/inputs/TextField.jsx";
@@ -14,7 +16,14 @@ import LoadingIndicator from "../components/LoadingIndicator.jsx";
 import store from "../store/index.js";
 
 export default () => {
+  if (Cookies.get("accessToken")) {
+    window.location.href = "/";
+    return;
+  }
+
   const [loading, setLoading] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Error");
   const [username, setUsername] = useState("");
   const [usernameError, setUsernameError] = useState(false);
   const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
@@ -22,8 +31,6 @@ export default () => {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-
-  const navigate = useNavigate();
 
   const usernameChangeHandler = (text) => {
     setUsernameError(false);
@@ -39,18 +46,45 @@ export default () => {
 
   // login
   const loginHandler = () => {
+    if (username.trim() === "") {
+      setUsernameError(true);
+      setUsernameErrorMessage("Please fill an username");
+      return;
+    }
+
+    if (password.trim() === "") {
+      setPasswordError(true);
+      setPasswordErrorMessage("Please fill an username");
+      return;
+    }
+
     setLoading(true);
 
-    axios.post("/api/users/login", {
-      username, password
-    }).then(res => {
-      store.dispatch(setUser(res.data.user))
-      setLoading(false)
-      window.location.href = "/"
-    }).catch(err => {
-      alert(err.response.data.message)
-      setLoading(false)
-    })
+    axios
+      .post("/api/users/login", {
+        username,
+        password,
+      })
+      .then((res) => {
+        store.dispatch(setUser(res.data.user));
+        setLoading(false);
+        window.location.href = "/";
+      })
+      .catch((err) => {
+        setLoading(false);
+        setShowSnackbar(true);
+
+        if (err.response.data.message.includes("cred")) {
+          setUsernameError(true);
+          setPasswordError(true);
+          setErrorMessage("Wrong username or password");
+        } else {
+          setErrorMessage(
+            err.response.data.message ||
+              "Something when wrong, please try again"
+          );
+        }
+      });
   };
 
   return (
@@ -93,6 +127,11 @@ export default () => {
                 inputProps={{
                   maxLength: 40,
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    loginHandler();
+                  }
+                }}
                 onPasswordChange={passwordChangeHandler}
               />
             </div>
@@ -123,6 +162,20 @@ export default () => {
           </div>
         </div>
       </div>
+      <Slide direction="up" in={showSnackbar} mountOnEnter unmountOnExit>
+        <Snackbar
+          open={showSnackbar}
+          autoHideDuration={5000}
+          onClose={() => setShowSnackbar(false)}
+        >
+          <Alert
+            severity="error"
+            sx={{ width: "100%", border: `1px solid ${palette.wrong}` }}
+          >
+            {errorMessage}
+          </Alert>
+        </Snackbar>
+      </Slide>
       <Logo />
       <LoadingIndicator active={loading} />
     </div>

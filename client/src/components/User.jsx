@@ -1,8 +1,9 @@
 import { Avatar } from "@mui/material";
 
 import palette from "../style/palette";
+import { avatarColors } from "../utils/dummy";
 
-export default ({ name, username, imageUrl, onClick = () => { }, ...props }) => {
+export default ({ name, username, imageUrl, onClick = () => {}, ...props }) => {
   if (window.screen.width < 1500 && name?.length > 15) {
     name = name.slice(0, 12) + "...";
   }
@@ -20,7 +21,12 @@ export default ({ name, username, imageUrl, onClick = () => { }, ...props }) => 
         {imageUrl ? (
           <Avatar alt={username} src={imageUrl} />
         ) : (
-          <Avatar alt={username}>{username[0]?.toUpperCase()}</Avatar>
+          <Avatar
+            alt={username}
+            sx={{ backgroundColor: avatarColors[username[0]?.toUpperCase()] }}
+          >
+            {username[0]?.toUpperCase()}
+          </Avatar>
         )}
       </div>
       <div className="flex flex-col w-full justify-center">

@@ -19,4 +19,16 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    port: process.env.PORT,
+    host: true,
+    strictPort: true,
+    proxy: {
+      "/api": {
+        target: process.env.SERVER_HOST,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 });

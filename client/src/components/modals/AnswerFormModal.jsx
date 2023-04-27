@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogTitle,
@@ -9,15 +8,15 @@ import {
   IconButton,
   Snackbar,
   Alert,
+  Slide,
 } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
 import palette from "../../style/palette";
 import store from "../../store/index";
-import { appendAnswer } from "../../store/answerSlice";
 import { authAxios } from "../../utils/axios.config";
-
+import { avatarColors } from "../../utils/dummy";
 import { imageToObjectURL } from "../../utils/lamda";
 
 import Button from "../buttons/Button";
@@ -34,12 +33,12 @@ export default ({
   onClose,
 }) => {
   const user = useSelector((state) => state.user.user);
-  const navigate = useNavigate();
 
   const [answerBodies, setAnswerBodies] = useState([
     { type: "paragraph", msg: "" },
   ]);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Error");
   const [loading, setLoading] = useState(false);
 
   const actions = [
@@ -81,14 +80,13 @@ export default ({
       input.onchange = (e) => {
         if (!e.target.files[0].type.includes("image")) {
           setShowSnackbar(true);
-          // alert("Invalid file type");
+          setErrorMessage("Invalid file type, require image only");
           return;
         }
         let image = {
           type: "image",
           image: e.target.files[0],
         };
-        // parseBase64(e.target.files[0]);
         setAnswerBodies([...answerBodies, image]);
       };
 
@@ -122,7 +120,24 @@ export default ({
 
   const submitHandler = async () => {
     const formData = new FormData();
-    formData.append("body", JSON.stringify(answerBodies));
+
+    const filteredAnswerBodies = answerBodies.filter((answerBody) => {
+      if (answerBody.type === "paragraph" || answerBody.type === "header") {
+        return answerBody.msg.trim() !== "";
+      } else if (answerBody.type === "code") {
+        return answerBody.code.trim() !== "";
+      } else {
+        return true;
+      }
+    });
+
+    if (filteredAnswerBodies.length === 0) {
+      setShowSnackbar(true);
+      setErrorMessage("Your answer is empty of content");
+      return;
+    }
+
+    formData.append("body", JSON.stringify(filteredAnswerBodies));
     formData.append(
       "question",
       JSON.stringify({
@@ -145,9 +160,11 @@ export default ({
       onClose();
       window.location.reload();
     } catch (err) {
-      console.log(err);
-      alert(err.response.data.message);
       setLoading(false);
+      setShowSnackbar(true);
+      setErrorMessage(
+        err.response.data.message || "Something when wrong, please try again"
+      );
     }
   };
 
@@ -188,7 +205,12 @@ export default ({
                   ) : (
                     <Avatar
                       alt={user?.username}
-                      sx={{ width: "40px", height: "40px" }}
+                      sx={{
+                        width: "40px",
+                        height: "40px",
+                        backgroundColor:
+                          avatarColors[user?.username[0]?.toUpperCase()],
+                      }}
                     >
                       {user?.username[0]?.toUpperCase()}
                     </Avatar>
@@ -227,7 +249,14 @@ export default ({
                   ) : (
                     <Avatar
                       alt={targetQuestion?.createdBy?.username}
-                      sx={{ width: "40px", height: "40px" }}
+                      sx={{
+                        width: "40px",
+                        height: "40px",
+                        backgroundColor:
+                          avatarColors[
+                            targetQuestion?.createdBy?.username[0]?.toUpperCase()
+                          ],
+                      }}
                     >
                       {targetQuestion?.createdBy?.username[0]?.toUpperCase()}
                     </Avatar>
@@ -385,15 +414,20 @@ export default ({
             </div>
           </div>
         </DialogContent>
-        <Snackbar
-          open={showSnackbar}
-          autoHideDuration={5000}
-          onClose={() => setShowSnackbar(false)}
-        >
-          <Alert severity="error" sx={{ width: "100%" }}>
-            Invalid file type, require image only
-          </Alert>
-        </Snackbar>
+        <Slide direction="up" in={showSnackbar} mountOnEnter unmountOnExit>
+          <Snackbar
+            open={showSnackbar}
+            autoHideDuration={5000}
+            onClose={() => setShowSnackbar(false)}
+          >
+            <Alert
+              severity="error"
+              sx={{ width: "100%", border: `1px solid ${palette.wrong}` }}
+            >
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+        </Slide>
       </Dialog>
     </>
   );

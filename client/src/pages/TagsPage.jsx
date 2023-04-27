@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Select, MenuItem } from "@mui/material";
 
-import palette from "../style/palette";
 import store from "../store/index";
-import { sortOptions } from "../utils/dummy";
 import { fetchTags } from "../store/tagSlice";
 import { searchTags } from "../utils/lamda";
 
