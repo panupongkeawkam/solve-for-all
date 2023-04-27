@@ -9,6 +9,7 @@ import {
   IconButton,
   Snackbar,
   Alert,
+  Slide,
 } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 
@@ -17,8 +18,8 @@ import store from "../../store/index";
 import { fetchTags } from "../../store/tagSlice";
 import { appendQuestion } from "../../store/questionSlice";
 import { authAxios } from "../../utils/axios.config";
-
 import { imageToObjectURL } from "../../utils/lamda";
+import { avatarColors } from "../../utils/dummy";
 
 import Button from "../buttons/Button";
 import InvisibleTextArea from "../inputs/InvisibleTextArea";
@@ -47,6 +48,7 @@ export default ({
     { type: "paragraph", msg: "" },
   ]);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Error");
   const [loading, setLoading] = useState(false);
 
   const actions = [
@@ -88,14 +90,13 @@ export default ({
       input.onchange = (e) => {
         if (!e.target.files[0].type.includes("image")) {
           setShowSnackbar(true);
-          // alert("Invalid file type");
+          setErrorMessage("Invalid file type, require image only");
           return;
         }
         let image = {
           type: "image",
           image: e.target.files[0],
         };
-        // parseBase64(e.target.files[0]);
         setQuestionBodies([...questionBodies, image]);
       };
 
@@ -134,8 +135,18 @@ export default ({
   const submitHandler = async () => {
     const formData = new FormData();
 
+    const filteredQuestionBodies = questionBodies.filter((questionBody) => {
+      if (questionBody.type === "paragraph" || questionBody.type === "header") {
+        return questionBody.msg.trim() !== "";
+      } else if (questionBody.type === "code") {
+        return questionBody.code.trim() !== "";
+      } else {
+        return true;
+      }
+    });
+
     formData.append("title", JSON.stringify(title));
-    formData.append("body", JSON.stringify(questionBodies));
+    formData.append("body", JSON.stringify(filteredQuestionBodies));
     formData.append("tags", JSON.stringify(selectedTags));
     questionBodies.forEach((questionBody, index) => {
       if (questionBody.type === "image") {
@@ -155,8 +166,11 @@ export default ({
       onClose();
       navigate(`/questions/${question._id}`);
     } catch (err) {
-      alert(err.response.data.message);
       setLoading(false);
+      setShowSnackbar(true);
+      setErrorMessage(
+        err.response.data.message || "Something when wrong, please try again"
+      );
     }
   };
 
@@ -197,7 +211,12 @@ export default ({
                   ) : (
                     <Avatar
                       alt={user?.username}
-                      sx={{ width: "40px", height: "40px" }}
+                      sx={{
+                        width: "40px",
+                        height: "40px",
+                        backgroundColor:
+                          avatarColors[user?.username[0]?.toUpperCase()],
+                      }}
                     >
                       {user?.username[0]?.toUpperCase()}
                     </Avatar>
@@ -227,7 +246,7 @@ export default ({
             <div className="basis-1/4 flex justify-end">
               <span className="mr-2">
                 <Button
-                  text="Cancel"
+                  text="Close"
                   size="small"
                   variant="outlined"
                   onClick={onClose}
@@ -384,15 +403,20 @@ export default ({
             </div>
           </div>
         </DialogContent>
-        <Snackbar
-          open={showSnackbar}
-          autoHideDuration={5000}
-          onClose={() => setShowSnackbar(false)}
-        >
-          <Alert severity="error" sx={{ width: "100%" }}>
-            Invalid file type, require image only
-          </Alert>
-        </Snackbar>
+        <Slide direction="up" in={showSnackbar} mountOnEnter unmountOnExit>
+          <Snackbar
+            open={showSnackbar}
+            autoHideDuration={5000}
+            onClose={() => setShowSnackbar(false)}
+          >
+            <Alert
+              severity="error"
+              sx={{ width: "100%", border: `1px solid ${palette.wrong}` }}
+            >
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+        </Slide>
       </Dialog>
     </>
   );

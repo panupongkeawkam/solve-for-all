@@ -2,6 +2,7 @@ import { Avatar } from "@mui/material";
 
 import palette from "../style/palette";
 import { getTimeDiffString } from "../utils/lamda";
+import { avatarColors } from "../utils/dummy";
 
 export default ({ message, name, username, image, userId, createdAt }) => {
   return (
@@ -11,7 +12,11 @@ export default ({ message, name, username, image, userId, createdAt }) => {
     >
       <div className="mr-6">
         {image ? (
-          <Avatar alt={username} src={image} />
+          <Avatar
+            alt={username}
+            src={image}
+            sx={{ backgroundColor: avatarColors[username[0]?.toUpperCase()] }}
+          />
         ) : (
           <Avatar alt={username}>{username[0]?.toUpperCase()}</Avatar>
         )}
