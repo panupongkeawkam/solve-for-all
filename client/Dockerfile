@@ -1,6 +1,4 @@
-FROM --platform=linux/amd64 node:16-alpine
-
-ENV PORT=$PORT
+FROM node:16-alpine
 
 WORKDIR /app
 
@@ -11,7 +9,5 @@ RUN npm install
 COPY . .
 
 RUN npm run build
-
-EXPOSE $PORT
 
 CMD ["npm", "run", "serve"]

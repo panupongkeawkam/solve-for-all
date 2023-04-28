@@ -21,7 +21,11 @@ export default ({ message, name, username, image, userId, createdAt }) => {
           <Avatar alt={username}>{username[0]?.toUpperCase()}</Avatar>
         )}
       </div>
-      <div className="basis-full flex flex-col mb-1">
+      <div className="basis-full flex flex-col mb-1 cursor-pointer hover:brightness-110 transition duration-300"
+        onClick={(e) => {
+          e.stopPropagation();
+          window.location.href = `/users/${userId}`;
+        }}>
         <div className="flex flex-row mb-1">
           <p className="mr-2" style={{ color: palette["content-1"] }}>
             {name}
