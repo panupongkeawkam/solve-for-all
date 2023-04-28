@@ -1,4 +1,4 @@
-import { PreviewQuestionDto } from "src/question/dto/previewQuestion.dto";
+import { PreviewQuestionDto } from "../../question/dto/previewQuestion.dto";
 
 export class PreviewTagDto {
 	_id: string;
@@ -7,4 +7,3 @@ export class PreviewTagDto {
 	questions: PreviewQuestionDto[];
 	createdAt: Date;
 }
-

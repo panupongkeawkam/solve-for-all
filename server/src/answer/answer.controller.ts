@@ -12,12 +12,12 @@ import {
 } from "@nestjs/common";
 import { Response } from "express";
 import { AnswerService } from "./answer.service";
-import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { FileService } from "src/file/file.service";
+import { FileService } from "../file/file.service";
 import { CreateAnswerDto } from "./dto/createAnswer.dto";
-import { UserService } from "src/user/user.service";
-import { QuestionService } from "src/question/question.service";
+import { UserService } from "../user/user.service";
+import { QuestionService } from "../question/question.service";
 import { InteractAnswerQueryDto } from "./dto/interactQuery.dto";
 
 @Controller("answers")
@@ -89,8 +89,6 @@ export class AnswerController {
 			if (files.length > 0) {
 				await this.fileService.removeFiles(uploadedFiles);
 			}
-			console.log("error from answer controller create answer function.");
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
@@ -122,8 +120,6 @@ export class AnswerController {
 				success: true,
 			});
 		} catch (err) {
-			console.log("error from answer controller like answer function/");
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}

@@ -31,10 +31,6 @@ export class TagService {
 				);
 			});
 		} catch (err) {
-			console.log(
-				"error from tag service add question or user id to tag function",
-			);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
@@ -54,10 +50,6 @@ export class TagService {
 				);
 			});
 		} catch (err) {
-			console.log(
-				"error from tag service pull user id from tag function",
-			);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
@@ -80,8 +72,6 @@ export class TagService {
 				);
 			});
 		} catch (err) {
-			console.log("error from tag service pull user id from tag");
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}

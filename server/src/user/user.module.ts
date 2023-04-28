@@ -3,11 +3,11 @@ import { UserService } from "./user.service";
 import { UserController } from "./user.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { User, UserSchema } from "./schema/user.schema";
-import { AuthService } from "src/auth/auth.service";
+import { AuthService } from "../auth/auth.service";
 import { JwtModule } from "@nestjs/jwt";
-import { TagModule } from "src/tag/tag.module";
+import { TagModule } from "../tag/tag.module";
 import { FileModule } from "../file/file.module";
-import { QuestionModule } from "src/question/question.module";
+import { QuestionModule } from "../question/question.module";
 
 @Module({
 	imports: [
