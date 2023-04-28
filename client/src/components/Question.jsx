@@ -7,6 +7,8 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 
 import palette from "../style/palette";
+import { avatarColors } from "../utils/dummy";
+
 import Tag from "./Tag";
 
 import { getTimeDiffString } from "../utils/lamda";
@@ -42,7 +44,12 @@ export default ({
         ) : (
           <Avatar
             alt={authorUsername}
-            sx={{ width: 64, height: 64, fontSize: "1.8em" }}
+            sx={{
+              width: 64,
+              height: 64,
+              fontSize: "1.8em",
+              backgroundColor: avatarColors[authorUsername[0]?.toUpperCase()],
+            }}
           >
             {authorUsername[0]?.toUpperCase()}
           </Avatar>

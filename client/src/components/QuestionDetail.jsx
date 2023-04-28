@@ -25,6 +25,7 @@ import palette from "../style/palette";
 import Tag from "./Tag";
 import { authAxios } from "../utils/axios.config";
 import { getTimeDiffString } from "../utils/lamda";
+import { avatarColors } from "../utils/dummy";
 
 import DialogModal from "./modals/DialogModal";
 
@@ -116,7 +117,12 @@ export default ({
         ) : (
           <Avatar
             alt={authorUsername}
-            sx={{ width: 64, height: 64, fontSize: "1.8em" }}
+            sx={{
+              width: 64,
+              height: 64,
+              fontSize: "1.8em",
+              backgroundColor: avatarColors[authorUsername[0]?.toUpperCase()],
+            }}
           >
             {authorUsername[0]?.toUpperCase()}
           </Avatar>
@@ -157,7 +163,11 @@ export default ({
       </div>
       <div className="basis-full flex flex-col">
         <div className="basis-full flex flex-row mb-1">
-          <div className="basis-1/2 flex flex-col mb-1">
+          <div className="basis-1/2 flex flex-col mb-1 cursor-pointer hover:brightness-110 transition duration-300"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.location.href = `/users/${authorId}`;
+            }}>
             <div className="flex flex-row mb-1">
               <p className="mr-2" style={{ color: palette["content-1"] }}>
                 {authorName}

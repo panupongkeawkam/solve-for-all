@@ -13,6 +13,7 @@ import { monokai } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import palette from "../style/palette";
 import { authAxios } from "../utils/axios.config";
 import { getTimeDiffString } from "../utils/lamda";
+import { avatarColors } from "../utils/dummy";
 
 import Button from "./buttons/Button";
 import DialogModal from "./modals/DialogModal";
@@ -118,7 +119,13 @@ export default ({
               <Avatar
                 alt={authorUsername}
                 src={authorProfilePicture}
-                sx={{ width: 64, height: 64 }}
+                sx={{
+                  width: 64,
+                  height: 64,
+                  fontSize: 64,
+                  backgroundColor:
+                    avatarColors[authorUsername[0]?.toUpperCase()],
+                }}
               />
             ) : (
               <Avatar

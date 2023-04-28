@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  Link as RouterLink,
-  useLocation,
-  Outlet,
-  useNavigate,
-} from "react-router-dom";
+import { Link as RouterLink, useLocation, Outlet } from "react-router-dom";
 import { IconButton, Menu, Badge } from "@mui/material";
 import * as Icon from "@mui/icons-material";
 import Cookies from "js-cookie";
@@ -38,11 +33,8 @@ export default () => {
   );
   const suggestedUsers = useSelector((state) => state.user.suggestedUsers);
   const location = useLocation();
-  const navigate = useNavigate();
-
   useEffect(() => {
     store.dispatch(fetchSuggestedUsers());
-    // test()
   }, []);
 
   useEffect(() => {
@@ -74,30 +66,6 @@ export default () => {
       .slice(0, 2);
     return suggestedUsersVar;
   };
-
-  // const test = () => {
-  //   // Define an empty object to store the colors
-  //   const colors = {};
-
-  //   // Loop through ASCII codes for A-Z
-  //   for (let i = 65; i <= 90; i++) {
-  //     // Generate a random hue value between 0 and 360
-  //     const hue = Math.floor(Math.random() * 360);
-
-  //     // Convert the hue to an HSL color string
-  //     const color = `hsl(${hue}, 60%, 70%)`;
-
-  //     // Convert the ASCII code to a character
-  //     const char = String.fromCharCode(i);
-
-  //     // Add the color to the object with the character as the key
-  //     colors[char] = color;
-  //   }
-
-  //   // Example usage: get the color for the letter 'G'
-  //   const colorG = colors['G'];
-  //   console.log(colors); // Output: "hsl(215, 60%, 70%)"
-  // }
 
   const searchSubmitHandler = (searchQuery) => {
     if (location.pathname === "/") {

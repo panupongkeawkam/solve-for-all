@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
-import { Dialog, DialogContent, IconButton, Avatar } from "@mui/material";
+import {
+  Dialog,
+  DialogContent,
+  IconButton,
+  Avatar,
+  Slide,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { useSelector } from "react-redux";
 import * as Icon from "@mui/icons-material";
 
 import palette from "../../style/palette";
-import { imageToObjectURL } from "../../utils/lamda";
+import { imageToObjectURL, validateEmail } from "../../utils/lamda";
 import { authAxios } from "../../utils/axios.config";
+import { avatarColors } from "../../utils/dummy";
 
 import SideBarNavigatorButton from "../buttons/SideBarNavigatorButton";
 import TextField from "../inputs/TextField";
@@ -19,6 +28,8 @@ import LoadingIndicator from "../LoadingIndicator";
 export default ({ active = false, onClose, user }) => {
   const tags = useSelector((state) => state.tag.tags);
   const [loading, setLoading] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Error");
   const [editingPage, setEditingPage] = useState("profile");
 
   const [profilePicture, setProfilePicture] = useState(user?.image);
@@ -49,6 +60,8 @@ export default ({ active = false, onClose, user }) => {
 
     input.onchange = (e) => {
       if (!e.target.files[0].type.includes("image")) {
+        setShowSnackbar(true);
+        setErrorMessage("Invalid file type, require image only");
         return;
       }
       let imageFile = e.target.files[0];
@@ -104,15 +117,32 @@ export default ({ active = false, onClose, user }) => {
   };
 
   const submitEditProfileHandler = async () => {
-    console.log(
-      name,
-      email,
-      bio,
-      birthday,
-      selectedTags,
-      user?.image,
-      profilePicture
-    );
+    if (name.trim() === "") {
+      setShowSnackbar(true);
+      setErrorMessage("Name cannot empty");
+      return;
+    } else if (name.trim().length < 4) {
+      setShowSnackbar(true);
+      setErrorMessage("Name length minimum is 4");
+      return;
+    }
+
+    if (!validateEmail(email.trim())) {
+      setShowSnackbar(true);
+      setErrorMessage("Invalid email");
+      return;
+    }
+
+    if (birthday === null) {
+      setShowSnackbar(true);
+      setErrorMessage("Birthday cannot empty");
+      return;
+    } else if (new Date(birthday) > new Date()) {
+      setShowSnackbar(true);
+      setErrorMessage("Birthday can't be future");
+      return;
+    }
+
     setLoading(true);
     const formData = new FormData();
     formData.append("name", JSON.stringify(name));
@@ -125,9 +155,17 @@ export default ({ active = false, onClose, user }) => {
       formData.append("imageFile", profilePicture);
     }
 
-    const res = await authAxios.put(`/api/users/${user?._id}`, formData);
-    setLoading(false);
-    window.location.href = `/users/${user?._id}`;
+    try {
+      const res = await authAxios.put(`/api/users/${user?._id}`, formData);
+      setLoading(false);
+      window.location.href = `/users/${user?._id}`;
+    } catch (err) {
+      setLoading(false);
+      setShowSnackbar(true);
+      setErrorMessage(
+        err.response.data.message || "Something when wrong, please try again"
+      );
+    }
   };
 
   return (
@@ -216,6 +254,8 @@ export default ({ active = false, onClose, user }) => {
                               width: "80px",
                               height: "80px",
                               fontSize: 48,
+                              backgroundColor:
+                                avatarColors[user?.username[0]?.toUpperCase()],
                             }}
                           >
                             {user?.username[0]?.toUpperCase()}
@@ -388,6 +428,20 @@ export default ({ active = false, onClose, user }) => {
           </div>
         </DialogContent>
       </Dialog>
+      <Slide direction="up" in={showSnackbar} mountOnEnter unmountOnExit>
+        <Snackbar
+          open={showSnackbar}
+          autoHideDuration={5000}
+          onClose={() => setShowSnackbar(false)}
+        >
+          <Alert
+            severity="error"
+            sx={{ width: "100%", border: `1px solid ${palette.wrong}` }}
+          >
+            {errorMessage}
+          </Alert>
+        </Snackbar>
+      </Slide>
       <LoadingIndicator active={loading} />
     </>
   );

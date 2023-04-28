@@ -68,7 +68,6 @@ export class QuestionService {
 	}
 
 	async IncreaseAnsweredAndParticipant(query: string): Promise<void> {
-		console.log(query);
 		await this.questionModel.findOneAndUpdate(
 			{
 				_id: query,

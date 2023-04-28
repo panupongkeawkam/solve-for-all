@@ -3,8 +3,8 @@ import { Provider as StoreProvider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 
+// utilities
 import axios from "./utils/axios.config";
-
 import store from "./store/index";
 import theme from "./style/mui.config";
 import { fetchQuestions } from "./store/questionSlice";
@@ -20,7 +20,6 @@ import NotFoundScreen from "./screens/NotFoundScreen";
 import HomePage from "./pages/HomePage";
 import InterestedPage from "./pages/InterestedPage";
 import TagsPage from "./pages/TagsPage";
-import ComponentTestPage from "./pages/ComponentTestPage";
 import ProfilePage from "./pages/ProfilePage";
 import QuestionPage from "./pages/QuestionPage";
 import TagDetailPage from "./pages/TagDetailPage";
@@ -62,10 +61,6 @@ export default () => {
         {
           path: "/tags/:tagId",
           element: <TagDetailPage />,
-        },
-        {
-          path: "/test",
-          element: <ComponentTestPage />,
         },
       ],
     },

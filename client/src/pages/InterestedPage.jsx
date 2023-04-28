@@ -14,6 +14,7 @@ import {
 
 import EmptyData from "../components/EmptyData";
 import Question from "../components/Question";
+import QuestionSkeleton from "../components/skeletons/QuestionSkeleton";
 
 export default ({}) => {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default ({}) => {
   const [filter, setFilter] = useState("");
   const [questions, setQuestions] = useState([]);
   const [questionsComponent, setQuestionsComponent] = useState([]);
+  const [fetchingQuestions, setFetchingQuestions] = useState(false);
 
   useEffect(() => {
     authAxios.get(`/api/tags/interested`).then((res) => {
@@ -147,7 +149,9 @@ export default ({}) => {
       </div>
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
-        {questionsComponent.length > 0 ? (
+        {fetchingQuestions ? (
+          [0, 1, 2, 3].map(() => <QuestionSkeleton />)
+        ) : questionsComponent.length > 0 ? (
           questionsComponent
         ) : (
           <div className="w-full 2xl:h-[720px] h-[480px]">

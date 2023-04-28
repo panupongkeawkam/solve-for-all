@@ -2,6 +2,7 @@ import { Avatar } from "@mui/material";
 
 import palette from "../style/palette";
 import { getTimeDiffString } from "../utils/lamda";
+import { avatarColors } from "../utils/dummy";
 
 export default ({ message, name, username, image, userId, createdAt }) => {
   return (
@@ -11,12 +12,20 @@ export default ({ message, name, username, image, userId, createdAt }) => {
     >
       <div className="mr-6">
         {image ? (
-          <Avatar alt={username} src={image} />
+          <Avatar
+            alt={username}
+            src={image}
+            sx={{ backgroundColor: avatarColors[username[0]?.toUpperCase()] }}
+          />
         ) : (
           <Avatar alt={username}>{username[0]?.toUpperCase()}</Avatar>
         )}
       </div>
-      <div className="basis-full flex flex-col mb-1">
+      <div className="basis-full flex flex-col mb-1 cursor-pointer hover:brightness-110 transition duration-300"
+        onClick={(e) => {
+          e.stopPropagation();
+          window.location.href = `/users/${userId}`;
+        }}>
         <div className="flex flex-row mb-1">
           <p className="mr-2" style={{ color: palette["content-1"] }}>
             {name}

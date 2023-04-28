@@ -3,7 +3,8 @@ services:
   solveforall-client:
     image: panupongkeawkam/solveforall-client
     build: .
+    container_name: solveforall-client
     env_file:
       - .env
     ports:
-      - "${PORT}:4173"
+      - "${PORT}:${PORT}"

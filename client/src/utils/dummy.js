@@ -34,5 +34,33 @@ const filterOptions = [
   { value: "unsolved", title: "Unsolved" },
   { value: "solved", title: "Solved" },
 ];
+const avatarColors = {
+  A: "hsl(191, 100%, 80%)",
+  B: "hsl(256, 100%, 80%)",
+  C: "hsl(0, 100%, 80%)",
+  D: "hsl(143, 100%, 80%)",
+  E: "hsl(101, 100%, 80%)",
+  F: "hsl(224, 100%, 80%)",
+  G: "hsl(200, 100%, 80%)",
+  H: "hsl(59, 100%, 80%)",
+  I: "hsl(45, 100%, 80%)",
+  J: "hsl(64, 100%, 80%)",
+  K: "hsl(258, 100%, 80%)",
+  L: "hsl(174, 100%, 80%)",
+  M: "hsl(163, 100%, 80%)",
+  N: "hsl(249, 100%, 80%)",
+  O: "hsl(71, 100%, 80%)",
+  P: "hsl(315, 100%, 80%)",
+  Q: "hsl(48, 100%, 80%)",
+  R: "hsl(238, 100%, 80%)",
+  S: "hsl(247, 100%, 80%)",
+  T: "hsl(233, 100%, 80%)",
+  U: "hsl(358, 100%, 80%)",
+  V: "hsl(294, 100%, 80%)",
+  W: "hsl(175, 100%, 80%)",
+  X: "hsl(214, 100%, 80%)",
+  Y: "hsl(8, 100%, 80%)",
+  Z: "hsl(218, 100%, 80%)",
+};
 
-export { languages, sortOptions, filterOptions };
+export { languages, sortOptions, filterOptions, avatarColors };

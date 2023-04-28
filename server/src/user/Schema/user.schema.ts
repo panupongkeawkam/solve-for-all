@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import * as mongoose from "mongoose";
+
 import { Tag } from "../../tag/schema/tag.schema";
 
 export type UserDocument = mongoose.HydratedDocument<User | null>;
