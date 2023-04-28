@@ -1,0 +1,56 @@
+@import "./font.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: "Karla", sans-serif, "IBM Plex Sans Thai", sans-serif;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+p {
+  font-size: 16px;
+  line-height: 16px;
+}
+
+span {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: #666;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+.inputRounded .MuiOutlinedInput-root {
+  border-radius: 8px;
+}
+
+.MuiInput-root::before,
+.MuiInput-root::after,
+.MuiInput-root:hover {
+  border-bottom: none !important;
+}
