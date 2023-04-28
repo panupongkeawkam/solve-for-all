@@ -117,7 +117,9 @@ export default (props) => {
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
         {fetchingQuestions ? (
-          [0, 1, 2, 3].map(() => <QuestionSkeleton />)
+          Array(4)
+            .fill(null)
+            .map((item, index) => <QuestionSkeleton key={index} />)
         ) : questions.length > 0 ? (
           questions.map((question, index) => (
             <Question

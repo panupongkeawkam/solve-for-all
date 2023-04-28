@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Select, MenuItem, RadioGroup, Radio } from "@mui/material";
 import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
 
 import palette from "../style/palette";
-import store from "../store/index";
 import axios from "../utils/axios.config";
 import { sortOptions, filterOptions } from "../utils/dummy";
-import { fetchTags } from "../store/tagSlice";
 import { sortQuestions, filterQuestions } from "../utils/lamda";
 
 import EmptyData from "../components/EmptyData";
-import TagDetail from "../components/TagDetail";
 import Question from "../components/Question";
+import QuestionSkeleton from "../components/skeletons/QuestionSkeleton";
 
 export default ({}) => {
   const navigate = useNavigate();
@@ -25,8 +22,10 @@ export default ({}) => {
   const [totalQuestion, setTotalQuestion] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [questionsComponent, setQuestionsComponent] = useState([]);
+  const [fetchingQuestions, setFetchingQuestions] = useState(false);
 
   useEffect(() => {
+    setFetchingQuestions(true);
     axios
       .get(`/api/tags/${tagId}`)
       .then((res) => {
@@ -35,6 +34,7 @@ export default ({}) => {
         setQuestions(res.data.tag.questions);
         setSortBy("latest");
         extractingQuestions();
+        setFetchingQuestions(false);
       })
       .catch((err) => navigate("/notfound"));
   }, []);
@@ -139,7 +139,11 @@ export default ({}) => {
       </div>
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
-        {questionsComponent.length > 0 ? (
+        {fetchingQuestions ? (
+          Array(4)
+            .fill(null)
+            .map((item, index) => <QuestionSkeleton key={index} />)
+        ) : questionsComponent.length > 0 ? (
           questionsComponent
         ) : (
           <div className="w-full 2xl:h-[720px] h-[480px]">
