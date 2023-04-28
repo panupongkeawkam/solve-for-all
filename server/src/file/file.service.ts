@@ -62,6 +62,7 @@ export class FileService {
 			Bucket: process.env.AWS_BUCKET_NAME,
 			Delete,
 		};
+		console.log(params);
 		await s3Bucket.deleteObjects(
 			params,
 			(err: AWSError, data: S3.DeleteObjectsOutput) => {
