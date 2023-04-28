@@ -1,8 +1,8 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import { User } from "src/user/schema/user.schema";
-import { Question } from "src/question/schema/question.schema";
+import { User } from "../../user/schema/user.schema";
+import { Question } from "../../question/schema/question.schema";
 import * as mongoose from "mongoose";
-import { Reply } from "src/reply/schema/reply.schema";
+import { Reply } from "../../reply/schema/reply.schema";
 
 export type AnswerDocument = mongoose.HydratedDocument<Answer | null>;
 

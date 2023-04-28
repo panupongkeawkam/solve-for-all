@@ -4,7 +4,7 @@ import { Model } from "mongoose";
 import { Answer } from "./schema/answer.schema";
 import { CreateAnswerDto } from "./dto/createAnswer.dto";
 import { InteractAnswerQueryDto } from "./dto/interactQuery.dto";
-import { PushReplyToAnswer } from "src/dto/pushReplyQuery.dto";
+import { PushReplyToAnswer } from "./dto/pushReplyQuery.dto";
 
 @Injectable()
 export class AnswerService {
@@ -23,8 +23,6 @@ export class AnswerService {
 			});
 			return await answer.save();
 		} catch (err) {
-			console.log("error from answer service create answer function.");
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
@@ -43,10 +41,6 @@ export class AnswerService {
 					updatedAt: 0,
 				});
 		} catch (err) {
-			console.log(
-				"error from answer service find answers by question id",
-			);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
@@ -89,10 +83,6 @@ export class AnswerService {
 			);
 			return answer;
 		} catch (err) {
-			console.log(
-				"error from answer service find one and interact answer.",
-			);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
