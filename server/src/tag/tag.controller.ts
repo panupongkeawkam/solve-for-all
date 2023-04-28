@@ -13,14 +13,14 @@ import {
 } from "@nestjs/common";
 import { TagService } from "./tag.service";
 import { Response, Request } from "express";
-import { QuestionService } from "src/question/question.service";
-import { PreviewQuestionDto } from "src/question/dto/previewQuestion.dto";
-import { UserService } from "src/user/user.service";
-import { PreviewTagDto } from "./dto/previewTag.dto";
-import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
+import { QuestionService } from "../question/question.service";
+import { PreviewQuestionDto } from "../question/dto/previewQuestion.dto";
+import { UserService } from "../user/user.service";
 import { previewQuestionFormat } from "../question/utils/formatter.util";
-import { previewTagFormat } from "./util/formatter.util";
-import { shuffle } from "./util/shuffle.util";
+import { PreviewTagDto } from "./dto/previewTag.dto";
+import { previewTagFormat } from "./utils/formatter.util";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { shuffle } from "./utils/shuffle.util";
 
 @Controller("tags")
 export class TagController {

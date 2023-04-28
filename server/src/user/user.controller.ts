@@ -23,12 +23,12 @@ import { LocalAuthGuard } from "../auth/local-auth.guard";
 import { AuthService } from "../auth/auth.service";
 import { LoginDto } from "./dto/login.dto";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { checkPermission } from "../auth/utils/permission.utils";
+import { checkPermission } from "../auth/permission.utils";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { FileService } from "../file/file.service";
-import { TagService } from "src/tag/tag.service";
-import { QuestionService } from "src/question/question.service";
-import { PreviewQuestionDto } from "src/question/dto/previewQuestion.dto";
+import { TagService } from "../tag/tag.service";
+import { QuestionService } from "../question/question.service";
+import { PreviewQuestionDto } from "../question/dto/previewQuestion.dto";
 import { previewQuestionFormat } from "../question/utils/formatter.util";
 import { previewUserFormat } from "./utils/formatter.util";
 

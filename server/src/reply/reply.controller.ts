@@ -41,7 +41,6 @@ export class ReplyController {
 				replyId: reply._id.toString(),
 			};
 
-			// Background
 			this.questionService.increaseParticipant(req.body.questionId);
 			this.answerService.pushReplyToAnswer(query);
 

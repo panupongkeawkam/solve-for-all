@@ -75,8 +75,6 @@ export class AnswerController {
 			};
 			const answer = await this.answerService.createAnswer(query);
 
-			// Background
-
 			this.userService.answeredCompute(req.user?._id);
 			this.questionService.IncreaseAnsweredAndParticipant(
 				questionDetail?._id,
@@ -110,7 +108,6 @@ export class AnswerController {
 				reputation: isLike ? 1 : -1,
 			};
 
-			// Background
 			this.questionService.increaseParticipant(
 				answer.answeredIn.toString(),
 			);

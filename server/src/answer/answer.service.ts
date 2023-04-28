@@ -4,7 +4,8 @@ import { Model } from "mongoose";
 import { Answer } from "./schema/answer.schema";
 import { CreateAnswerDto } from "./dto/createAnswer.dto";
 import { InteractAnswerQueryDto } from "./dto/interactQuery.dto";
-import { PushReplyToAnswer } from "./dto/pushReplyQuery.dto";
+
+import { PushReplyToAnswer } from "../answer/dto/pushReplyQuery.dto";
 
 @Injectable()
 export class AnswerService {
@@ -60,6 +61,7 @@ export class AnswerService {
 		);
 	}
 
+	// Find answer and push user id is liked or disliked
 	async findOneAndInteract(
 		query: InteractAnswerQueryDto,
 	): Promise<Answer | null> {

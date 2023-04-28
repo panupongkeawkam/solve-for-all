@@ -24,8 +24,8 @@ import { FileService } from "../file/file.service";
 import { BadRequestException } from "@nestjs/common";
 import { DeleteQuestionDto } from "./dto/deleteQuestion.dto";
 import { UserService } from "../user/user.service";
+import { previewQuestionFormat } from "./utils/formatter.util";
 import { previewAnswerFormat } from "../answer/utils/formatter.util";
-import { previewQuestionFormat } from "../question/utils/formatter.util";
 import { previewReplyFormat } from "../reply/utils/formatter.util";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
 import { ReputationQueryDto } from "../user/dto/reputationQuery.dto";
@@ -223,7 +223,6 @@ export class QuestionController {
 
 			response.answers = answerResponse;
 
-			// increase viewed
 			this.questionService.increaseView(question?._id.toString());
 			return res.status(HttpStatus.OK).json({ question: response });
 		}
@@ -275,7 +274,6 @@ export class QuestionController {
 				isLikeQuery,
 			);
 
-			// behind screen work
 			if (!question)
 				throw new BadRequestException(
 					"Question doesn't exists anymore.",
@@ -318,7 +316,6 @@ export class QuestionController {
 				reputation: 10,
 			};
 
-			// Background
 			this.userService.reputationCompute(userReputationQuery);
 			this.userService.increaseSolved(req.body.answerOwnerId);
 			this.answerService.confirmAnswerSolved(req.body.answerId);
