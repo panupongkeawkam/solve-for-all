@@ -15,10 +15,14 @@ import {
 
 import EmptyData from "../components/EmptyData";
 import Question from "../components/Question";
+import QuestionSkeleton from "../components/skeletons/QuestionSkeleton";
 
 export default (props) => {
   const navigate = useNavigate();
   const questionsList = useSelector((state) => state.question.questionsList);
+  const fetchingQuestions = useSelector(
+    (state) => state.question.fetchingQuestions
+  );
   const homePageQuestionSearchQuery = useSelector(
     (state) => state.question.homePageQuestionSearchQuery
   );
@@ -112,7 +116,9 @@ export default (props) => {
       </div>
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
-        {questions.length > 0 ? (
+        {fetchingQuestions ? (
+          [0, 1, 2, 3].map(() => <QuestionSkeleton />)
+        ) : questions.length > 0 ? (
           questions.map((question, index) => (
             <Question
               key={index}
