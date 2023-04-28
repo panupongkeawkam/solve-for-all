@@ -60,7 +60,9 @@ export default ({}) => {
       {/* content section */}
       <div className="flex flex-row flex-wrap w-full mb-10">
         {fetchingTags ? (
-          Array(12).map(() => <TagDetailSkeleton />)
+          Array(22)
+            .fill(null)
+            .map((item, index) => <TagDetailSkeleton key={index} />)
         ) : displayedTags.length > 0 ? (
           displayedTags
         ) : (

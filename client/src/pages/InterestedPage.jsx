@@ -29,6 +29,7 @@ export default ({}) => {
   const [fetchingQuestions, setFetchingQuestions] = useState(false);
 
   useEffect(() => {
+    setFetchingQuestions(true);
     authAxios.get(`/api/tags/interested`).then((res) => {
       setQuestions(res.data.questions);
       setQuestionsComponent(
@@ -51,6 +52,7 @@ export default ({}) => {
           />
         ))
       );
+      setFetchingQuestions(false);
     });
   }, []);
 
@@ -150,7 +152,9 @@ export default ({}) => {
       {/* content section */}
       <section className="flex flex-col w-full mb-10">
         {fetchingQuestions ? (
-          [0, 1, 2, 3].map(() => <QuestionSkeleton />)
+          Array(4)
+            .fill(null)
+            .map((item, index) => <QuestionSkeleton key={index} />)
         ) : questionsComponent.length > 0 ? (
           questionsComponent
         ) : (

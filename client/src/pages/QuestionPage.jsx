@@ -11,6 +11,7 @@ import QuestionDetail from "../components/QuestionDetail";
 import QuestionDetailSkeleton from "../components/skeletons/QuestionDetailSkeleton";
 import Button from "../components/buttons/Button";
 import Answer from "../components/Answer";
+import AnswerSkeleton from "../components/skeletons/AnswerSkeleton";
 import AnswerFormModal from "../components/modals/AnswerFormModal";
 import EmptyData from "../components/EmptyData";
 
@@ -128,7 +129,11 @@ export default ({}) => {
         </div>
       </div>
       <section>
-        {answers.length > 0 ? (
+        {questionLoading ? (
+          Array(4)
+            .fill(null)
+            .map((item, index) => <AnswerSkeleton key={index} />)
+        ) : answers.length > 0 ? (
           answers.map((answer, index) => (
             <Answer
               key={index}
