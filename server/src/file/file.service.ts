@@ -13,7 +13,6 @@ export class FileService {
 	): Promise<ResponseInterface[] | null> {
 		const s3Bucket = new S3();
 
-		// Parallel job
 		const uploadedFiles = await Promise.all(
 			files.map(async (file) => {
 				const params = {
@@ -63,7 +62,6 @@ export class FileService {
 			Bucket: process.env.AWS_BUCKET_NAME,
 			Delete,
 		};
-		console.log(params);
 		await s3Bucket.deleteObjects(
 			params,
 			(err: AWSError, data: S3.DeleteObjectsOutput) => {

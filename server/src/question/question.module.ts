@@ -6,8 +6,8 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Question, QuestionSchema } from "./schema/question.schema";
 import { TagModule } from "../tag/tag.module";
 import { FileModule } from "../file/file.module";
-import { AnswerModule } from "src/answer/answer.module";
-import { ReplyModule } from "src/reply/reply.module";
+import { AnswerModule } from "../answer/answer.module";
+import { ReplyModule } from "../reply/reply.module";
 
 @Module({
 	providers: [QuestionService],

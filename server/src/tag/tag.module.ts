@@ -3,8 +3,8 @@ import { TagController } from "./tag.controller";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Tag, TagSchema } from "./schema/tag.schema";
 import { TagService } from "./tag.service";
-import { QuestionModule } from "src/question/question.module";
-import { UserModule } from "src/user/user.module";
+import { QuestionModule } from "../question/question.module";
+import { UserModule } from "../user/user.module";
 
 @Module({
 	controllers: [TagController],

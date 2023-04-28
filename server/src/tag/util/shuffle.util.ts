@@ -1,4 +1,4 @@
-export function shuffle(items) {
+export function shuffle(items: string[]) {
 	let array = items?.map((item) => item.toString());
 	if (items.length > 3) {
 		array.sort();

@@ -16,13 +16,11 @@ import { Response, Request } from "express";
 import { QuestionService } from "src/question/question.service";
 import { PreviewQuestionDto } from "src/question/dto/previewQuestion.dto";
 import { UserService } from "src/user/user.service";
-import {
-	previewQuestionFormat,
-	previewTagFormat,
-} from "src/utils/formatter.utils";
 import { PreviewTagDto } from "./dto/previewTag.dto";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
-import { shuffle } from "../utils/util.util";
+import { previewQuestionFormat } from "../question/utils/formatter.util";
+import { previewTagFormat } from "./util/formatter.util";
+import { shuffle } from "./util/shuffle.util";
 
 @Controller("tags")
 export class TagController {
@@ -45,8 +43,6 @@ export class TagController {
 				tags,
 			});
 		} catch (err) {
-			console.log(`error from tag controller get all tag`);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong");
 		}
 	}
@@ -108,10 +104,6 @@ export class TagController {
 				questions: responses,
 			});
 		} catch (err) {
-			console.log(
-				"error from tag controller filter interested tags function.",
-			);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
@@ -152,8 +144,6 @@ export class TagController {
 				tag: response,
 			});
 		} catch (err) {
-			console.log(`error from tag controller get tag by tag id function`);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
