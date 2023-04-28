@@ -16,23 +16,21 @@ import {
 } from "@nestjs/common";
 import { Request, Response } from "express";
 import { Controller } from "@nestjs/common";
-import { ChangePasswordDto, CreateUserDto, EditUserDto } from "./dto/user.dto";
+import { ChangePasswordDto, CreateUserDto } from "./dto/user.dto";
 import { UserService } from "./user.service";
 import * as bcrypt from "bcrypt";
 import { LocalAuthGuard } from "../auth/local-auth.guard";
 import { AuthService } from "../auth/auth.service";
 import { LoginDto } from "./dto/login.dto";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { checkPermission } from "../utils/permission.utils";
+import { checkPermission } from "../auth/permission.utils";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { FileService } from "../file/file.service";
-import { TagService } from "src/tag/tag.service";
-import { QuestionService } from "src/question/question.service";
-import { PreviewQuestionDto } from "src/question/dto/previewQuestion.dto";
-import {
-	previewQuestionFormat,
-	previewUserFormat,
-} from "src/utils/formatter.utils";
+import { TagService } from "../tag/tag.service";
+import { QuestionService } from "../question/question.service";
+import { PreviewQuestionDto } from "../question/dto/previewQuestion.dto";
+import { previewQuestionFormat } from "../question/utils/formatter.util";
+import { previewUserFormat } from "./utils/formatter.util";
 
 @Controller("users")
 export class UserController {
@@ -192,7 +190,6 @@ export class UserController {
 
 			res.status(HttpStatus.OK).json({ user });
 		} catch (err) {
-			console.log(err);
 			throw new BadRequestException("something went wrong");
 		}
 	}
@@ -221,20 +218,7 @@ export class UserController {
 				status,
 			});
 		} catch (err) {
-			console.log(err);
 			throw new BadRequestException("something went wrong");
 		}
-	}
-
-	// use to test authentication
-	@UseGuards(JwtAuthGuard)
-	@Get("test")
-	async testCookie(@Res() res: Response) {
-		res.status(HttpStatus.OK).send("You're in");
-	}
-
-	@Get("test/no-auth")
-	async testRoute(@Res() res: Response) {
-		return res.status(HttpStatus.OK).send("Hello there.");
 	}
 }

@@ -20,21 +20,19 @@ import { QuestionService } from "./question.service";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { TagService } from "../tag/tag.service";
 import { findExistTags, findNotExistTags } from "./utils/filter.util";
-import { FileService } from "src/file/file.service";
+import { FileService } from "../file/file.service";
 import { BadRequestException } from "@nestjs/common";
 import { DeleteQuestionDto } from "./dto/deleteQuestion.dto";
-import { UserService } from "src/user/user.service";
-import {
-	previewAnswerFormat,
-	previewQuestionFormat,
-	previewReplyFormat,
-} from "../utils/formatter.utils";
+import { UserService } from "../user/user.service";
+import { previewQuestionFormat } from "./utils/formatter.util";
+import { previewAnswerFormat } from "../answer/utils/formatter.util";
+import { previewReplyFormat } from "../reply/utils/formatter.util";
 import { InteractWithQuestionDto } from "./dto/interactQuestion.dto";
-import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
+import { ReputationQueryDto } from "../user/dto/reputationQuery.dto";
 import { PreviewQuestionDto } from "./dto/previewQuestion.dto";
-import { AnswerService } from "src/answer/answer.service";
-import { ReplyService } from "src/reply/reply.service";
-import { PreviewReplyDto } from "src/reply/dto/previewReply.dto";
+import { AnswerService } from "../answer/answer.service";
+import { ReplyService } from "../reply/reply.service";
+import { PreviewReplyDto } from "../reply/dto/previewReply.dto";
 
 @Controller("questions")
 export class QuestionController {
@@ -73,10 +71,6 @@ export class QuestionController {
 				});
 			}
 		} catch (err) {
-			console.log(
-				`Error from question controller find all question function`,
-			);
-			console.log(err);
 			throw new BadRequestException("Something when wrong on server.");
 		}
 	}
@@ -171,7 +165,6 @@ export class QuestionController {
 			if (files.length > 0) {
 				await this.fileService.removeFiles(uploadedFiles);
 			}
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}
@@ -230,7 +223,6 @@ export class QuestionController {
 
 			response.answers = answerResponse;
 
-			// increase viewed
 			this.questionService.increaseView(question?._id.toString());
 			return res.status(HttpStatus.OK).json({ question: response });
 		}
@@ -282,7 +274,6 @@ export class QuestionController {
 				isLikeQuery,
 			);
 
-			// behind screen work
 			if (!question)
 				throw new BadRequestException(
 					"Question doesn't exists anymore.",
@@ -298,10 +289,6 @@ export class QuestionController {
 				success: true,
 			});
 		} catch (err) {
-			console.log(
-				`Error from question controller like question functional`,
-			);
-			console.log(err);
 			throw new BadGatewayException("something went wrong from server");
 		}
 	}
@@ -329,7 +316,6 @@ export class QuestionController {
 				reputation: 10,
 			};
 
-			// Background
 			this.userService.reputationCompute(userReputationQuery);
 			this.userService.increaseSolved(req.body.answerOwnerId);
 			this.answerService.confirmAnswerSolved(req.body.answerId);
@@ -338,10 +324,6 @@ export class QuestionController {
 				success: true,
 			});
 		} catch (err) {
-			console.log(
-				"error from question controller confirm solved function.",
-			);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}

@@ -4,7 +4,7 @@ import { Model } from "mongoose";
 import { Answer } from "./schema/answer.schema";
 import { CreateAnswerDto } from "./dto/createAnswer.dto";
 import { InteractAnswerQueryDto } from "./dto/interactQuery.dto";
-import { PushReplyToAnswer } from "src/dto/pushReplyQuery.dto";
+import { PushReplyToAnswer } from "../answer/dto/pushReplyQuery.dto";
 
 @Injectable()
 export class AnswerService {
@@ -66,6 +66,7 @@ export class AnswerService {
 		);
 	}
 
+	// Find answer and push user id is liked or disliked
 	async findOneAndInteract(
 		query: InteractAnswerQueryDto,
 	): Promise<Answer | null> {
@@ -89,10 +90,6 @@ export class AnswerService {
 			);
 			return answer;
 		} catch (err) {
-			console.log(
-				"error from answer service find one and interact answer.",
-			);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}

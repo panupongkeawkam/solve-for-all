@@ -8,7 +8,7 @@ import { User } from "./schema/user.schema";
 import { Model } from "mongoose";
 import { CreateUserDto, EditUserDto } from "./dto/user.dto";
 import { UserDetail } from "./interfaces/user.interface";
-import { ReputationQueryDto } from "src/dto/reputationQuery.dto";
+import { ReputationQueryDto } from "../user/dto/reputationQuery.dto";
 
 @Injectable()
 export class UserService {
@@ -23,7 +23,6 @@ export class UserService {
 			const { password, createdAt, updatedAt, ...rest } = user?._doc;
 			return rest;
 		} catch (error) {
-			console.log(error);
 			const { username } = error.keyValue;
 			if (error.code === 11000 && username)
 				throw new BadRequestException("Username is used");

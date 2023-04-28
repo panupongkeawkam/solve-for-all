@@ -14,8 +14,6 @@ export class ReplyService {
 		try {
 			return this.replyModel.create(query);
 		} catch (err) {
-			console.log("error from reply service create reply function.");
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}

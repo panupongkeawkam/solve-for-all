@@ -29,7 +29,6 @@ export class QuestionService {
 			});
 			return newQuestion;
 		} catch (err) {
-			console.log(err);
 			throw new BadRequestException("Please provide all values");
 		}
 	}
@@ -148,10 +147,6 @@ export class QuestionService {
 				},
 			);
 		} catch (err) {
-			console.log(
-				"error from question service solved question function.",
-			);
-			console.log(err);
 			throw new InternalServerErrorException("Something went wrong.");
 		}
 	}

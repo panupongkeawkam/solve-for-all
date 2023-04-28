@@ -13,7 +13,6 @@ export class FileService {
 	): Promise<ResponseInterface[] | null> {
 		const s3Bucket = new S3();
 
-		// Parallel job
 		const uploadedFiles = await Promise.all(
 			files.map(async (file) => {
 				const params = {
