@@ -1,6 +1,3 @@
-# Solve For All - Client
-Frontend of **Solve For All** app using React.js, Redux.js, Vite, Tailwind CSS and Meterial UI, Node.js for a package manager
-
 ## Get Started
 1. Go to `client` directory
 ```
